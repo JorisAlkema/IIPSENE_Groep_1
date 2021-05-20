@@ -14,14 +14,14 @@ public class MainMenuView extends StackPane implements Observer {
         super();
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
-        ImageView background = new ImageView("bg.jpg");
+        ImageView background = new ImageView("images/main_menu_background.jpg");
         background.setFitWidth(1280);
         background.setFitHeight(720);
         background.setEffect(colorAdjust);
 
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(40));
-        ImageView title = new ImageView("title.png");
+        ImageView title = new ImageView("images/main_menu_logo.png");
         title.setFitWidth(title.getImage().getWidth() * 0.9);
         title.setFitHeight(title.getImage().getHeight() * 0.9);
         grid.add(title, 0,0,2,1);

@@ -24,8 +24,8 @@ public class HelloFX extends Application {
         // Left pane
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(30));
-        Image zoomInImage = new Image("button-zoom-in.png");
-        Image zoomOutImage = new Image("button-zoom-out.png");
+        Image zoomInImage = new Image("icons/button_zoom_in.png");
+        Image zoomOutImage = new Image("icons/button_zoom_out.png");
         ImageView imageView = new ImageView(zoomInImage);
         imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (mapView.isZoomedIn()) {
@@ -46,7 +46,7 @@ public class HelloFX extends Application {
         Button mainmenu = new Button("Return to menu");
         mainmenu.setOnAction(e -> {
             Scene newScene = new Scene(new MainMenuView(), scene.getWidth(), scene.getHeight());
-            String css = this.getClass().getResource("styling.css").toString();
+            String css = this.getClass().getResource("css/styling.css").toString();
             newScene.getStylesheets().add(css);
             primaryStage.setScene(newScene);
         });

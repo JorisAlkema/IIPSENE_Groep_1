@@ -30,10 +30,10 @@ public class MapView extends ScrollPane {
 
     public MapView() {
         super();
-        bigBackgroundImage = new ImageView("Map_Big.jpg");
-        smallBackgroundImage = new ImageView("Map_Small.jpg");
-        bigImagePattern = new ImagePattern(new Image("Train.png"));
-        smallImagePattern = new ImagePattern(new Image("Train-small.png"));
+        bigBackgroundImage = new ImageView("maps/map_big.jpg");
+        smallBackgroundImage = new ImageView("maps/map_small.jpg");
+        bigImagePattern = new ImagePattern(new Image("icons/train.png"));
+        smallImagePattern = new ImagePattern(new Image("icons/train_small.png"));
         this.backgroundImage = smallBackgroundImage;
         setContent(initLayout());
         // Hide scrollbars
@@ -87,7 +87,7 @@ public class MapView extends ScrollPane {
         // Stack overlays on top of the background image
         layout = new StackPane();
         layout.getChildren().add(backgroundImage);
-        rectangles = createRouteCells("src/main/resources/routes.txt");
+        rectangles = createRouteCells("src/main/resources/text/routes.txt");
         for (Rectangle rectangle : rectangles) {
             rectangle.setTranslateX(rectangle.getTranslateX() / 2);
             rectangle.setTranslateY(rectangle.getTranslateY() / 2);
