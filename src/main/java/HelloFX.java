@@ -1,3 +1,4 @@
+import View.MainMenuView;
 import View.MapView;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -17,6 +18,7 @@ public class HelloFX extends Application {
         MapView mapView = new MapView();
 
         BorderPane borderPane = new BorderPane();
+
         // Center pane
         borderPane.setCenter(mapView);
         // Left pane
@@ -39,12 +41,23 @@ public class HelloFX extends Application {
         // Right pane
         vBox = new VBox();
         vBox.setPadding(new Insets(30));
-        vBox.getChildren().addAll(new Button("Button 1"), new Button("Button 2"));
-        borderPane.setRight(vBox);
         Scene scene = new Scene(borderPane);
+
+        Button mainmenu = new Button("Return to menu");
+        mainmenu.setOnAction(e -> {
+            Scene newScene = new Scene(new MainMenuView(), scene.getWidth(), scene.getHeight());
+            String css = this.getClass().getResource("styling.css").toString();
+            newScene.getStylesheets().add(css);
+            primaryStage.setScene(newScene);
+        });
+        vBox.getChildren().addAll(mainmenu, new Button("Button 2"));
+        borderPane.setRight(vBox);
 
         primaryStage.setTitle("Ticket to Ride");
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.setHeight(720);
+        primaryStage.setWidth(1280);
         primaryStage.show();
     }
 
