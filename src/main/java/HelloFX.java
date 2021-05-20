@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 public class HelloFX extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         MapView mapView = new MapView();
 
         BorderPane borderPane = new BorderPane();
