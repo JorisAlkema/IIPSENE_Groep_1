@@ -64,7 +64,11 @@ public class MainMenuView extends StackPane implements Observer {
                 ex.printStackTrace();
             }
         });
+
+        quit.setOnMouseClicked(e -> System.exit(0));
     }
+
+
 
     public static void openFile(File file) throws Exception {
         if (Desktop.isDesktopSupported()) {

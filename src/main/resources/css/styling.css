@@ -1,16 +1,11 @@
 @font-face {
-    font-family: MerriweatherRegular;
-    src: url('Merriweather.ttf');
-}
-
-@font-face {
-    font-family: MerriweatherBold;
-    src: url('MerriweatherBold.ttf');
+    font-family: Merriweather;
+    src: url('../fonts/MerriweatherBold.ttf');
 }
 
 .button {
 	-fx-background-color: #c73e18;
-	-fx-font-family: MerriweatherBold;
+	-fx-font-family: Merriweather;
 	-fx-text-fill: white;
 	-fx-font-size: 20;
 	-fx-font-weight: 700;

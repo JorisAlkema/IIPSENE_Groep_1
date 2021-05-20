@@ -76,7 +76,7 @@ public class Firebase {
         HashMap<String, String> quote = getSomethingToInsert();
 
         ApiFuture<WriteResult> future = db.collection("firebaseTest")
-                .document("test_document")
+                .document("joris_document")
                 .set(quote);
 
         System.out.println("Successfully updated at: "
@@ -85,7 +85,7 @@ public class Firebase {
 
     public HashMap<String, String> getSomethingToInsert() throws IOException {
         HashMap<String, String> quoteHashMap = new HashMap<String, String>();
-        quoteHashMap.put("Tim", "I like trains.");
+        quoteHashMap.put("Joris", "I also like trains.");
 
         return quoteHashMap;
     }
