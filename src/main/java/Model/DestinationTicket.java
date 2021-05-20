@@ -1,7 +1,5 @@
 package Model;
 
-import java.util.ArrayList;
-
 // Instances of this class represent destination tickets. They have a filepath String referring to the corresponding
 // png image, a list of Cities which they connect, a boolean which indicates whether the two Cities have been
 // connected, and an amount of points for successfully connecting them.
@@ -10,23 +8,23 @@ import java.util.ArrayList;
 // that are not kept in a Players hand are discarded; they are not added to the DestinationTicketDeck
 // TODO: determine in which class the pathfinding algorithm which calculate if two cities are connected should be
 public class DestinationTicket {
-    private final String filePath;
-    private final ArrayList<City> cities;
+    private final City firstCity;
+    private final City secondCity;
     private final String type;
     private final int points;
     private boolean connected;
 
-    public DestinationTicket(String filePath, ArrayList<City> cities, String type, int points) {
-        this.filePath = filePath;
-        this.cities = cities;
+    public DestinationTicket(City firstCity, City secondCity, String type, int points) {
+        this.firstCity = firstCity;
+        this.secondCity = secondCity;
         this.points = points;
         this.type = type;
         connected = false;
     }
 
-    public DestinationTicket(String filePath, ArrayList<City> cities, String type, int points, boolean connected) {
-        this.filePath = filePath;
-        this.cities = cities;
+    public DestinationTicket(City firstCity, City secondCity, String type, int points, boolean connected) {
+        this.firstCity = firstCity;
+        this.secondCity = secondCity;
         this.points = points;
         this.type = type;
         this.connected = connected;

@@ -1,6 +1,4 @@
-// https://stackoverflow.com/a/41080735
-
-package View;
+package Service;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -13,7 +11,6 @@ public class OverlayEventHandler implements EventHandler<MouseEvent> {
     private final EventHandler<MouseEvent> clickEventHandler;
     private final EventHandler<MouseEvent> dragEventHandler;
     private boolean dragging = false;
-
 
     public OverlayEventHandler(EventHandler<MouseEvent> onClickedEventHandler, EventHandler<MouseEvent> onDraggedEventHandler) {
         this.clickEventHandler = onClickedEventHandler;
@@ -32,5 +29,4 @@ public class OverlayEventHandler implements EventHandler<MouseEvent> {
             dragEventHandler.handle(event);
         }
     }
-
 }

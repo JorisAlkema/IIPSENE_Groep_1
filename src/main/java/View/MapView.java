@@ -1,5 +1,8 @@
 package View;
 
+import Model.RouteCell;
+import Service.GameSetupService;
+import Service.OverlayEventHandler;
 import javafx.event.Event;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -15,14 +18,15 @@ import java.util.ArrayList;
 
 /** Constructs a scene with a pannable Map background. */
 public class MapView extends ScrollPane {
+    private final GameSetupService gameSetupService = new GameSetupService();
     private ImageView backgroundImage;
     private ArrayList<Rectangle> rectangles;
-    private StackPane layout;
+    private StackPane stackPane;
     private boolean zoomedIn;
-    private final ImageView bigBackgroundImage;
-    private final ImageView smallBackgroundImage;
-    private final ImagePattern smallImagePattern;
-    private final ImagePattern bigImagePattern;
+    private final ImageView bigBackgroundImage = new ImageView("maps/map_big.jpg");
+    private final ImageView smallBackgroundImage = new ImageView("maps/map_small.jpg");
+    private final ImagePattern smallImagePattern = new ImagePattern(new Image("icons/train_small.png"));
+    private final ImagePattern bigImagePattern = new ImagePattern(new Image("icons/train.png"));
     private static final double smallCellWidth = 35; // 70x23 for large, 35x12 for small
     private static final double smallCellHeight = 12;
     private static final double bigCellWidth = 70;
@@ -30,16 +34,12 @@ public class MapView extends ScrollPane {
 
     public MapView() {
         super();
-        bigBackgroundImage = new ImageView("maps/map_big.jpg");
-        smallBackgroundImage = new ImageView("maps/map_small.jpg");
-        bigImagePattern = new ImagePattern(new Image("icons/train.png"));
-        smallImagePattern = new ImagePattern(new Image("icons/train_small.png"));
         this.backgroundImage = smallBackgroundImage;
-        setContent(initLayout());
+        this.setContent(initStackPane());
         // Hide scrollbars
-        setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        zoomedIn = false;
+        this.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        this.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        this.zoomedIn = false;
     }
 
     public void zoomIn() {
@@ -47,7 +47,7 @@ public class MapView extends ScrollPane {
             return;
         }
         this.backgroundImage = bigBackgroundImage;
-        layout.getChildren().set(0, this.backgroundImage);
+        stackPane.getChildren().set(0, this.backgroundImage);
         setPannable(true);
         for (Rectangle rectangle : rectangles) {
             rectangle.setWidth(bigCellWidth);
@@ -69,7 +69,7 @@ public class MapView extends ScrollPane {
             return;
         }
         this.backgroundImage = smallBackgroundImage;
-        layout.getChildren().set(0, this.backgroundImage);
+        stackPane.getChildren().set(0, this.backgroundImage);
         setPannable(false);
         for (Rectangle rectangle : rectangles) {
             rectangle.setWidth(smallCellWidth);
@@ -83,18 +83,21 @@ public class MapView extends ScrollPane {
         zoomedIn = false;
     }
 
-    private StackPane initLayout() {
+    private StackPane initStackPane() {
         // Stack overlays on top of the background image
-        layout = new StackPane();
-        layout.getChildren().add(backgroundImage);
-        rectangles = createRouteCells("src/main/resources/text/routes.txt");
+        stackPane = new StackPane();
+        stackPane.getChildren().add(backgroundImage);
+        rectangles = new ArrayList<Rectangle>();
+        for (RouteCell routeCell : gameSetupService.readRouteCellsFromFile("src/main/resources/text/routes.txt")) {
+            rectangles.add(createCellOverlay(routeCell));
+        }
+
         for (Rectangle rectangle : rectangles) {
             rectangle.setTranslateX(rectangle.getTranslateX() / 2);
             rectangle.setTranslateY(rectangle.getTranslateY() / 2);
         }
-        layout.getChildren().addAll(rectangles);
-
-        return layout;
+        stackPane.getChildren().addAll(rectangles);
+        return stackPane;
     }
 
     private Rectangle createCellOverlay(double offsetX, double offsetY, double rotation) {
@@ -112,54 +115,14 @@ public class MapView extends ScrollPane {
                             }
                         },
                         Event::consume)
-//                e -> System.out.println("Dragged"))
         );
         return rectangle;
     }
 
-    private Rectangle createCellOverlay(double[] doubles) {
-        if (doubles.length != 3) {
-            System.err.println(doubles + " is not of length 3!");
-            return null;
-        }
-        return createCellOverlay(doubles[0], doubles[1], doubles[2]);
+    private Rectangle createCellOverlay(RouteCell routeCell) {
+        return createCellOverlay(routeCell.getOffsetX(), routeCell.getOffsetY(), routeCell.getRotation());
     }
 
-    private ArrayList<Rectangle> createRouteCells(String filename) {
-        ArrayList<Rectangle> routeCellList = new ArrayList<>();
-        try {
-            File file = new File(filename);
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                // Skip over comments
-                if (line.startsWith("/")) {
-                    line = bufferedReader.readLine();
-                    continue;
-                }
-                String[] strings = line.split(" ");
-                if (strings.length != 3) {
-                    System.err.println("Error: " + strings.toString() + " is not of length 3");
-                    break;
-                }
-                double[] doubles = new double[strings.length];
-                for (int i = 0; i < strings.length; i++) {
-                    try {
-                        doubles[i] = Double.parseDouble(strings[i]);
-                    } catch (NumberFormatException numberFormatException) {
-                        System.err.println(numberFormatException.getMessage());
-                    }
-                }
-                routeCellList.add(createCellOverlay(doubles));
-                line = bufferedReader.readLine();
-            }
-            bufferedReader.close();
-        } catch (IOException ioException) {
-            System.err.println(ioException.getMessage());
-        }
-        return routeCellList;
-    }
 
     public boolean isZoomedIn() {
         return zoomedIn;

@@ -2,15 +2,27 @@ package Model;
 
 // RouteCell represents a single cell on the map. It is part of a Route.
 // A RouteCell has no color or type of its own, this is determined in the Route class.
-// The location of the RouteCell on the map is determined by its xOffset, yOffset and rotation.
+// The location of the RouteCell on the map is determined by its offsetX, offsetY and rotation.
 public class RouteCell {
-    private double xOffset;
-    private double yOffset;
+    private double offsetX;
+    private double offsetY;
     private final double rotation;
 
-    public RouteCell(double xOffset, double yOffset, double rotation) {
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
+    public RouteCell(double offsetX, double offsetY, double rotation) {
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
         this.rotation = rotation;
+    }
+
+    public double getOffsetX() {
+        return offsetX;
+    }
+
+    public double getOffsetY() {
+        return offsetY;
+    }
+
+    public double getRotation() {
+        return rotation;
     }
 }
