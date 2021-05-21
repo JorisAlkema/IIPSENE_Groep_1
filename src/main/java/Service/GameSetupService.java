@@ -2,6 +2,10 @@ package Service;
 
 import Model.DestinationTicket;
 import Model.RouteCell;
+import javafx.event.Event;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,12 +17,17 @@ import java.util.Arrays;
 public class GameSetupService {
 
     private ArrayList<DestinationTicket> destinationTickets;
+    private ArrayList<RouteCell> routeCells;
+    private ArrayList<Rectangle> rectangleOverlays;
+    private final static String routeCellFile = "src/main/resources/text/routes.txt";
 
     // This class should be used to help initialize the game, using methods to
     // read Cities, RouteCells, Routes, DestinationTickets and more from files
     // Could also be used to deal cards at the start of the game if no other class is made for this
     public GameSetupService() {
-        // ...
+        this.routeCells = readRouteCellsFromFile(routeCellFile);
+        this.rectangleOverlays = new ArrayList<>();
+        this.destinationTickets = new ArrayList<>();
 
 
     }
@@ -30,12 +39,39 @@ public class GameSetupService {
     }
 
 
+    public ArrayList<Rectangle> createMapViewOverlays() {
+        for (RouteCell routeCell : this.routeCells) {
+            this.rectangleOverlays.add( createRectangleOverlay(routeCell) );
+        }
+        return rectangleOverlays;
+    }
+
+    /**
+     * Creates a Rectangle object to overlay on the MapView background image. The rectangle
+     * overlay represents the user to interact with the given RouteCell or the Route that
+     * it is a part of. The rectangles height, width and EventHandler are currently added
+     * in the MapView class
+     * @param routeCell an individual RouteCell
+     * @return a javafx Rectangle object corresponding to the given RouteCell
+     */
+    private Rectangle createRectangleOverlay(RouteCell routeCell) {
+        Rectangle rectangle = new Rectangle();
+        // Divide by two because the file contains offsets for the large map,
+        // and the MapView starts by showing the small map.
+        rectangle.setTranslateX(routeCell.getOffsetX() / 2);
+        rectangle.setTranslateY(routeCell.getOffsetY() / 2);
+        rectangle.setRotate(routeCell.getRotation());
+        rectangle.setFill(Color.TRANSPARENT);
+        return rectangle;
+    }
+
+
     /**
      * Read locations of individual RouteCells from a file
      * @param filename The name of the file containing the RouteCell locations
      * @return An ArrayList of the RouteCells described in the file
      */
-    public ArrayList<RouteCell> readRouteCellsFromFile(String filename) {
+    private ArrayList<RouteCell> readRouteCellsFromFile(String filename) {
         ArrayList<RouteCell> routeCellList = new ArrayList<>();
         try {
             File file = new File(filename);

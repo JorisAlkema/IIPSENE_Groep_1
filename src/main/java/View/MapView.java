@@ -1,6 +1,5 @@
 package View;
 
-import Model.RouteCell;
 import Service.GameSetupService;
 import Service.OverlayEventHandler;
 import javafx.event.Event;
@@ -13,14 +12,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
-import java.io.*;
 import java.util.ArrayList;
 
 /** Constructs a scene with a pannable Map background. */
 public class MapView extends ScrollPane {
-    private final GameSetupService gameSetupService = new GameSetupService();
+    private final GameSetupService gameSetupService;
     private ImageView backgroundImage;
-    private ArrayList<Rectangle> rectangles;
+    private ArrayList<Rectangle> rectangleOverlays;
     private StackPane stackPane;
     private boolean zoomedIn;
     private final ImageView bigBackgroundImage = new ImageView("maps/map_big.jpg");
@@ -34,6 +32,7 @@ public class MapView extends ScrollPane {
 
     public MapView() {
         super();
+        this.gameSetupService = new GameSetupService();
         this.backgroundImage = smallBackgroundImage;
         this.setContent(initStackPane());
         // Hide scrollbars
@@ -49,7 +48,7 @@ public class MapView extends ScrollPane {
         this.backgroundImage = bigBackgroundImage;
         stackPane.getChildren().set(0, this.backgroundImage);
         setPannable(true);
-        for (Rectangle rectangle : rectangles) {
+        for (Rectangle rectangle : rectangleOverlays) {
             rectangle.setWidth(bigCellWidth);
             rectangle.setHeight(bigCellHeight);
             rectangle.setTranslateX(rectangle.getTranslateX() * 2);
@@ -71,7 +70,7 @@ public class MapView extends ScrollPane {
         this.backgroundImage = smallBackgroundImage;
         stackPane.getChildren().set(0, this.backgroundImage);
         setPannable(false);
-        for (Rectangle rectangle : rectangles) {
+        for (Rectangle rectangle : rectangleOverlays) {
             rectangle.setWidth(smallCellWidth);
             rectangle.setHeight(smallCellHeight);
             rectangle.setTranslateX(rectangle.getTranslateX() / 2);
@@ -87,42 +86,24 @@ public class MapView extends ScrollPane {
         // Stack overlays on top of the background image
         stackPane = new StackPane();
         stackPane.getChildren().add(backgroundImage);
-        rectangles = new ArrayList<Rectangle>();
-        for (RouteCell routeCell : gameSetupService.readRouteCellsFromFile("src/main/resources/text/routes.txt")) {
-            rectangles.add(createCellOverlay(routeCell));
+        rectangleOverlays = gameSetupService.createMapViewOverlays();
+        for (Rectangle rectangle : rectangleOverlays) {
+            rectangle.setWidth(smallCellWidth);
+            rectangle.setHeight(smallCellHeight);
+            rectangle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
+                    e -> {
+                        if (rectangle.getFill().equals(Color.TRANSPARENT)) {
+                            rectangle.setFill( zoomedIn ? bigImagePattern : smallImagePattern );
+                        } else {
+                            rectangle.setFill(Color.TRANSPARENT);
+                        }
+                    },
+                    Event::consume)
+            );
         }
-
-        for (Rectangle rectangle : rectangles) {
-            rectangle.setTranslateX(rectangle.getTranslateX() / 2);
-            rectangle.setTranslateY(rectangle.getTranslateY() / 2);
-        }
-        stackPane.getChildren().addAll(rectangles);
+        stackPane.getChildren().addAll(rectangleOverlays);
         return stackPane;
     }
-
-    private Rectangle createCellOverlay(double offsetX, double offsetY, double rotation) {
-        Rectangle rectangle = new Rectangle(smallCellWidth, smallCellHeight);
-        rectangle.setFill(smallImagePattern);
-        rectangle.setRotate(rotation);
-        rectangle.setTranslateX(offsetX);
-        rectangle.setTranslateY(offsetY);
-        rectangle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
-                        e -> {
-                            if (rectangle.getFill().equals(Color.TRANSPARENT)) {
-                                rectangle.setFill( zoomedIn ? bigImagePattern : smallImagePattern );
-                            } else {
-                                rectangle.setFill(Color.TRANSPARENT);
-                            }
-                        },
-                        Event::consume)
-        );
-        return rectangle;
-    }
-
-    private Rectangle createCellOverlay(RouteCell routeCell) {
-        return createCellOverlay(routeCell.getOffsetX(), routeCell.getOffsetY(), routeCell.getRotation());
-    }
-
 
     public boolean isZoomedIn() {
         return zoomedIn;
