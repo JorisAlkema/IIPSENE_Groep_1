@@ -33,7 +33,7 @@ public class CardView extends VBox {
         //forloop die knoppen maakt van de opencardsarray
         for(int i =0; i < openCards.getOpenCards().size(); i++) {
             buttons[i] = new Button(openCards.getOpenCards().get(i).getColor());
-            getChildren().addAll(buttons);
         }
+        getChildren().addAll(buttons);
     }
 }
