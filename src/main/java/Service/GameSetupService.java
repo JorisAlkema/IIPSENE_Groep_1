@@ -5,6 +5,7 @@ import Model.RouteCell;
 import javafx.event.Event;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 import java.io.BufferedReader;
@@ -24,6 +25,10 @@ public class GameSetupService {
     // This class should be used to help initialize the game, using methods to
     // read Cities, RouteCells, Routes, DestinationTickets and more from files
     // Could also be used to deal cards at the start of the game if no other class is made for this
+
+
+    // Lees cities file, maak arraylist
+    // Lees routecell file, maak routes met routecells
     public GameSetupService() {
         this.routeCells = readRouteCellsFromFile(routeCellFile);
         this.rectangleOverlays = new ArrayList<>();
@@ -36,6 +41,33 @@ public class GameSetupService {
     public ArrayList<DestinationTicket> readDestinationTicketsFromFile(String filename) {
         // ...
         return destinationTickets;
+    }
+
+    public ArrayList<Circle> createCityOverlays() {
+        ArrayList<Circle> circleList = new ArrayList<>();
+        // Zagrab
+        circleList.add(createCircleOverlay(72, 203));
+        //
+        circleList.add(createCircleOverlay(80, 205));
+        return circleList;
+    }
+
+    private Circle createCircleOverlay(int x, int y) {
+        Circle circle = new Circle();
+        circle.setTranslateX(x);
+        circle.setTranslateY(y);
+        circle.setRadius(15);
+        circle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
+                e -> {
+                    if (circle.getFill().equals(Color.TRANSPARENT)) {
+                        circle.setFill( Color.BLACK);
+                    } else {
+                        circle.setFill(Color.TRANSPARENT);
+                    }
+                },
+                Event::consume)
+        );
+        return circle;
     }
 
 
