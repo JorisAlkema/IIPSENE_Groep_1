@@ -1,7 +1,10 @@
+package View;
+
 import View.CardView;
 import View.LoginView;
 import View.MainMenuView;
 import View.MapView;
+import Model.Observer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -37,7 +40,6 @@ public class HelloFX extends Application implements Observer {
         Image zoomInImage = new Image("icons/button_zoom_in.png");
         Image zoomOutImage = new Image("icons/button_zoom_out.png");
         ImageView imageView = new ImageView(zoomInImage);
-        Scene scene = new Scene(borderPane);
 
         imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (mapView.isZoomedIn()) {
