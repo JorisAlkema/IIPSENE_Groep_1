@@ -1,4 +1,5 @@
 import View.CardView;
+import View.LoginView;
 import View.MainMenuView;
 import View.MapView;
 import javafx.application.Application;
@@ -43,8 +44,8 @@ public class HelloFX extends Application {
 
 
         mainmenu.setOnAction(e -> {
-            Scene newScene = new Scene(new MainMenuView(), scene.getWidth(), scene.getHeight());
-            String css = this.getClass().getResource("css/styling.css").toString();
+            Scene newScene = new Scene(new LoginView(primaryStage), scene.getWidth(), scene.getHeight());
+            String css = "css/styling.css";
             newScene.getStylesheets().add(css);
             primaryStage.setScene(newScene);
         });
