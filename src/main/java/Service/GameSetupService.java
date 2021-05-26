@@ -14,40 +14,78 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// This class should be used to help initialize the game, using methods to
+// read Cities, RouteCells, Routes, DestinationTickets and more from files
+// Could also be used to deal cards at the start of the game if no other class is made for this
 public class GameSetupService {
 
-    private ArrayList<DestinationTicket> destinationTickets;
-
-
-
-    private ArrayList<RouteCell> routeCells;
-    private ArrayList<Rectangle> routeCellOverlays;
-    private final static String routeCellFile = "src/main/resources/text/routes.txt";
     private ArrayList<City> cities;
     private ArrayList<Circle> cityOverlays;
     private final static String citiesFile = "src/main/resources/text/cities.txt";
-
-    // This class should be used to help initialize the game, using methods to
-    // read Cities, RouteCells, Routes, DestinationTickets and more from files
-    // Could also be used to deal cards at the start of the game if no other class is made for this
-
+    private ArrayList<RouteCell> routeCells;
+    private ArrayList<Rectangle> routeCellOverlays;
+    private final static String routeCellFile = "src/main/resources/text/routes.txt";
+    private final static String destinationTicketsFile = "src/main/resources/text/destination_tickets.txt";
+    private ArrayList<DestinationTicket> destinationTickets;
 
     // Lees cities file, maak arraylist
     // Lees routecell file, maak routes met routecells
     public GameSetupService() {
-        this.routeCells = readRouteCellsFromFile(routeCellFile);
-        this.routeCellOverlays = createRouteCellOverlays();
-//        this.destinationTickets = new ArrayList<>();
-
         this.cities = readCitiesFromFile(citiesFile);
         this.cityOverlays = createCityOverlays();
+
+        this.routeCells = readRouteCellsFromFile(routeCellFile);
+        this.routeCellOverlays = createRouteCellOverlays();
+
+        this.destinationTickets = readDestinationTicketsFromFile(destinationTicketsFile);
 
     }
 
     // Read DestinationTickets from file
     public ArrayList<DestinationTicket> readDestinationTicketsFromFile(String filename) {
-        // ...
-        return destinationTickets;
+        ArrayList<DestinationTicket> tickets = new ArrayList<>();
+        try {
+            File file = new File(filename);
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                // Skip over comments
+                if (line.startsWith("/")) {
+                    line = bufferedReader.readLine();
+                    continue;
+                }
+                String[] strings = line.split(" ");
+                if (strings.length != 4) {
+                    System.err.println("Error: " + Arrays.toString(strings) + " is not of length 4");
+                    break;
+                }
+                City firstCity = null;
+                City secondCity = null;
+                for (City city : this.cities) {
+                    if (city.getName().equals(strings[0])) {
+                        firstCity = city;
+                    } else if (city.getName().equals(strings[1])) {
+                        secondCity = city;
+                    }
+                }
+                if (firstCity == null || secondCity == null) {
+                    System.err.println(line + " has incorrectly formatted or unexisting cities");
+                }
+                int points = -1;
+                try {
+                    points = Integer.parseInt(strings[2]);
+                } catch (NumberFormatException numberFormatException) {
+                    System.err.println(numberFormatException.getMessage());
+                }
+                tickets.add(new DestinationTicket(firstCity, secondCity, points, strings[3]));
+                line = bufferedReader.readLine();
+            }
+            bufferedReader.close();
+        } catch (IOException ioException) {
+            System.err.println(ioException.getMessage());
+        }
+        return tickets;
     }
 
     private ArrayList<Circle> createCityOverlays() {
