@@ -9,4 +9,8 @@ public class TrainCard {
     public TrainCard(String color) {
         this.color = color;
     }
+
+    public String getColor() {
+        return color;
+    }
 }

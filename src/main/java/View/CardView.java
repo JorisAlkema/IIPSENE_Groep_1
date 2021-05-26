@@ -16,9 +16,11 @@ public class CardView extends VBox {
 
         Button getTrainCard = new Button("Get closed train card");
         getChildren().addAll(getTrainCard);
+
+        getTrainCard.setOnAction(e -> {
+            //TODO: logic that pulls a random traincard and adds it to the players inventory
+        });
+
+
     }
-
-
-
-
 }
