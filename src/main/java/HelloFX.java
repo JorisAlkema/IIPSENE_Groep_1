@@ -1,3 +1,5 @@
+import View.CardView;
+import View.LoginView;
 import View.MainMenuView;
 import View.MapView;
 import javafx.application.Application;
@@ -27,6 +29,8 @@ public class HelloFX extends Application {
         Image zoomInImage = new Image("icons/button_zoom_in.png");
         Image zoomOutImage = new Image("icons/button_zoom_out.png");
         ImageView imageView = new ImageView(zoomInImage);
+        Scene scene = new Scene(borderPane);
+
         imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (mapView.isZoomedIn()) {
                 mapView.zoomOut();
@@ -36,23 +40,20 @@ public class HelloFX extends Application {
                 imageView.setImage(zoomOutImage);
             }
         });
-        vBox.getChildren().addAll(imageView);
-        borderPane.setLeft(vBox);
-        // Right pane
-        vBox = new VBox();
-        vBox.setPadding(new Insets(30));
-        Scene scene = new Scene(borderPane);
-
         Button mainmenu = new Button("Return to menu");
+
+
         mainmenu.setOnAction(e -> {
-            Scene newScene = new Scene(new MainMenuView(), scene.getWidth(), scene.getHeight());
-            String css = this.getClass().getResource("css/styling.css").toString();
+            Scene newScene = new Scene(new LoginView(primaryStage), scene.getWidth(), scene.getHeight());
+            String css = "css/styling.css";
             newScene.getStylesheets().add(css);
             primaryStage.setScene(newScene);
         });
-        vBox.getChildren().addAll(mainmenu, new Button("Button 2"));
-        borderPane.setRight(vBox);
 
+        vBox.getChildren().addAll(imageView,mainmenu);
+        borderPane.setLeft(vBox);
+
+        borderPane.setRight(new CardView());
         primaryStage.setTitle("Ticket to Ride");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
