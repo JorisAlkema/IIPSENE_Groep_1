@@ -18,7 +18,6 @@ import java.io.IOException;
 public class MainMenuView extends StackPane implements Observer {
     public MainMenuView() {
         super();
-
         // Main layout
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(40));
@@ -67,8 +66,6 @@ public class MainMenuView extends StackPane implements Observer {
 
         quit.setOnMouseClicked(e -> System.exit(0));
     }
-
-
 
     public static void openFile(File file) throws Exception {
         if (Desktop.isDesktopSupported()) {
