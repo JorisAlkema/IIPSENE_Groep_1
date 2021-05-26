@@ -28,6 +28,8 @@ public class CardView extends VBox {
         getTrainCard.setOnAction(e -> {
             //todo: give the player a card app.getRandomCard(deck);
         });
+
+
         Button[] buttons = new Button[5];
 
         //forloop die knoppen maakt van de opencardsarray
@@ -35,5 +37,12 @@ public class CardView extends VBox {
             buttons[i] = new Button(openCards.getOpenCards().get(i).getColor());
         }
         getChildren().addAll(buttons);
+
+        for(Button clickedButton: buttons){
+            clickedButton.setOnAction(e -> {
+                //dit is een schande voor de mensheid, maar ik mag geen normale for-loop gebruiken want ik kan geen [i] gebuikren in een event. heluuup!
+                System.out.println(clickedButton.getText());
+            });
+        }
     }
 }
