@@ -6,13 +6,11 @@ public class City {
     private final String name;
     private double xOffset;
     private double yOffset;
-    private double radius;
     // boolean trainstation?
 
-    public City(String name, double xOffset, double yOffset, double radius) {
+    public City(String name, double xOffset, double yOffset) {
         this.name = name;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
-        this.radius = radius;
     }
 }

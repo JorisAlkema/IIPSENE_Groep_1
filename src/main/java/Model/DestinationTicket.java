@@ -10,11 +10,11 @@ package Model;
 public class DestinationTicket {
     private final City firstCity;
     private final City secondCity;
-    private final String type;
     private final int points;
+    private final String type;
     private boolean connected;
 
-    public DestinationTicket(City firstCity, City secondCity, String type, int points) {
+    public DestinationTicket(City firstCity, City secondCity, int points, String type) {
         this.firstCity = firstCity;
         this.secondCity = secondCity;
         this.points = points;
@@ -22,7 +22,7 @@ public class DestinationTicket {
         connected = false;
     }
 
-    public DestinationTicket(City firstCity, City secondCity, String type, int points, boolean connected) {
+    public DestinationTicket(City firstCity, City secondCity, int points, String type, boolean connected) {
         this.firstCity = firstCity;
         this.secondCity = secondCity;
         this.points = points;

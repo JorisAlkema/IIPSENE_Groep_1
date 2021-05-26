@@ -1,46 +1,46 @@
-Amsterdam Pamplona 7
-Amsterdam Wilno 12
-Angora Kharkov 10
-Athina Angora 5
-Athina Wilno 11
-Barcelona Bruxelles 8
-Barcelona Munchen 8
-Berlin Bucuresti 8
-Berlin Moskva 12
-Berlin Roma 9
-Brest Marseille 7
-Brest Petrograd 20
-Brest Venezia 8
-Bruxelles Danzig 9
-Budapest Sofia 5
-Cadiz Stockholm 21
-Edinburgh Athina 21
-Edinburgh Paris 7
-Essen Kyiv 10
-Frankfurt Kobenhavn 5
-Frankfurt Smolensk 13
-Kobenhavn Erzurum 21
-Kyiv Petrograd 6
-Kyiv Sochi 8
-Lisboa Danzig 20
-London Berlin 7
-London Wien 10
-Madrid Dieppe 8
-Madrid Zurich 8
-Marseille Essen 8
-Palermo Constantinople 8
-Palermo Moskva 20
-Paris Wien 8
-Paris Zagrab 7
-Riga Bucuresti 10
-Roma Smyrna 8
-Rostov Erzurum 5
-Sarajevo Sevastopol 8
-Smolensk Rostov 8
-Sofia Smyrna 5
-Stockholm Wien 11
-Venezia Constantinople 10
-Warszawa Smolensk 6
-Zagrab Brindisi 6
-Zurich Brindisi 6
-Zurich Budapest 6
+Amsterdam Pamplona 7 short
+Amsterdam Wilno 12 short
+Angora Kharkov 10 short
+Athina Angora 5 short
+Athina Wilno 11 short
+Barcelona Bruxelles 8 short
+Barcelona Munchen 8 short
+Berlin Bucuresti 8 short
+Berlin Moskva 12 short
+Berlin Roma 9 short
+Brest Marseille 7 short
+Brest Petrograd 20 long
+Brest Venezia 8 short
+Bruxelles Danzig 9 short
+Budapest Sofia 5 short
+Cadiz Stockholm 21 long
+Edinburgh Athina 21 long
+Edinburgh Paris 7 short
+Essen Kyiv 10 short
+Frankfurt Kobenhavn 5 short
+Frankfurt Smolensk 13 short
+Kobenhavn Erzurum 21 long
+Kyiv Petrograd 6 short
+Kyiv Sochi 8 short
+Lisboa Danzig 20 long
+London Berlin 7 short
+London Wien 10 short
+Madrid Dieppe 8 short
+Madrid Zurich 8 short
+Marseille Essen 8 short
+Palermo Constantinople 8 short
+Palermo Moskva 20 long
+Paris Wien 8 short
+Paris Zagrab 7 short
+Riga Bucuresti 10 short
+Roma Smyrna 8 short
+Rostov Erzurum 5 short
+Sarajevo Sevastopol 8 short
+Smolensk Rostov 8 short
+Sofia Smyrna 5 short
+Stockholm Wien 11 short
+Venezia Constantinople 10 short
+Warszawa Smolensk 6 short
+Zagrab Brindisi 6 short
+Zurich Brindisi 6 short
+Zurich Budapest 6 short
