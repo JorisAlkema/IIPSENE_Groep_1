@@ -17,7 +17,7 @@ public class LoginView extends StackPane {
     private Stage primaryStage;
     private LoginController controller = new LoginController();
 
-    public LoginView(Stage primaryStage) {
+    public LoginView(Stage primaryStage, Boolean host) {
         this.primaryStage = primaryStage;
 
         // Logo
@@ -44,6 +44,30 @@ public class LoginView extends StackPane {
         app.setPadding(new Insets(40));
         Button returnToMenu = new Button("Return to menu");
 
+        // if player wants to join a game
+        if (!host) {
+            app.getChildren().add(joinScreen());
+        } else {
+            app.getChildren().add(hostScreen());
+        }
+
+
+        app.getChildren().add(returnToMenu);
+
+        getChildren().add(background);
+        getChildren().add(grid);
+        getChildren().add(app);
+
+        //returnToMenu
+        returnToMenu.setOnMouseClicked(e -> controller.returnToMenu(primaryStage));
+
+        // Unfocus textfield when clicked outside the textfield
+        setOnMousePressed(e -> {
+            requestFocus();
+        });
+    }
+
+    private VBox joinScreen() {
         // Box with the explanation, input username, input roomcode and join button
         VBox textFields = new VBox(20);
         textFields.setId("textFields");
@@ -76,24 +100,50 @@ public class LoginView extends StackPane {
         textFields.getChildren().add(inputUsername);
         textFields.getChildren().add(inputWithJoin);
 
-        app.getChildren().add(textFields);
-        app.getChildren().add(returnToMenu);
-
-        getChildren().add(background);
-        getChildren().add(grid);
-        getChildren().add(app);
-
         // Event Handlers
-
-        // Unfocus textfield when clicked outside the textfield
-        setOnMouseClicked(e -> {
-            requestFocus();
+        inputCode.setOnMouseClicked(e -> {
+            inputCode.setPromptText("Room code...");
         });
 
         //join
         join.setOnMouseClicked(e -> controller.join(inputUsername, inputCode));
 
-        //returnToMenu
-        returnToMenu.setOnMouseClicked(e -> controller.returnToMenu(primaryStage));
+        return textFields;
+    }
+
+    private VBox hostScreen() {
+        // Box with the explanation, input username, input roomcode and join button
+        VBox textFields = new VBox(20);
+        textFields.setId("textFields");
+        Text explaination = new Text("Enter a username to host a game with your friends");
+        explaination.setId("text");
+
+        // input and join button next to each other
+        HBox inputWithHost = new HBox();
+        Button host = new Button("Host");
+        TextField inputUsername = new TextField();
+        inputUsername.setPromptText("Username...");
+        inputUsername.setFocusTraversable(false);
+        HBox.setHgrow(inputUsername, Priority.ALWAYS);
+        HBox.setHgrow(host, Priority.ALWAYS);
+
+        // Add margins
+        VBox.setMargin(explaination, new Insets(20, 10, 20, 10));
+        VBox.setMargin(inputWithHost, new Insets(0, 0, 20, 0));
+        VBox.setMargin(textFields, new Insets(30, 0, 30, 0));
+
+        // Add all
+        inputWithHost.getChildren().add(inputUsername);
+        inputWithHost.getChildren().add(host);
+
+        textFields.getChildren().add(explaination);
+        textFields.getChildren().add(inputWithHost);
+
+        // Event Handlers
+
+        //join
+        host.setOnMouseClicked(e -> controller.host(inputUsername));
+
+        return textFields;
     }
 }
