@@ -1,9 +1,14 @@
+package View;
+
+import Model.GameInfo;
+import Model.Observer;
 import View.MainMenuView;
 import View.MapView;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -11,7 +16,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class HelloFX extends Application {
+public class HelloFX extends Application implements Observer {
+
+    Label label;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -19,8 +26,13 @@ public class HelloFX extends Application {
 
         BorderPane borderPane = new BorderPane();
 
+        // Top pane
+        label = new Label("0:00");
+        borderPane.setTop(label);
+
         // Center pane
         borderPane.setCenter(mapView);
+
         // Left pane
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(30));
@@ -36,6 +48,7 @@ public class HelloFX extends Application {
                 imageView.setImage(zoomOutImage);
             }
         });
+
         vBox.getChildren().addAll(imageView);
         borderPane.setLeft(vBox);
         // Right pane
@@ -54,11 +67,15 @@ public class HelloFX extends Application {
         borderPane.setRight(vBox);
 
         primaryStage.setTitle("Ticket to Ride");
-        primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.setHeight(720);
         primaryStage.setWidth(1280);
         primaryStage.show();
+    }
+
+    @Override
+    public void update(Object timerText) {
+        label.setText((String) timerText);
     }
 
     public static void main(String[] args) {

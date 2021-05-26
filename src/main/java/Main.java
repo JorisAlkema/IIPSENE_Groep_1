@@ -1,3 +1,5 @@
+import View.HelloFX;
+
 public class Main {
 
     // https://stackoverflow.com/a/52654791
