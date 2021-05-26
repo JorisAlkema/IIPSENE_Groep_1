@@ -44,7 +44,7 @@ public class HelloFX extends Application {
 
 
         mainmenu.setOnAction(e -> {
-            Scene newScene = new Scene(new LoginView(primaryStage), scene.getWidth(), scene.getHeight());
+            Scene newScene = new Scene(new LoginView(primaryStage, true), scene.getWidth(), scene.getHeight());
             String css = "css/styling.css";
             newScene.getStylesheets().add(css);
             primaryStage.setScene(newScene);
