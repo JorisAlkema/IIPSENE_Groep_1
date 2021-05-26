@@ -20,6 +20,7 @@ public class MapView extends ScrollPane {
     private final GameSetupService gameSetupService;
     private ImageView backgroundImage;
     private ArrayList<Rectangle> rectangleOverlays;
+    private ArrayList<Circle> circleOverlays;
     private StackPane stackPane;
     private boolean zoomedIn;
     private final ImageView bigBackgroundImage = new ImageView("maps/map_big.jpg");
@@ -30,6 +31,8 @@ public class MapView extends ScrollPane {
     private static final double smallCellHeight = 12;
     private static final double bigCellWidth = 70;
     private static final double bigCellHeight = 23;
+    private static final double smallRadius = 7;
+    private static final double bigRadius = 15;
 
     public MapView() {
         super();
@@ -58,6 +61,11 @@ public class MapView extends ScrollPane {
                 rectangle.setFill(bigImagePattern);
             }
         }
+        for (Circle circle : circleOverlays) {
+            circle.setRadius(bigRadius);
+            circle.setTranslateX(circle.getTranslateX() * 2);
+            circle.setTranslateY(circle.getTranslateY() * 2);
+        }
         this.layout();
         setHvalue(getHmin() + (getHmax() - getHmin()) / 2);
         setVvalue(getVmin() + (getVmax() - getVmin()) / 2);
@@ -80,6 +88,11 @@ public class MapView extends ScrollPane {
                 rectangle.setFill(smallImagePattern);
             }
         }
+        for (Circle circle : circleOverlays) {
+            circle.setRadius(smallRadius);
+            circle.setTranslateX(circle.getTranslateX() / 2);
+            circle.setTranslateY(circle.getTranslateY() / 2);
+        }
         zoomedIn = false;
     }
 
@@ -87,7 +100,7 @@ public class MapView extends ScrollPane {
         // Stack overlays on top of the background image
         stackPane = new StackPane();
         stackPane.getChildren().add(backgroundImage);
-        rectangleOverlays = gameSetupService.createMapViewOverlays();
+        rectangleOverlays = gameSetupService.getRouteCellOverlays();
         for (Rectangle rectangle : rectangleOverlays) {
             rectangle.setWidth(smallCellWidth);
             rectangle.setHeight(smallCellHeight);
@@ -102,11 +115,22 @@ public class MapView extends ScrollPane {
                     Event::consume)
             );
         }
-
-
-
         stackPane.getChildren().addAll(rectangleOverlays);
-        stackPane.getChildren().addAll(gameSetupService.createCityOverlays());
+        circleOverlays = gameSetupService.getCityOverlays();
+        for (Circle circle : circleOverlays) {
+            circle.setRadius(smallRadius);
+            circle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
+                    e -> {
+                        if (circle.getFill().equals(Color.TRANSPARENT)) {
+                            circle.setFill( Color.BLACK);
+                        } else {
+                            circle.setFill(Color.TRANSPARENT);
+                        }
+                    },
+                    Event::consume)
+            );
+        }
+        stackPane.getChildren().addAll(circleOverlays);
         return stackPane;
     }
 

@@ -1,9 +1,8 @@
 package Service;
 
+import Model.City;
 import Model.DestinationTicket;
 import Model.RouteCell;
-import javafx.event.Event;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -18,9 +17,15 @@ import java.util.Arrays;
 public class GameSetupService {
 
     private ArrayList<DestinationTicket> destinationTickets;
+
+
+
     private ArrayList<RouteCell> routeCells;
-    private ArrayList<Rectangle> rectangleOverlays;
+    private ArrayList<Rectangle> routeCellOverlays;
     private final static String routeCellFile = "src/main/resources/text/routes.txt";
+    private ArrayList<City> cities;
+    private ArrayList<Circle> cityOverlays;
+    private final static String citiesFile = "src/main/resources/text/cities.txt";
 
     // This class should be used to help initialize the game, using methods to
     // read Cities, RouteCells, Routes, DestinationTickets and more from files
@@ -31,9 +36,11 @@ public class GameSetupService {
     // Lees routecell file, maak routes met routecells
     public GameSetupService() {
         this.routeCells = readRouteCellsFromFile(routeCellFile);
-        this.rectangleOverlays = new ArrayList<>();
-        this.destinationTickets = new ArrayList<>();
+        this.routeCellOverlays = createRouteCellOverlays();
+//        this.destinationTickets = new ArrayList<>();
 
+        this.cities = readCitiesFromFile(citiesFile);
+        this.cityOverlays = createCityOverlays();
 
     }
 
@@ -43,39 +50,64 @@ public class GameSetupService {
         return destinationTickets;
     }
 
-    public ArrayList<Circle> createCityOverlays() {
+    private ArrayList<Circle> createCityOverlays() {
         ArrayList<Circle> circleList = new ArrayList<>();
-        // Zagrab
-        circleList.add(createCircleOverlay(72, 203));
-        //
-        circleList.add(createCircleOverlay(80, 205));
+        for (City city : this.cities) {
+            circleList.add(createCityOverlay(city));
+        }
         return circleList;
     }
 
-    private Circle createCircleOverlay(int x, int y) {
+    private Circle createCityOverlay(City city) {
         Circle circle = new Circle();
-        circle.setTranslateX(x);
-        circle.setTranslateY(y);
-        circle.setRadius(15);
-        circle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
-                e -> {
-                    if (circle.getFill().equals(Color.TRANSPARENT)) {
-                        circle.setFill( Color.BLACK);
-                    } else {
-                        circle.setFill(Color.TRANSPARENT);
-                    }
-                },
-                Event::consume)
-        );
+        circle.setTranslateX(city.getxOffset() / 2);
+        circle.setTranslateY(city.getyOffset() / 2);
+        circle.setFill(Color.BLACK);
         return circle;
     }
 
-
-    public ArrayList<Rectangle> createMapViewOverlays() {
-        for (RouteCell routeCell : this.routeCells) {
-            this.rectangleOverlays.add( createRectangleOverlay(routeCell) );
+    private ArrayList<City> readCitiesFromFile(String filename) {
+        ArrayList<City> cities = new ArrayList<>();
+        try {
+            File file = new File(filename);
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                // Skip over comments
+                if (line.startsWith("/")) {
+                    line = bufferedReader.readLine();
+                    continue;
+                }
+                String[] strings = line.split(" ");
+                if (strings.length != 3) {
+                    System.err.println("Error: " + Arrays.toString(strings) + " is not of length 3");
+                    break;
+                }
+                double[] doubles = new double[strings.length - 1];
+                for (int i = 0; i < doubles.length; i++) {
+                    try {
+                        doubles[i] = Double.parseDouble(strings[i+1]);
+                    } catch (NumberFormatException numberFormatException) {
+                        System.err.println(numberFormatException.getMessage());
+                    }
+                }
+                cities.add(new City(strings[0], doubles[0], doubles[1]));
+                line = bufferedReader.readLine();
+            }
+            bufferedReader.close();
+        } catch (IOException ioException) {
+            System.err.println(ioException.getMessage());
         }
-        return rectangleOverlays;
+        return cities;
+    }
+
+    private ArrayList<Rectangle> createRouteCellOverlays() {
+        ArrayList<Rectangle> routeCells = new ArrayList<>();
+        for (RouteCell routeCell : this.routeCells) {
+            routeCells.add( createRectangleOverlay(routeCell) );
+        }
+        return routeCells;
     }
 
     /**
@@ -142,6 +174,11 @@ public class GameSetupService {
 
 
 
+    public ArrayList<Rectangle> getRouteCellOverlays() {
+        return routeCellOverlays;
+    }
 
-
+    public ArrayList<Circle> getCityOverlays() {
+        return cityOverlays;
+    }
 }

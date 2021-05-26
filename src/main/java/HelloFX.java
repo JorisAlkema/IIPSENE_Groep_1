@@ -58,7 +58,6 @@ public class HelloFX extends Application {
         primaryStage.setResizable(false);
         primaryStage.setHeight(720);
         primaryStage.setWidth(1280);
-        mapView.zoomIn();
         primaryStage.show();
     }
 
