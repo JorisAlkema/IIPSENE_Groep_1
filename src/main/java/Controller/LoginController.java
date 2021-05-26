@@ -1,23 +1,33 @@
 package Controller;
 
+import Model.Login;
+import Service.FirebaseService;
 import View.MainMenuView;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
 public class LoginController {
+    private Login login = new Login();
+
     // Return to Menu
     public void returnToMenu(Stage primaryStage) {
-        Scene scene = new Scene(new MainMenuView(), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
-        String css = "css/styling.css";
-        scene.getStylesheets().add(css);
-        primaryStage.setScene(scene);
+        login.returnToMenu(primaryStage);
     }
 
     // Join game
     public void join(TextField inputUsername, TextField inputCode) {
-        String username = inputUsername.getText();
-        String code = inputCode.getText();
-        System.out.println(String.format("User pressed join with the following inputs:\nUsername: %s\nCode: %s", username, code));
+        // Try to join lobby using these 2 arguments
+        login.join(inputUsername, inputCode);
+
+    }
+
+    //Host game
+    public void host(TextField inputUsername) {
+        System.out.println(String.format("%s wants to host a game", inputUsername.getText()));
     }
 }
