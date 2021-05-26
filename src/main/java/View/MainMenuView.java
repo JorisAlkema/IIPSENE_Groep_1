@@ -1,5 +1,6 @@
 package View;
 
+import Controller.MainMenuController;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,15 +11,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
 public class MainMenuView extends StackPane implements Observer {
-    public MainMenuView() {
+    private MainMenuController mainMenuController = new MainMenuController();
+    public MainMenuView(Stage primaryStage) {
         super();
-
         // Main layout
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(40));
@@ -55,6 +57,10 @@ public class MainMenuView extends StackPane implements Observer {
         getChildren().add(grid);
         getChildren().add(buttons);
 
+        //Events
+        hostGame.setOnMouseClicked(e -> mainMenuController.host(primaryStage));
+        joinGame.setOnMouseClicked(e -> mainMenuController.join(primaryStage));
+
         File rulesPDF = new File("src/main/resources/rules/ticket_to_ride_europe_rules.pdf");
 
         rules.setOnMouseClicked(e -> {
@@ -67,8 +73,6 @@ public class MainMenuView extends StackPane implements Observer {
 
         quit.setOnMouseClicked(e -> System.exit(0));
     }
-
-
 
     public static void openFile(File file) throws Exception {
         if (Desktop.isDesktopSupported()) {
