@@ -13,10 +13,10 @@ import java.util.Random;
 // TODO: Think about implementation type of the deck. List<TrainCard>, Map<TrainCard, Integer> or something else?
 public class TrainCardDeck {
     ArrayList<TrainCard> trainCards = new ArrayList<TrainCard>();
-    ArrayList<TrainCard> openCards = new ArrayList<TrainCard>();
     String[] colors  = {"purple", "white", "blue", "yellow", "orange", "black", "red", "green"};
 
     public TrainCardDeck() {
+        trainCards = generateDeck();
     }
 
     public ArrayList<TrainCard> generateDeck() {
@@ -32,31 +32,21 @@ public class TrainCardDeck {
         return trainCards;
     }
 
-
-     public TrainCard getRandomCard(ArrayList<TrainCard> array){
+     public TrainCard getRandomCard(){
         Random rand = new Random();
-        TrainCard randomCard = array.get(rand.nextInt(array.size()));
-        array.remove(randomCard);
+        TrainCard randomCard = trainCards.get(rand.nextInt(trainCards.size()));
+        trainCards.remove(randomCard);
         return randomCard;
      }
-
-    public ArrayList<TrainCard> fillOpenCards(ArrayList<TrainCard> deck) {
-
-        while(openCards.size() < 5){
-            openCards.add(getRandomCard(deck));
-        }
-        return openCards;
-    }
 
     public static void main(String[] args){
         //to test functionality
         TrainCardDeck app = new TrainCardDeck();
-        ArrayList<TrainCard> deck = app.generateDeck();
-        for (TrainCard card : deck){
+        for (TrainCard card : app.trainCards){
             System.out.println(card.getColor());
         }
-        System.out.println(deck.size());
-        System.out.println("random card:" + app.getRandomCard(deck).getColor());
-        System.out.println(deck.size());
+        System.out.println(app.trainCards.size());
+        System.out.println("random card:" + app.getRandomCard().getColor());
+        System.out.println(app.trainCards.size());
     }
 }
