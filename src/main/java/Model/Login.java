@@ -2,7 +2,9 @@ package Model;
 
 import Service.FirebaseService;
 import Service.Observable;
+import View.LobbyView;
 import View.MainMenuView;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -13,23 +15,17 @@ public class Login extends Observable {
     private Stage primaryStage;
     private FirebaseService firebaseService;
     private String player_uuid;
-    private String room_code;
+    private String roomCode;
     private Boolean busy = false;
 
     public Login(Stage primaryStage) {
         this.firebaseService = new FirebaseService();
         this.primaryStage = primaryStage;
-
-        // Might be moving this to lobby
-        this.primaryStage.setOnCloseRequest(e -> {
-            disconnect();
-        });
     }
 
     // Methods seen by the controller
     public void returnToMenu() {
         // Remove in production testing purposes
-        disconnect();
         Scene scene = new Scene(new MainMenuView(primaryStage), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
         String css = "css/styling.css";
         scene.getStylesheets().add(css);
@@ -73,7 +69,8 @@ public class Login extends Observable {
                     }
 
                     // At this point player can join the lobby.
-                    room_code = code;
+                    roomCode = code;
+                    Platform.runLater(() -> initLobbyView(player_uuid, roomCode));
                 }
             };
             // Run function after 1sec, give space for the fetching animation to run.
@@ -106,28 +103,19 @@ public class Login extends Observable {
                         created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
                     }
 
-                    room_code = code;
+                    roomCode = code;
 
                     // Process finished
                     busy = false;
 
                     creatingLobbyAnimation.cancel();
                     // Go to lobby view
+                    Platform.runLater(() -> initLobbyView(player_uuid, roomCode));
                 }
             };
 
             // Run function after 1sec, give space for the fetching animation to run.
             new Timer().schedule(task, 1000);
-        }
-    }
-
-    public void disconnect() {
-        if (player_uuid != null && room_code != null) {
-            firebaseService.removePlayer(player_uuid, room_code);
-            player_uuid = null;
-            room_code = null;
-
-            // if you were the last player remove the room
         }
     }
 
@@ -163,5 +151,12 @@ public class Login extends Observable {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 0, 200);
         return timer;
+    }
+
+    private void initLobbyView(String player_uuid, String roomCode) {
+        Scene scene = new Scene(new LobbyView(primaryStage, player_uuid, roomCode), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
+        String css = "css/styling.css";
+        scene.getStylesheets().add(css);
+        primaryStage.setScene(scene);
     }
 }
