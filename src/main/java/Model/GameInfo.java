@@ -1,6 +1,10 @@
 package Model;
 
-import View.HelloFX;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
 import java.util.*;
 
 public class GameInfo {
@@ -17,6 +21,10 @@ public class GameInfo {
 
     static int seconds;
     static Timer timer;
+
+    public GameInfo(Stage primaryStage) {
+        primaryStage.setOnCloseRequest(event -> timer.cancel());
+    }
 
     public void initGame() {
         setTurn(getPlayer());
@@ -40,20 +48,18 @@ public class GameInfo {
         int period = 1000;
 
         // Increase time by 1, since 0:00 is counted as the final second
-        seconds = 180 + 1;
+        seconds = 90 + 1;
 
         // Schedules the timer for repeated fixed-rate execution, beginning after the specified delay
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 if (seconds > 0 ) {
-                    System.out.println(timerFormat(setSeconds()));
                     setTimerText(timerFormat(setSeconds()));
                 } else if (seconds == 0) {
                     // Code that gets executed after the countdown has hit 0
 
                     setTimerText(timerFormat(setSeconds()));
                     turnCount++;
-                    timer.cancel();
                 }
             }
         }, delay, period);
@@ -62,6 +68,7 @@ public class GameInfo {
     private int setSeconds() {
         if (seconds == 0) {
             timer.cancel();
+            return seconds;
         }
         return --seconds;
     }
@@ -80,25 +87,16 @@ public class GameInfo {
 
     public void setTimerText(String timerText) {
         this.timerText = timerText;
-        for (Observer observer : this.observers) {
-            observer.update(this.timerText);
-        }
+        Platform.runLater(() -> {
+            for (Observer observer : this.observers) {
+                observer.update(this.timerText);
+            }
+        });
     }
 
     private String timerFormat(int timer) {
         int minutes = (int) Math.floor(timer / 60);
-        int seconds = (timer % 60);
+        int seconds = timer % 60;
         return String.format("%d:%02d", minutes, seconds);
     }
-
-//    // TESTING
-//    public static void main(String[] args) {
-//        GameInfo observable = new GameInfo();
-//        HelloFX observer = new HelloFX();
-//
-//        observable.countdownTimer();
-//
-//        observable.addObserver(observer);
-//        observable.setTimerText(observable.getTimer());
-//    }
 }
