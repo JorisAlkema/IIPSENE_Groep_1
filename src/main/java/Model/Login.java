@@ -1,20 +1,16 @@
 package Model;
 
 import Service.FirebaseService;
-import View.LoginObserver;
+import Service.Observable;
 import View.MainMenuView;
-import View.Observer;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
 
-public class Login {
+public class Login extends Observable {
     private Stage primaryStage;
-    private List<LoginObserver> loginObservers = new ArrayList<>();
     private FirebaseService firebaseService;
     private String player_uuid;
     private String room_code;
@@ -42,7 +38,7 @@ public class Login {
     // TODO: LobbyView
     public void join(String username, String code) {
         if (username.isBlank() || code.isBlank()) {
-            updateInterface("Fill in all the required fields");
+            notifyAllObservers("Fill in all the required fields");
             return;
         }
 
@@ -65,7 +61,7 @@ public class Login {
                 joiningLobby.cancel();
 
                 if (exception != null) {
-                    updateInterface(exception);
+                    notifyAllObservers(exception);
                     return;
                 }
 
@@ -81,7 +77,7 @@ public class Login {
 
     public void host(String username) {
         if (username.isBlank()) {
-            updateInterface("Fill in all the required fields");
+            notifyAllObservers("Fill in all the required fields");
             return;
         }
 
@@ -147,26 +143,11 @@ public class Login {
             public void run() {
                 n = (n + 1) % 4;
                 String dots = new String(new char[n]).replace("\0", ".");
-                updateInterface(message + dots);
+                notifyAllObservers(message + dots);
             }
         };
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 0, 200);
         return timer;
-    }
-
-    // Observable methods
-    public void addObserver(LoginObserver loginObserver) {
-        this.loginObservers.add(loginObserver);
-    }
-
-    public void removeObserver(LoginObserver loginObserver) {
-        this.loginObservers.remove(loginObserver);
-    }
-
-    public void updateInterface(String message) {
-        for (LoginObserver x : loginObservers) {
-            x.update(message);
-        }
     }
 }
