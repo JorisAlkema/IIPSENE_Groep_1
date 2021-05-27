@@ -1,8 +1,7 @@
 package View;
 
 import Model.GameInfo;
-import Model.Observer;
-import javafx.application.Platform;
+import Service.Observer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -66,6 +65,7 @@ public class GameView extends BorderPane implements Observer {
         setRight(new CardView());
 
         gameInfo.addObserver(this);
+        // Change to gameinfo.initGame() when player implementation is finished
         gameInfo.countdownTimer();
         gameInfo.setTimerText(gameInfo.getTimer());
     }
