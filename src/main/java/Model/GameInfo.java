@@ -18,8 +18,8 @@ public class GameInfo extends Observable {
 
     private int turnCount = 0;
 
-    static int seconds;
-    static Timer timer;
+    private int seconds;
+    private Timer timer;
 
     public GameInfo(Stage primaryStage) {
         primaryStage.setOnCloseRequest(event -> timer.cancel());
