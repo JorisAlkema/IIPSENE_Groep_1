@@ -3,6 +3,8 @@ package View;
 import Service.GameSetupService;
 import Service.OverlayEventHandler;
 import javafx.event.Event;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -100,22 +102,7 @@ public class MapView extends ScrollPane {
         // Stack overlays on top of the background image
         stackPane = new StackPane();
         stackPane.getChildren().add(backgroundImage);
-        rectangleOverlays = gameSetupService.getRouteCellOverlays();
-        for (Rectangle rectangle : rectangleOverlays) {
-            rectangle.setWidth(smallCellWidth);
-            rectangle.setHeight(smallCellHeight);
-            rectangle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
-                    e -> {
-                        if (rectangle.getFill().equals(Color.TRANSPARENT)) {
-                            rectangle.setFill( zoomedIn ? bigImagePattern : smallImagePattern );
-                        } else {
-                            rectangle.setFill(Color.TRANSPARENT);
-                        }
-                    },
-                    Event::consume)
-            );
-        }
-        stackPane.getChildren().addAll(rectangleOverlays);
+
         circleOverlays = gameSetupService.getCityOverlays();
         for (Circle circle : circleOverlays) {
             circle.setRadius(smallRadius);
@@ -131,6 +118,59 @@ public class MapView extends ScrollPane {
             );
         }
         stackPane.getChildren().addAll(circleOverlays);
+
+        ArrayList<Group> groups = gameSetupService.createRouteGroups();
+        for (Group group : groups) {
+            for (int i = 0; i < group.getChildren().size(); i++) {
+                int half = group.getChildren().size() / 2;
+//            for (Node node : group.getChildren()) {
+                Node node = group.getChildren().get(i);
+                Rectangle rectangle = (Rectangle) node;
+                if (i == half) {
+                    group.setTranslateX(rectangle.getTranslateX());
+                    group.setTranslateY(rectangle.getTranslateY());
+                }
+                rectangle.setWidth(bigCellWidth);
+                rectangle.setHeight(bigCellHeight);
+                rectangle.setFill(smallImagePattern);
+                System.out.println(rectangle.getTranslateX());
+            }
+            group.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
+                    e -> {
+                        for (Node node : group.getChildren()) {
+                            Rectangle rectangle = (Rectangle) node;
+                            if (rectangle.getFill().equals(Color.TRANSPARENT)) {
+                                rectangle.setFill( zoomedIn ? bigImagePattern : smallImagePattern );
+                            } else {
+                                rectangle.setFill(Color.TRANSPARENT);
+                            }
+                        }
+                    },
+                    Event::consume
+            ));
+
+
+        }
+
+        stackPane.getChildren().addAll(groups);
+
+//        rectangleOverlays = gameSetupService.getRouteCellOverlays();
+//        for (Rectangle rectangle : rectangleOverlays) {
+//            rectangle.setWidth(smallCellWidth);
+//            rectangle.setHeight(smallCellHeight);
+//            rectangle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
+//                    e -> {
+//                        if (rectangle.getFill().equals(Color.TRANSPARENT)) {
+//                            rectangle.setFill( zoomedIn ? bigImagePattern : smallImagePattern );
+//                        } else {
+//                            rectangle.setFill(Color.TRANSPARENT);
+//                        }
+//                    },
+//                    Event::consume)
+//            );
+//        }
+//        stackPane.getChildren().addAll(rectangleOverlays);
+
         return stackPane;
     }
 

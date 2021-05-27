@@ -4,6 +4,8 @@ import Model.City;
 import Model.DestinationTicket;
 import Model.Route;
 import Model.RouteCell;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -38,10 +40,10 @@ public class GameSetupService {
 
         this.routes = readRoutesFromFile(routeCellFile);
 
-        this.routeCells = readRouteCellsFromFile(routeCellFile);
-        this.routeCellOverlays = createRouteCellOverlays();
-
-        this.destinationTickets = readDestinationTicketsFromFile(destinationTicketsFile);
+//        this.routeCells = readRouteCellsFromFile(routeCellFile);
+//        this.routeCellOverlays = createRouteCellOverlays();
+//
+//        this.destinationTickets = readDestinationTicketsFromFile(destinationTicketsFile);
 
     }
 
@@ -164,11 +166,27 @@ public class GameSetupService {
         Rectangle rectangle = new Rectangle();
         // Divide by two because the file contains offsets for the large map,
         // and the MapView starts by showing the small map.
-        rectangle.setTranslateX(routeCell.getOffsetX() / 2);
-        rectangle.setTranslateY(routeCell.getOffsetY() / 2);
+        rectangle.setTranslateX(routeCell.getOffsetX());
+        rectangle.setTranslateY(routeCell.getOffsetY());
         rectangle.setRotate(routeCell.getRotation());
         rectangle.setFill(Color.TRANSPARENT);
         return rectangle;
+    }
+
+    public ArrayList<Group> createRouteGroups() {
+        ArrayList<Group> groups = new ArrayList<>();
+        for (Route route : routes) {
+            Group group = new Group();
+            for (RouteCell routeCell : route.getRouteCells()) {
+                group.getChildren().add(createRectangleOverlay(routeCell));
+            }
+//            for (Node node : group.getChildren()) {
+//                System.out.println(node.getTranslateX() + " " + node.getTranslateY());
+//            }
+//            System.out.println(group.getChildren().toString());
+            groups.add(group);
+        }
+        return groups;
     }
 
     private ArrayList<Route> readRoutesFromFile(String filename) {
@@ -191,10 +209,9 @@ public class GameSetupService {
                 String type = null;
                 int locomotives = 0;
                 ArrayList<RouteCell> routeCells = new ArrayList<>();
-
                 String[] splitLine = line.split(" ");
-                System.out.println(Arrays.toString(splitLine));
-                // New route
+
+                // Get Cities etc. for new Route
                 for (City city : this.cities) {
                     if (city.getName().equals(splitLine[0])) {
                         firstCity = city;
@@ -211,9 +228,9 @@ public class GameSetupService {
                     locomotives = Integer.parseInt(splitLine[4]);
                 }
 
+                // Add RouteCells to Route
                 line = bufferedReader.readLine();
                 splitLine = line.split(" ");
-
                 while (splitLine.length == 3) {
                     double[] doubles = new double[3];
                     for (int i = 0; i < 3; i++) {
@@ -226,8 +243,8 @@ public class GameSetupService {
                     }
                     splitLine = line.split(" ");
                 }
-                routes.add(new Route(firstCity, secondCity, routeCells, color, type, locomotives));
 
+                routes.add(new Route(firstCity, secondCity, routeCells, color, type, locomotives));
             }
             bufferedReader.close();
         } catch (IOException ioException) {
