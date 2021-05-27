@@ -46,32 +46,33 @@ public class Login {
             return;
         }
 
-        // Fetching... loading animation
-        Timer fetchAnimation = getLoadingAnimation("Fetching");
+        // Joining lobby... loading animation
+        Timer joiningLobby = getLoadingAnimation("Joining lobby");
 
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                // Get room info from firebase
-                List<QueryDocumentSnapshot> lobbyDocs = firebaseService.fetchRoom(code);
+                String exception = null;
+                player_uuid = generateUUID();
 
-                // Done fetching room cancel loading animation
-                fetchAnimation.cancel();
-
-                // If room is found
-                if (lobbyDocs.size() != 0) {
-                    room_code = code;
-                    player_uuid = generateUUID();
-                    Timer joiningLobby = getLoadingAnimation("Joining lobby");
-                    firebaseService.addPlayer(player_uuid, createPlayer(username, false), code);
-                    // Go to lobby
-
-                    // Stop the animation after lobbyscreen is loaded
-                    joiningLobby.cancel();
-                } else {
-                    // Show room not found
-                    updateInterface("Room not found");
+                // Tries to add player to the lobby
+                try {
+                    firebaseService.addPlayer(generatePlayerMap(player_uuid, username, false), code);
+                } catch (Exception e) {
+                    exception = e.getMessage();
                 }
+
+                joiningLobby.cancel();
+
+                if (exception != null) {
+                    updateInterface(exception);
+                    return;
+                }
+
+                // At this point player can join the lobby.
+                room_code = code;
+
+
             }
         };
         // Run function after 1sec, give space for the fetching animation to run.
@@ -83,19 +84,24 @@ public class Login {
             updateInterface("Fill in all the required fields");
             return;
         }
+
         // Creating lobby... loading animation
         Timer creatingLobbyAnimation = getLoadingAnimation("Creating lobby");
 
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
+                player_uuid = generateUUID();
+
                 // If a room already exists with a random code then create a new one
                 String code = generateCode();
-                boolean created = firebaseService.addLobby(code);
+                boolean created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
                 while(!created) {
                     code = generateCode();
-                    created = firebaseService.addLobby(code);
+                    created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
                 }
+
+                room_code = code;
                 creatingLobbyAnimation.cancel();
 
                 // Go to lobby view
@@ -116,12 +122,13 @@ public class Login {
     }
 
     // Private methods
-
-    private Map<String, Object> createPlayer(String username, Boolean host) {
+    private Map<String, Object> generatePlayerMap(String player_uuid, String username, Boolean host) {
         Map<String, Object> playerData = new HashMap<>();
-        playerData.put("username", username);
-        playerData.put("host", host);
-        playerData.put("data", new HashMap<>());
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", username);
+        data.put("host", host);
+        data.put("data", new HashMap<>());
+        playerData.put(player_uuid, data);
         return playerData;
     }
 
