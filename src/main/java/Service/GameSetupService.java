@@ -2,6 +2,7 @@ package Service;
 
 import Model.City;
 import Model.DestinationTicket;
+import Model.Route;
 import Model.RouteCell;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -27,12 +28,15 @@ public class GameSetupService {
     private final static String routeCellFile = "src/main/resources/text/routes.txt";
     private ArrayList<DestinationTicket> destinationTickets;
     private final static String destinationTicketsFile = "src/main/resources/text/destination_tickets.txt";
+    private ArrayList<Route> routes;
 
     // Lees cities file, maak arraylist
     // Lees routecell file, maak routes met routecells
     public GameSetupService() {
         this.cities = readCitiesFromFile(citiesFile);
         this.cityOverlays = createCityOverlays();
+
+        this.routes = readRoutesFromFile(routeCellFile);
 
         this.routeCells = readRouteCellsFromFile(routeCellFile);
         this.routeCellOverlays = createRouteCellOverlays();
@@ -165,6 +169,71 @@ public class GameSetupService {
         rectangle.setRotate(routeCell.getRotation());
         rectangle.setFill(Color.TRANSPARENT);
         return rectangle;
+    }
+
+    private ArrayList<Route> readRoutesFromFile(String filename) {
+        ArrayList<Route> routes = new ArrayList<>();
+        try {
+            File file = new File(filename);
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                // Skip over comments
+                if (line.startsWith("/")) {
+                    line = bufferedReader.readLine();
+                    continue;
+                }
+                // Initialize variables
+                City firstCity = null;
+                City secondCity = null;
+                String color = null;
+                String type = null;
+                int locomotives = 0;
+                ArrayList<RouteCell> routeCells = new ArrayList<>();
+
+                String[] splitLine = line.split(" ");
+                System.out.println(Arrays.toString(splitLine));
+                // New route
+                for (City city : this.cities) {
+                    if (city.getName().equals(splitLine[0])) {
+                        firstCity = city;
+                    } else if (city.getName().equals(splitLine[1])) {
+                        secondCity = city;
+                    }
+                }
+                if (firstCity == null || secondCity == null) {
+                    System.err.println(line + " has incorrectly formatted or unexisting cities");
+                }
+                color = splitLine[2];
+                type = splitLine[3];
+                if (type.equals("FERRY")) {
+                    locomotives = Integer.parseInt(splitLine[4]);
+                }
+
+                line = bufferedReader.readLine();
+                splitLine = line.split(" ");
+
+                while (splitLine.length == 3) {
+                    double[] doubles = new double[3];
+                    for (int i = 0; i < 3; i++) {
+                        doubles[i] = Double.parseDouble(splitLine[i]);
+                    }
+                    routeCells.add(new RouteCell(doubles[0], doubles[1], doubles[2]));
+                    line = bufferedReader.readLine();
+                    if (line == null) {
+                        break;
+                    }
+                    splitLine = line.split(" ");
+                }
+                routes.add(new Route(firstCity, secondCity, routeCells, color, type, locomotives));
+
+            }
+            bufferedReader.close();
+        } catch (IOException ioException) {
+            System.err.println(ioException.getMessage());
+        }
+        return routes;
     }
 
 
