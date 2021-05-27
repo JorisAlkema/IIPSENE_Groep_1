@@ -1,8 +1,13 @@
 package View;
 
+import Model.GameInfo;
+import Model.Observer;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -10,9 +15,22 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class GameView extends BorderPane {
+public class GameView extends BorderPane implements Observer {
+
+    Label label;
+    GameInfo gameInfo;
+
     public GameView(Stage primaryStage) {
+        gameInfo = new GameInfo(primaryStage);
         MapView mapView = new MapView();
+
+        // Top pane
+        label = new Label("0:00");
+        setAlignment(label, Pos.CENTER);
+        label.setStyle("-fx-font-family: Merriweather;" +
+                "-fx-font-weight: bold;" +
+                "-fx-font-size: 30;");
+        setTop(label);
 
         // Center pane
         setCenter(mapView);
@@ -46,5 +64,14 @@ public class GameView extends BorderPane {
 
         setLeft(vBox);
         setRight(new CardView());
+
+        gameInfo.addObserver(this);
+        gameInfo.countdownTimer();
+        gameInfo.setTimerText(gameInfo.getTimer());
+    }
+
+    @Override
+    public void update(Object timerText) {
+        label.setText((String) timerText);
     }
 }
