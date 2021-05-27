@@ -90,7 +90,7 @@ public class LoginView extends StackPane {
         // Add margins
         VBox.setMargin(explaination, new Insets(20, 10, 20, 10));
         VBox.setMargin(inputWithJoin, new Insets(0, 0, 20, 0));
-        VBox.setMargin(textFields, new Insets(30, 0, 30, 0));
+        VBox.setMargin(textFields, new Insets(60, 0, 60, 0));
 
         // Add all
         inputWithJoin.getChildren().add(inputCode);
@@ -130,7 +130,7 @@ public class LoginView extends StackPane {
         // Add margins
         VBox.setMargin(explaination, new Insets(20, 10, 20, 10));
         VBox.setMargin(inputWithHost, new Insets(0, 0, 20, 0));
-        VBox.setMargin(textFields, new Insets(30, 0, 30, 0));
+        VBox.setMargin(textFields, new Insets(60, 0, 60, 0));
 
         // Add all
         inputWithHost.getChildren().add(inputUsername);
