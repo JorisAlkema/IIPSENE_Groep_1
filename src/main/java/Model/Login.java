@@ -14,6 +14,7 @@ public class Login extends Observable {
     private FirebaseService firebaseService;
     private String player_uuid;
     private String room_code;
+    private Boolean busy = false;
 
     public Login(Stage primaryStage) {
         this.firebaseService = new FirebaseService();
@@ -41,38 +42,43 @@ public class Login extends Observable {
             notifyAllObservers("Fill in all the required fields");
             return;
         }
+        if (!busy) {
+            // Spam protection
+            busy = true;
 
-        // Joining lobby... loading animation
-        Timer joiningLobby = getLoadingAnimation("Joining lobby");
+            // Joining lobby... loading animation
+            Timer joiningLobby = getLoadingAnimation("Joining lobby");
 
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                String exception = null;
-                player_uuid = generateUUID();
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    String exception = null;
+                    player_uuid = generateUUID();
 
-                // Tries to add player to the lobby
-                try {
-                    firebaseService.addPlayer(generatePlayerMap(player_uuid, username, false), code);
-                } catch (Exception e) {
-                    exception = e.getMessage();
+                    // Tries to add player to the lobby
+                    try {
+                        firebaseService.addPlayer(generatePlayerMap(player_uuid, username, false), code);
+                    } catch (Exception e) {
+                        exception = e.getMessage();
+                    }
+
+                    joiningLobby.cancel();
+
+                    // Process finished
+                    busy = false;
+
+                    if (exception != null) {
+                        notifyAllObservers(exception);
+                        return;
+                    }
+
+                    // At this point player can join the lobby.
+                    room_code = code;
                 }
-
-                joiningLobby.cancel();
-
-                if (exception != null) {
-                    notifyAllObservers(exception);
-                    return;
-                }
-
-                // At this point player can join the lobby.
-                room_code = code;
-
-
-            }
-        };
-        // Run function after 1sec, give space for the fetching animation to run.
-        new Timer().schedule(task, 1000);
+            };
+            // Run function after 1sec, give space for the fetching animation to run.
+            new Timer().schedule(task, 1000);
+        }
     }
 
     public void host(String username) {
@@ -81,30 +87,38 @@ public class Login extends Observable {
             return;
         }
 
-        // Creating lobby... loading animation
-        Timer creatingLobbyAnimation = getLoadingAnimation("Creating lobby");
+        if (!busy) {
+            // Spam protection
+            busy = true;
 
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                player_uuid = generateUUID();
+            // Creating lobby... loading animation
+            Timer creatingLobbyAnimation = getLoadingAnimation("Creating lobby");
 
-                // If a room already exists with a random code then create a new one
-                String code = generateCode();
-                boolean created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
-                while(!created) {
-                    code = generateCode();
-                    created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    player_uuid = generateUUID();
+                    // If a room already exists with a random code then create a new one
+                    String code = generateCode();
+                    boolean created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
+                    while(!created) {
+                        code = generateCode();
+                        created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
+                    }
+
+                    room_code = code;
+
+                    // Process finished
+                    busy = false;
+
+                    creatingLobbyAnimation.cancel();
+                    // Go to lobby view
                 }
+            };
 
-                room_code = code;
-                creatingLobbyAnimation.cancel();
-
-                // Go to lobby view
-            }
-        };
-        // Run function after 1sec, give space for the fetching animation to run.
-        new Timer().schedule(task, 1000);
+            // Run function after 1sec, give space for the fetching animation to run.
+            new Timer().schedule(task, 1000);
+        }
     }
 
     public void disconnect() {
