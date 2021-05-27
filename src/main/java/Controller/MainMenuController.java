@@ -1,6 +1,9 @@
 package Controller;
 
 import Model.MainMenu;
+import View.GameView;
+import View.LoginView;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MainMenuController {
@@ -11,5 +14,10 @@ public class MainMenuController {
 
     public void join(Stage primaryStage) {
         mainMenu.viewLogin(primaryStage, false);
+    }
+
+    public void test(Stage primaryStage) {
+        Scene scene = new Scene(new GameView(primaryStage), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
+        primaryStage.setScene(scene);
     }
 }
