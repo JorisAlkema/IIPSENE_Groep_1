@@ -11,20 +11,20 @@ public class Observable {
     }
 
     public void addObserver(Observer observer) {
-
+        this.observers.add(observer);
     }
 
     public void deleteObserver(Observer observer) {
-
+        this.observers.remove(observer);
     }
 
-    public void notifyObserver(Observer observer) {
-
+    public void notifyObserver(Observer observer, Object o) {
+        observer.update(this, o);
     }
 
-    public void notifyAllObservers() {
+    public void notifyAllObservers(Object o) {
         for (Observer observer : observers) {
-            notifyObserver(observer);
+            notifyObserver(observer, o);
         }
     }
 }

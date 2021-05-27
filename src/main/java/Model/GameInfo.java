@@ -1,14 +1,13 @@
 package Model;
 
+import Service.Observable;
 import Service.Observer;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import java.util.*;
 
-public class GameInfo {
-
-    private List<Service.Observer> observers = new ArrayList<>();
+public class GameInfo extends Observable {
     private String timerText;
 
     // TODO: Add Firebase compatibility
@@ -87,9 +86,7 @@ public class GameInfo {
     public void setTimerText(String timerText) {
         this.timerText = timerText;
         Platform.runLater(() -> {
-            for (Service.Observer observer : this.observers) {
-                observer.update(this.timerText);
-            }
+            notifyAllObservers(this.timerText);
         });
     }
 
@@ -97,13 +94,5 @@ public class GameInfo {
         int minutes = (int) Math.floor(timer / 60);
         int seconds = (timer % 60);
         return String.format("%d:%02d", minutes, seconds);
-    }
-
-    public void addObserver(Service.Observer observer) {
-        this.observers.add(observer);
-    }
-
-    public void removeObserver(Observer observer) {
-        this.observers.remove(observer);
     }
 }
