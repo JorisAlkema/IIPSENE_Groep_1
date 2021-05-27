@@ -12,9 +12,10 @@ public class Player {
     private int points;
     private int trains;
     private boolean isTurn;
+    private int actionsTaken;
     private ArrayList<Route> claimedRoutes;
 
-    public Player(String name, String UUID, String playerColor, ArrayList<TrainCard> trainCards, ArrayList<DestinationTicket> destinationTickets, int points, int trains, boolean isTurn, ArrayList<Route> claimedRoutes) {
+    public Player(String name, String UUID, String playerColor, ArrayList<TrainCard> trainCards, ArrayList<DestinationTicket> destinationTickets, int points, int trains, boolean isTurn, int actionsTaken, ArrayList<Route> claimedRoutes) {
         this.name = name;
         this.UUID = UUID;
         this.playerColor = playerColor;
@@ -23,6 +24,7 @@ public class Player {
         this.points = points;
         this.trains = trains;
         this.isTurn = isTurn;
+        this.actionsTaken = actionsTaken;
         this.claimedRoutes = claimedRoutes;
     }
 
@@ -34,11 +36,19 @@ public class Player {
         this.trainCards = trainCards;
     }
 
-    public boolean isTurn() {
+    public boolean getTurn() {
         return isTurn;
     }
 
     public void setTurn(boolean turn) {
         isTurn = turn;
+    }
+
+    public int getActionsTaken() {
+        return actionsTaken;
+    }
+
+    public void setActionsTaken(int actionsTaken) {
+        this.actionsTaken = actionsTaken;
     }
 }
