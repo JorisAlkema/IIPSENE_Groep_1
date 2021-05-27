@@ -1,6 +1,6 @@
 Zagrab 72 203
 Wien 99 12
-München -138 -22
+Munchen -138 -22
 Berlin -21 -229
 Essen -228 -260
 Frankfurt -259 -114
@@ -13,7 +13,7 @@ Edinburgh -735 -598
 Dieppe -621 -98
 Brest -807 -38
 Paris -518 -6
-Zürich -277 110
+Zurich -277 110
 Pamplona -650 314
 Barcelona -625 504
 Madrid -855 483

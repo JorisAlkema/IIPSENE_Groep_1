@@ -25,8 +25,8 @@ public class GameSetupService {
     private ArrayList<RouteCell> routeCells;
     private ArrayList<Rectangle> routeCellOverlays;
     private final static String routeCellFile = "src/main/resources/text/routes.txt";
-    private final static String destinationTicketsFile = "src/main/resources/text/destination_tickets.txt";
     private ArrayList<DestinationTicket> destinationTickets;
+    private final static String destinationTicketsFile = "src/main/resources/text/destination_tickets.txt";
 
     // Lees cities file, maak arraylist
     // Lees routecell file, maak routes met routecells
@@ -100,7 +100,7 @@ public class GameSetupService {
         Circle circle = new Circle();
         circle.setTranslateX(city.getxOffset() / 2);
         circle.setTranslateY(city.getyOffset() / 2);
-        circle.setFill(Color.BLACK);
+        circle.setFill(Color.TRANSPARENT);
         return circle;
     }
 
@@ -218,5 +218,9 @@ public class GameSetupService {
 
     public ArrayList<Circle> getCityOverlays() {
         return cityOverlays;
+    }
+
+    public ArrayList<DestinationTicket> getDestinationTickets() {
+        return destinationTickets;
     }
 }

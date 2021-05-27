@@ -4,7 +4,7 @@ Angora Kharkov 10 short
 Athina Angora 5 short
 Athina Wilno 11 short
 Barcelona Bruxelles 8 short
-Barcelona München 8 short
+Barcelona Munchen 8 short
 Berlin Bucuresti 8 short
 Berlin Moskva 12 short
 Berlin Roma 9 short
@@ -26,7 +26,7 @@ Lisboa Danzig 20 long
 London Berlin 7 short
 London Wien 10 short
 Madrid Dieppe 8 short
-Madrid Zürich 8 short
+Madrid Zurich 8 short
 Marseille Essen 8 short
 Palermo Constantinople 8 short
 Palermo Moskva 20 long
@@ -42,5 +42,5 @@ Stockholm Wien 11 short
 Venezia Constantinople 10 short
 Warszawa Smolensk 6 short
 Zagrab Brindisi 6 short
-Zürich Brindisi 6 short
-Zürich Budapest 6 short
+Zurich Brindisi 6 short
+Zurich Budapest 6 short
