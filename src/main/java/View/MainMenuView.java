@@ -1,6 +1,8 @@
 package View;
 
 import Controller.MainMenuController;
+import Service.Observable;
+import Service.Observer;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -91,7 +93,7 @@ public class MainMenuView extends StackPane implements Observer {
     }
 
     @Override
-    public void update() {
+    public void update(Observable observable, Object o) {
 
     }
 }

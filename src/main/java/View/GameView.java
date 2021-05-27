@@ -1,6 +1,7 @@
 package View;
 
 import Model.GameInfo;
+import Service.Observable;
 import Service.Observer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -71,7 +72,7 @@ public class GameView extends BorderPane implements Observer {
     }
 
     @Override
-    public void update(Object timerText) {
+    public void update(Observable observable, Object timerText) {
         label.setText((String) timerText);
     }
 }

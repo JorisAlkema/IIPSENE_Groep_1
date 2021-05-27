@@ -1,6 +1,8 @@
 package View;
 
 import Controller.LoginController;
+import Service.Observable;
+import Service.Observer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,7 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class LoginView extends StackPane implements LoginObserver {
+public class LoginView extends StackPane implements Observer {
     private LoginController controller;
     private Text message;
 
@@ -158,7 +160,7 @@ public class LoginView extends StackPane implements LoginObserver {
     }
 
     @Override
-    public void update(Object message) {
+    public void update(Observable observable, Object message) {
         this.message.setText((String) message);
     }
 }
