@@ -1,5 +1,10 @@
 package Service;
 
 public interface Observer {
-    public void update(Object o);
+    void update(Object o);
+
+
+//    public interface Observer {
+//        void update(Observable observable, Object o);
+//    }
 }
