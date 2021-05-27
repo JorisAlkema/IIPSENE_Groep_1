@@ -1,5 +1,6 @@
 package View;
 
+import Controller.MainMenuController;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,13 +11,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
 public class MainMenuView extends StackPane implements Observer {
-    public MainMenuView() {
+    private MainMenuController mainMenuController = new MainMenuController();
+    public MainMenuView(Stage primaryStage) {
         super();
         // Main layout
         GridPane grid = new GridPane();
@@ -45,6 +48,9 @@ public class MainMenuView extends StackPane implements Observer {
         Button rules = new Button("Rules");
         Button quit = new Button("Quit");
 
+        Button test = new Button("Testing");
+
+        buttons.getChildren().add(test);
         buttons.getChildren().add(hostGame);
         buttons.getChildren().add(joinGame);
         buttons.getChildren().add(rules);
@@ -53,6 +59,11 @@ public class MainMenuView extends StackPane implements Observer {
         getChildren().add(background);
         getChildren().add(grid);
         getChildren().add(buttons);
+
+        //Events
+        test.setOnMouseClicked(e -> mainMenuController.test(primaryStage));
+        hostGame.setOnMouseClicked(e -> mainMenuController.host(primaryStage));
+        joinGame.setOnMouseClicked(e -> mainMenuController.join(primaryStage));
 
         File rulesPDF = new File("src/main/resources/rules/ticket_to_ride_europe_rules.pdf");
 
