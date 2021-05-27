@@ -44,6 +44,7 @@ public class GameInfo {
 
     private void endTurn(Player player) {
         // TODO: Restrict player actions
+        timer.cancel();
         turnCount++;
     }
 
