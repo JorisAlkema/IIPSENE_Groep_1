@@ -104,10 +104,6 @@ public class FirebaseService {
         ApiFuture<WriteResult> writeResult = documentReference.update(updates);
     }
 
-    public void updatePlayerData() {
-
-    }
-
     // if lobby is created succesfully it return true
     // Try to generate a lobby using the provided code,
     // To add a host to the lobby the function needs a host_data which is generated with a function in Login
@@ -136,5 +132,13 @@ public class FirebaseService {
 
     public void removeLobby(String code) {
 
+    }
+
+    public void updatePlayerData() {
+
+    }
+
+    public DocumentReference getDocumentReference(String room_code, String path) {
+        return db.collection(room_code).document(path);
     }
 }
