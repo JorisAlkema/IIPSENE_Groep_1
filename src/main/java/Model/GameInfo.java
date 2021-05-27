@@ -83,6 +83,10 @@ public class GameInfo extends Observable {
         return timerFormat(setSeconds());
     }
 
+    public void stopTimer() {
+        timer.cancel();
+    }
+
     public void setTimerText(String timerText) {
         this.timerText = timerText;
         Platform.runLater(() -> {
