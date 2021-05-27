@@ -1,5 +1,6 @@
 package Model;
 
+import Service.Observer;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
@@ -7,7 +8,7 @@ import java.util.*;
 
 public class GameInfo {
 
-    private List<Observer> observers = new ArrayList<>();
+    private List<Service.Observer> observers = new ArrayList<>();
     private String timerText;
 
     // TODO: Add Firebase compatibility
@@ -38,12 +39,12 @@ public class GameInfo {
     }
 
     private void startTurn(Player player) {
-        // TODO: Add player eligibility to take actions
+        player.setTurn(true);
         countdownTimer();
     }
 
     private void endTurn(Player player) {
-        // TODO: Restrict player actions
+        player.setTurn(false);
         timer.cancel();
         turnCount++;
     }
@@ -86,7 +87,7 @@ public class GameInfo {
     public void setTimerText(String timerText) {
         this.timerText = timerText;
         Platform.runLater(() -> {
-            for (Observer observer : this.observers) {
+            for (Service.Observer observer : this.observers) {
                 observer.update(this.timerText);
             }
         });
@@ -98,7 +99,7 @@ public class GameInfo {
         return String.format("%d:%02d", minutes, seconds);
     }
 
-    public void addObserver(Observer observer) {
+    public void addObserver(Service.Observer observer) {
         this.observers.add(observer);
     }
 
