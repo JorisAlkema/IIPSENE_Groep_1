@@ -47,11 +47,11 @@ public class GameInfo {
             public void run() {
                 if (seconds > 0 ) {
                     System.out.println(timerFormat(setSeconds()));
-                    //notifyView();
+                    setTimerText(timerFormat(setSeconds()));
                 } else if (seconds == 0) {
                     // Code that gets executed after the countdown has hit 0
 
-                    //notifyView();
+                    setTimerText(timerFormat(setSeconds()));
                     turnCount++;
                     timer.cancel();
                 }
@@ -87,18 +87,18 @@ public class GameInfo {
 
     private String timerFormat(int timer) {
         int minutes = (int) Math.floor(timer / 60);
-        int seconds = timer % 60;
+        int seconds = (timer % 60);
         return String.format("%d:%02d", minutes, seconds);
     }
 
-    // TESTING
-    public static void main(String[] args) {
-        GameInfo observable = new GameInfo();
-        HelloFX observer = new HelloFX();
-
-        observable.countdownTimer();
-
-        observable.addObserver(observer);
-        observable.setTimerText(observable.getTimer());
-    }
+//    // TESTING
+//    public static void main(String[] args) {
+//        GameInfo observable = new GameInfo();
+//        HelloFX observer = new HelloFX();
+//
+//        observable.countdownTimer();
+//
+//        observable.addObserver(observer);
+//        observable.setTimerText(observable.getTimer());
+//    }
 }

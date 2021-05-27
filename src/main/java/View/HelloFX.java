@@ -1,5 +1,6 @@
 package View;
 
+import Model.GameInfo;
 import View.CardView;
 import View.LoginView;
 import View.MainMenuView;
@@ -20,6 +21,7 @@ import javafx.stage.Stage;
 public class HelloFX extends Application implements Observer {
 
     Label label;
+    GameInfo gameInfo = new GameInfo();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -51,9 +53,9 @@ public class HelloFX extends Application implements Observer {
             }
         });
 
-
         vBox.getChildren().addAll(imageView);
         borderPane.setLeft(vBox);
+
         // Right pane
         vBox = new VBox();
         vBox.setPadding(new Insets(30));
@@ -78,6 +80,10 @@ public class HelloFX extends Application implements Observer {
         primaryStage.setHeight(720);
         primaryStage.setWidth(1280);
         primaryStage.show();
+
+        //gameInfo.addObserver(this);
+        //gameInfo.countdownTimer();
+        //gameInfo.setTimerText(gameInfo.getTimer());
     }
 
     @Override
