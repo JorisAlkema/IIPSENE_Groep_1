@@ -8,6 +8,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.cloud.FirestoreClient;
+import javafx.concurrent.Task;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,7 +22,15 @@ public class FirebaseService {
     private Firestore db;
     private final String PRIVATE_KEY = "firebase_privatekey.json";
 
-    public FirebaseService() throws IOException {
+    public FirebaseService() {
+        try {
+            initialize();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initialize() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
             // Initialize Firestore connection
             FileInputStream serviceAccount = new FileInputStream(PRIVATE_KEY);
@@ -34,6 +43,7 @@ public class FirebaseService {
         this.db = FirestoreClient.getFirestore();
     }
 
+    // DEPRECATED
     public List<QueryDocumentSnapshot> fetchRoom(String code) {
         try {
             // Get all documents from collection
@@ -49,22 +59,43 @@ public class FirebaseService {
         return null;
     }
 
-    public void addPlayer(String playerUUID, Map<String, Object> data, String code) {
+    // Add a player to a room
+    // If the room has 5 players -> reject
+    // If game is ongoing -> reject
+    public void addPlayer(Map<String, Object> player_data, String code) throws Exception {
         DocumentReference documentReference = db.collection(code).document("players");
+        Map statusSnapshot = getDocumentData(code, "status");
+        Map playerSnapshot = getDocumentData(code, "players");
 
-        Map<String, Object> players = new HashMap<>();
-        players.put(playerUUID, data);
+        if (statusSnapshot == null || playerSnapshot == null) {
+            throw new Exception("Room not found");
+        }
 
-        ApiFuture<WriteResult> writeResult  = documentReference.update(players);
+        if ((Boolean) statusSnapshot.get("ongoing")) {
+            throw new Exception("Room is ongoing");
+        }
+
+        if (playerSnapshot.size() == 5) {
+            throw new Exception("Room is full");
+        }
+
+        documentReference.update(player_data);
+    }
+
+    public Map<String, Object> getDocumentData(String room_code, String path) {
+        Map Snapshot = null;
         try {
-            System.out.println("Update time : " + writeResult.get().getUpdateTime());
+            Snapshot = db.collection(room_code).document(path).get().get().getData();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        return Snapshot;
     }
 
+    // Remove a player using it's UUID and the roomcode.
+    // It is possible to remove other players than urself, but that is outside the scope.
     public void removePlayer(String playerUUID, String code) {
         DocumentReference documentReference = db.collection(code).document("players");
         Map<String, Object> updates = new HashMap<>();
@@ -74,6 +105,36 @@ public class FirebaseService {
     }
 
     public void updatePlayerData() {
+
+    }
+
+    // if lobby is created succesfully it return true
+    // Try to generate a lobby using the provided code,
+    // To add a host to the lobby the function needs a host_data which is generated with a function in Login
+    public boolean addLobby(String code, Map<String, Object> host_data) {
+        try {
+            // Get all documents from collection
+            ApiFuture<QuerySnapshot> future = db.collection(code).get();
+            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+            if (documents.size() == 0) {
+
+                Map<String, Object> status = new HashMap<>();
+                status.put("ongoing", false);
+
+                db.collection(code).document("status").set(status);
+                db.collection(code).document("players").set(host_data);
+
+                return true;
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void removeLobby(String code) {
 
     }
 }
