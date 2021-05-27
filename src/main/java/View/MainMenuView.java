@@ -48,6 +48,9 @@ public class MainMenuView extends StackPane implements Observer {
         Button rules = new Button("Rules");
         Button quit = new Button("Quit");
 
+        Button test = new Button("Testing");
+
+        buttons.getChildren().add(test);
         buttons.getChildren().add(hostGame);
         buttons.getChildren().add(joinGame);
         buttons.getChildren().add(rules);
@@ -58,6 +61,7 @@ public class MainMenuView extends StackPane implements Observer {
         getChildren().add(buttons);
 
         //Events
+        test.setOnMouseClicked(e -> mainMenuController.test(primaryStage));
         hostGame.setOnMouseClicked(e -> mainMenuController.host(primaryStage));
         joinGame.setOnMouseClicked(e -> mainMenuController.join(primaryStage));
 

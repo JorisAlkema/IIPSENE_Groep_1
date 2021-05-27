@@ -13,4 +13,16 @@ public class City {
         this.xOffset = xOffset;
         this.yOffset = yOffset;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getxOffset() {
+        return xOffset;
+    }
+
+    public double getyOffset() {
+        return yOffset;
+    }
 }
