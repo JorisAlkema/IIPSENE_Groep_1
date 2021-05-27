@@ -1,9 +1,7 @@
 package Model;
 
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.util.*;
 
@@ -12,6 +10,7 @@ public class GameInfo {
     private List<Observer> observers = new ArrayList<>();
     private String timerText;
 
+    // TODO: Add Firebase compatibility
     /* 'REAL' ARRAYLIST GETS GENERATED IN THE LOBBY
     FINAL ARRAYLIST WILL BE PULLED FROM FIREBASE */
     private ArrayList<Player> players = new ArrayList<Player>();
@@ -27,10 +26,10 @@ public class GameInfo {
     }
 
     public void initGame() {
-        setTurn(getPlayer());
+        startTurn(getCurrentPlayer());
     }
 
-    private Player getPlayer() {
+    private Player getCurrentPlayer() {
         if (turnCount == 0) {
             return players.get(0);
         } else {
@@ -38,8 +37,14 @@ public class GameInfo {
         }
     }
 
-    private void setTurn(Player player) {
+    private void startTurn(Player player) {
+        // TODO: Add player eligibility to take actions
         countdownTimer();
+    }
+
+    private void endTurn(Player player) {
+        // TODO: Restrict player actions
+        turnCount++;
     }
 
     public void countdownTimer() {
@@ -57,9 +62,9 @@ public class GameInfo {
                     setTimerText(timerFormat(setSeconds()));
                 } else if (seconds == 0) {
                     // Code that gets executed after the countdown has hit 0
-
                     setTimerText(timerFormat(setSeconds()));
-                    turnCount++;
+                    endTurn(getCurrentPlayer());
+                    startTurn(getCurrentPlayer());
                 }
             }
         }, delay, period);
@@ -77,14 +82,6 @@ public class GameInfo {
         return timerFormat(setSeconds());
     }
 
-    public void addObserver(Observer observer) {
-        this.observers.add(observer);
-    }
-
-    public void removeObserver(Observer observer) {
-        this.observers.remove(observer);
-    }
-
     public void setTimerText(String timerText) {
         this.timerText = timerText;
         Platform.runLater(() -> {
@@ -96,7 +93,15 @@ public class GameInfo {
 
     private String timerFormat(int timer) {
         int minutes = (int) Math.floor(timer / 60);
-        int seconds = timer % 60;
+        int seconds = (timer % 60);
         return String.format("%d:%02d", minutes, seconds);
+    }
+
+    public void addObserver(Observer observer) {
+        this.observers.add(observer);
+    }
+
+    public void removeObserver(Observer observer) {
+        this.observers.remove(observer);
     }
 }
