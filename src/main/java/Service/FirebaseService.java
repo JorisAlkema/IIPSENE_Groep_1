@@ -8,6 +8,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.cloud.FirestoreClient;
+import javafx.concurrent.Task;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,7 +22,15 @@ public class FirebaseService {
     private Firestore db;
     private final String PRIVATE_KEY = "firebase_privatekey.json";
 
-    public FirebaseService() throws IOException {
+    public FirebaseService() {
+        try {
+            initialize();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initialize() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
             // Initialize Firestore connection
             FileInputStream serviceAccount = new FileInputStream(PRIVATE_KEY);
@@ -74,6 +83,34 @@ public class FirebaseService {
     }
 
     public void updatePlayerData() {
+
+    }
+
+    // if lobby is created succesfully it return true
+    public boolean addLobby(String code) {
+        try {
+            // Get all documents from collection
+            ApiFuture<QuerySnapshot> future = db.collection(code).get();
+            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+            if (documents.size() == 0) {
+                Map<String, Object> players = new HashMap<>();
+                Map<String, Object> status = new HashMap<>();
+                status.put("ongoing", false);
+
+                db.collection(code).document("status").set(status);
+                db.collection(code).document("players").set(players);
+
+                return true;
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void removeLobby(String code) {
 
     }
 }
