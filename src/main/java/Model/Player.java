@@ -28,6 +28,15 @@ public class Player {
         this.claimedRoutes = claimedRoutes;
     }
 
+    public Player(String name, String UUID) {
+        this.name = name;
+        this.UUID = UUID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public ArrayList<TrainCard> getTrainCards() {
         return trainCards;
     }
