@@ -95,7 +95,7 @@ public class FirebaseService {
     }
 
     // Remove a player using it's UUID and the roomcode.
-    // It is possible to remove other players than urself, but that is outside the scope.
+    // It is possible to remove other players, but that is outside the scope.
     public void removePlayer(String playerUUID, String code) {
         DocumentReference documentReference = db.collection(code).document("players");
         Map<String, Object> updates = new HashMap<>();

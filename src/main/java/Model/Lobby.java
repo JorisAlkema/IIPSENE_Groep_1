@@ -3,10 +3,14 @@ package Model;
 import Service.FirebaseService;
 import Service.Observable;
 import View.MainMenuView;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.cloud.firestore.*;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -19,8 +23,7 @@ public class Lobby extends Observable {
     private ListenerRegistration playerEventListener;
     private String roomCode;
     private String player_uuid;
-    private Map<String, Objects> players;
-
+    private Player[] players;
     private Stage primaryStage;
 
     public Lobby(Stage primaryStage, String player_uuid, String roomCode) {
@@ -28,11 +31,15 @@ public class Lobby extends Observable {
         this.roomCode = roomCode;
         this.player_uuid = player_uuid;
         this.firebaseService = new FirebaseService();
-        attachListener();
-
         // Disconnect when player closes the program!
         this.primaryStage.setOnCloseRequest(e -> {
             disconnect();
+        });
+
+        Platform.runLater(() -> {
+            attachListener();
+            updatePartyCode(roomCode);
+            updateMessage("Retrieving room data...\n");
         });
     }
 
@@ -57,28 +64,54 @@ public class Lobby extends Observable {
     }
 
     public void attachListener() {
-        DocumentReference playerDocument = firebaseService.getDocumentReference(roomCode, "players");
-        playerEventListener = playerDocument.addSnapshotListener((documentSnapshot, e) -> {
-
-            String players = "";
-            if (documentSnapshot != null) {
-                Set<String> all_players = Objects.requireNonNull(documentSnapshot.getData()).keySet();
-
-                for (String player_id : all_players) {
-                    Object data = documentSnapshot.getData().get(player_id);
-                    Map<String, Object> playerData = (Map<String, Object>) data;
-                    if ((Boolean) playerData.get("host")) {
-                        players += playerData.get("username") + ": Host" + "\n";
-                    } else {
-                        players += playerData.get("username") + "\n";
-                    }
-                }
-                notifyAllObservers(players);
+        playerEventListener = firebaseService.getDocumentReference(roomCode, "players").addSnapshotListener((document, e) -> {
+            if (document != null && document.getData() != null) {
+                updatePlayers(document.getData());
             }
         });
     }
 
     public void detachListener() {
         playerEventListener.remove();
+    }
+
+    // Parse Object to Map<String, Object>
+    private Map<String, Object> parseObjectToMap(Object o) {
+        TypeReference<Map<String,Object>> typeRef = new TypeReference<>() {};
+        return new ObjectMapper().convertValue(o, typeRef);
+    }
+
+    // Handle new data
+    private void updatePlayers(Map<String, Object> data) {
+        Set<String> uuids = data.keySet();
+        Player[] players = new Player[uuids.size()];
+
+        int index = 0;
+        for (String id : uuids) {
+            Map<String, Object> playerData = parseObjectToMap(data.get(id));
+            String username = (String) playerData.get("username");
+            players[index] = new Player(username, id);
+            index++;
+        }
+
+        this.players = players;
+
+        Map<String, Object> viewData = new HashMap<>();
+        viewData.put("players", players);
+        viewData.put("message", "Waiting for host to start the game");
+        notifyAllObservers(viewData);
+
+    }
+
+    private void updateMessage(String message) {
+        Map<String, Object> viewData = new HashMap<>();
+        viewData.put("message", message);
+        notifyAllObservers(viewData);
+    }
+
+    private void updatePartyCode(String partycode) {
+        Map<String, Object> viewData = new HashMap<>();
+        viewData.put("partycode", partycode);
+        notifyAllObservers(viewData);
     }
 }
