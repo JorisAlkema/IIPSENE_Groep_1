@@ -32,7 +32,6 @@ public class Login extends Observable {
         primaryStage.setScene(scene);
     }
 
-    // TODO: LobbyView
     public void join(String username, String code) {
         if (username.isBlank() || code.isBlank()) {
             notifyAllObservers("Fill in all the required fields");
