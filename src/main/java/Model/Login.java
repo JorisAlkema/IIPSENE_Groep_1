@@ -15,9 +15,6 @@ public class Login implements Observable {
     private ArrayList<Observer> observers = new ArrayList<>();
     private FirebaseService firebaseService;
 
-    private String player_uuid;
-    private String roomCode;
-
     private Boolean busy = false;
 
     public Login(Stage primaryStage) {
@@ -52,7 +49,7 @@ public class Login implements Observable {
                 @Override
                 public void run() {
                     String exception = null;
-                    player_uuid = generateUUID();
+                    String player_uuid = generateUUID();
 
                     // Tries to add player to the lobby
                     try {
@@ -72,8 +69,7 @@ public class Login implements Observable {
                     }
 
                     // At this point player can join the lobby.
-                    roomCode = code;
-                    Platform.runLater(() -> showLobbyView(player_uuid, roomCode));
+                    Platform.runLater(() -> showLobbyView(player_uuid, code));
                 }
             };
             // Run function after 1sec, give space for the fetching animation to run.
@@ -97,20 +93,19 @@ public class Login implements Observable {
             TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
-                    player_uuid = generateUUID();
+                    String player_uuid = generateUUID();
                     // If a room already exists with a random code then create a new one
                     String code = generateCode();
+
                     boolean created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
                     while(!created) {
                         code = generateCode();
                         created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
                     }
 
-                    roomCode = code;
-
                     // Process finished
                     busy = false;
-
+                    String roomCode = code;
                     creatingLobbyAnimation.cancel();
                     // Go to lobby view
                     Platform.runLater(() -> showLobbyView(player_uuid, roomCode));
