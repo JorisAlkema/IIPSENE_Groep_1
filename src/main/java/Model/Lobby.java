@@ -2,6 +2,7 @@ package Model;
 
 import Service.FirebaseService;
 import Service.Observable;
+import Service.Observer;
 import View.MainMenuView;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.cloud.firestore.*;
@@ -10,15 +11,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 // Players can join together in a Lobby before they start the game. This means a Lobby is basically a collection of
 // Players and a shared roomCode. Once enough players are ready, the host can start the game.
 // Possible methods: join, leave, start, (changeHost?), ..
-public class Lobby extends Observable {
+public class Lobby implements Observable {
+    private ArrayList<Observer> observers = new ArrayList<>();
     private FirebaseService firebaseService;
     private ListenerRegistration playerEventListener;
     private String roomCode;
@@ -113,5 +112,22 @@ public class Lobby extends Observable {
         Map<String, Object> viewData = new HashMap<>();
         viewData.put("partycode", partycode);
         notifyAllObservers(viewData);
+    }
+
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void unregisterObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyAllObservers(Object o) {
+        for (Observer observer : observers) {
+            observer.update(this, o);
+        }
     }
 }

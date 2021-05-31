@@ -25,4 +25,13 @@ public class RouteCell {
     public double getRotation() {
         return rotation;
     }
+
+    public void setOffsetX(double offsetX) {
+        this.offsetX = offsetX;
+    }
+
+    public void setOffsetY(double offsetY) {
+        this.offsetY = offsetY;
+    }
+
 }

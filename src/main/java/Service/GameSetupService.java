@@ -104,8 +104,8 @@ public class GameSetupService {
 
     private Circle createCityOverlay(City city) {
         Circle circle = new Circle();
-        circle.setTranslateX(city.getxOffset() / 2);
-        circle.setTranslateY(city.getyOffset() / 2);
+        circle.setTranslateX(city.getOffsetX() / 2);
+        circle.setTranslateY(city.getOffsetY() / 2);
         circle.setFill(Color.TRANSPARENT);
         return circle;
     }
@@ -308,5 +308,13 @@ public class GameSetupService {
 
     public ArrayList<DestinationTicket> getDestinationTickets() {
         return destinationTickets;
+    }
+
+    public ArrayList<Route> getRoutes() {
+        return routes;
+    }
+
+    public ArrayList<City> getCities() {
+        return cities;
     }
 }

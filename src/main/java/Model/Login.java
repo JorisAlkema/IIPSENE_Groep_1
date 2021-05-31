@@ -2,6 +2,7 @@ package Model;
 
 import Service.FirebaseService;
 import Service.Observable;
+import Service.Observer;
 import View.LobbyView;
 import View.MainMenuView;
 import javafx.application.Platform;
@@ -11,7 +12,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.*;
 
-public class Login extends Observable {
+public class Login implements Observable {
+    private ArrayList<Observer> observers = new ArrayList<>();
     private Stage primaryStage;
     private FirebaseService firebaseService;
     private String player_uuid;
@@ -157,5 +159,22 @@ public class Login extends Observable {
         String css = "css/styling.css";
         scene.getStylesheets().add(css);
         primaryStage.setScene(scene);
+    }
+
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void unregisterObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyAllObservers(Object o) {
+        for (Observer observer : observers) {
+            observer.update(this, o);
+        }
     }
 }

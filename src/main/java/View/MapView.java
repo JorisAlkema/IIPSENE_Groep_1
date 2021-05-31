@@ -1,6 +1,10 @@
 package View;
 
+import Controller.MapController;
+import Model.MapModel;
 import Service.GameSetupService;
+import Service.Observable;
+import Service.Observer;
 import Service.OverlayEventHandler;
 import javafx.event.Event;
 import javafx.scene.Group;
@@ -18,8 +22,9 @@ import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
 
 /** Constructs a scene with a pannable Map background. */
-public class MapView extends ScrollPane {
-    private final GameSetupService gameSetupService;
+public class MapView extends ScrollPane implements Observer {
+    private final MapController mapController;
+//    private final GameSetupService gameSetupService;
     private ImageView backgroundImage;
     private ArrayList<Rectangle> rectangleOverlays;
     private ArrayList<Circle> circleOverlays;
@@ -36,15 +41,18 @@ public class MapView extends ScrollPane {
     private static final double smallRadius = 7;
     private static final double bigRadius = 15;
 
-    public MapView() {
+    public MapView(MapController mapController) {
         super();
-        this.gameSetupService = new GameSetupService();
+        this.mapController = mapController;
+//        this.gameSetupService = new GameSetupService();
         this.backgroundImage = smallBackgroundImage;
         this.setContent(initStackPane());
         // Hide scrollbars
         this.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         this.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         this.zoomedIn = false;
+//        MapModel model = new MapModel();
+//        model.registerObserver(this);
     }
 
     public void zoomIn() {
@@ -103,56 +111,56 @@ public class MapView extends ScrollPane {
         stackPane = new StackPane();
         stackPane.getChildren().add(backgroundImage);
 
-        circleOverlays = gameSetupService.getCityOverlays();
-        for (Circle circle : circleOverlays) {
-            circle.setRadius(smallRadius);
-            circle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
-                    e -> {
-                        if (circle.getFill().equals(Color.TRANSPARENT)) {
-                            circle.setFill( Color.BLACK);
-                        } else {
-                            circle.setFill(Color.TRANSPARENT);
-                        }
-                    },
-                    Event::consume)
-            );
-        }
-        stackPane.getChildren().addAll(circleOverlays);
+        circleOverlays = null;//gameSetupService.getCityOverlays();
+//        for (Circle circle : circleOverlays) {
+//            circle.setRadius(smallRadius);
+//            circle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
+//                    e -> {
+//                        if (circle.getFill().equals(Color.TRANSPARENT)) {
+//                            circle.setFill( Color.BLACK);
+//                        } else {
+//                            circle.setFill(Color.TRANSPARENT);
+//                        }
+//                    },
+//                    Event::consume)
+//            );
+//        }
+//        stackPane.getChildren().addAll(circleOverlays);
 
-        ArrayList<Group> groups = gameSetupService.createRouteGroups();
-        for (Group group : groups) {
-            for (int i = 0; i < group.getChildren().size(); i++) {
-                int half = group.getChildren().size() / 2;
-//            for (Node node : group.getChildren()) {
-                Node node = group.getChildren().get(i);
-                Rectangle rectangle = (Rectangle) node;
-                if (i == half) {
-                    group.setTranslateX(rectangle.getTranslateX());
-                    group.setTranslateY(rectangle.getTranslateY());
-                }
-                rectangle.setWidth(bigCellWidth);
-                rectangle.setHeight(bigCellHeight);
-                rectangle.setFill(smallImagePattern);
-                System.out.println(rectangle.getTranslateX());
-            }
-            group.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
-                    e -> {
-                        for (Node node : group.getChildren()) {
-                            Rectangle rectangle = (Rectangle) node;
-                            if (rectangle.getFill().equals(Color.TRANSPARENT)) {
-                                rectangle.setFill( zoomedIn ? bigImagePattern : smallImagePattern );
-                            } else {
-                                rectangle.setFill(Color.TRANSPARENT);
-                            }
-                        }
-                    },
-                    Event::consume
-            ));
+        ArrayList<Group> groups = null;//gameSetupService.createRouteGroups();
+//        for (Group group : groups) {
+//            for (int i = 0; i < group.getChildren().size(); i++) {
+//                int half = group.getChildren().size() / 2;
+////            for (Node node : group.getChildren()) {
+//                Node node = group.getChildren().get(i);
+//                Rectangle rectangle = (Rectangle) node;
+////                if (i == half) {
+////                    group.setTranslateX(rectangle.getTranslateX());
+////                    group.setTranslateY(rectangle.getTranslateY());
+////                }
+//                rectangle.setWidth(bigCellWidth);
+//                rectangle.setHeight(bigCellHeight);
+//                rectangle.setFill(smallImagePattern);
+//                System.out.println(rectangle.getTranslateX());
+//            }
+//            group.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
+//                    e -> {
+//                        for (Node node : group.getChildren()) {
+//                            Rectangle rectangle = (Rectangle) node;
+//                            if (rectangle.getFill().equals(Color.TRANSPARENT)) {
+//                                rectangle.setFill( zoomedIn ? bigImagePattern : smallImagePattern );
+//                            } else {
+//                                rectangle.setFill(Color.TRANSPARENT);
+//                            }
+//                        }
+//                    },
+//                    Event::consume
+//            ));
+//
+//
+//        }
 
-
-        }
-
-        stackPane.getChildren().addAll(groups);
+//        stackPane.getChildren().addAll(groups);
 
 //        rectangleOverlays = gameSetupService.getRouteCellOverlays();
 //        for (Rectangle rectangle : rectangleOverlays) {
@@ -172,6 +180,14 @@ public class MapView extends ScrollPane {
 //        stackPane.getChildren().addAll(rectangleOverlays);
 
         return stackPane;
+    }
+
+
+    @Override
+    public void update(Observable observable, Object o) {
+        if (observable instanceof MapModel) {
+            this.backgroundImage = (ImageView) o;
+        }
     }
 
     public boolean isZoomedIn() {
