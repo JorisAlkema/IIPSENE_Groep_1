@@ -7,8 +7,9 @@ import javafx.stage.Stage;
 
 import java.util.*;
 
-public class GameInfo extends Observable {
+public class GameInfo implements Observable {
     private String timerText;
+    private ArrayList<Observer> observers = new ArrayList<>();
 
     // TODO: Add Firebase compatibility
     /* 'REAL' ARRAYLIST GETS GENERATED IN THE LOBBY
@@ -98,5 +99,22 @@ public class GameInfo extends Observable {
         int minutes = (int) Math.floor(timer / 60);
         int seconds = (timer % 60);
         return String.format("%d:%02d", minutes, seconds);
+    }
+
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void unregisterObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyAllObservers(Object o) {
+        for (Observer observer : observers) {
+            observer.update(this, o);
+        }
     }
 }

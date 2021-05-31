@@ -39,6 +39,6 @@ public class LoginController {
     }
 
     public void addObserver(Observer observer) {
-        login.addObserver(observer);
+        login.registerObserver(observer);
     }
 }
