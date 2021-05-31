@@ -16,7 +16,7 @@ public class LoginController {
     private Login login;
 
     public LoginController(Stage primaryStage) {
-        login = new Login(primaryStage);
+        this.login = new Login(primaryStage);
     }
 
     // Return to Menu
