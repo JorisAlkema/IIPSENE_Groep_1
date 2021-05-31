@@ -20,7 +20,6 @@ public class Lobby implements Observable {
     private ListenerRegistration playerEventListener;
     private String roomCode;
     private String player_uuid;
-    private Player[] players;
     private Stage primaryStage;
 
     public Lobby(Stage primaryStage, String player_uuid, String roomCode) {
@@ -76,23 +75,7 @@ public class Lobby implements Observable {
 
     // Handle new data from eventlistener
     private void update(Map<String, Object> data) {
-        Map<String, Object> all_players = (Map<String, Object>) data.get("players");
-
-//        Set<String> uuids = all_players.keySet();
-//        Player[] players = new Player[uuids.size()];
-//
-//        int index = 0;
-//        for (String id : uuids) {
-//            Map<String, Object> playerData = (Map<String, Object>) all_players.get(id);
-//            String username = (String) playerData.get("username");
-//            players[index] = new Player(username, id);
-//            index++;
-//        }
-//
-//        this.players = players;
-
         notifyAllObservers(data);
-
     }
 
     /*
