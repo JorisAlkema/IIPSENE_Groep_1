@@ -67,7 +67,6 @@ public class FirebaseService {
         documentReference.update(snapShot);
     }
 
-
     // Get document data of specifiek collections and document
     public Map<String, Object> getDocumentData(String collection, String document) {
         Map<String, Object> Snapshot = null;
@@ -83,6 +82,7 @@ public class FirebaseService {
 
     // Remove a player using it's UUID and the roomcode.
     // It is possible to remove other players, but that is outside the scope.
+    // If you are the last player in the room and this function is called, the room will get deleted
     public void removePlayer(String playerUUID, String code) {
         DocumentReference documentReference = db.collection("rooms").document(code);
         Map<String, Object> snapShot = getDocumentData("rooms", code);
@@ -136,11 +136,7 @@ public class FirebaseService {
         documentReference.update(snapShot);
     }
 
-    public void removeLobby(String code) {
-
-    }
-
-    public void updatePlayerData() {
+    public void updatePlayerData(Map<String, Object> player_data, String code) {
 
     }
 
