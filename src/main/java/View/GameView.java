@@ -23,7 +23,7 @@ public class GameView extends BorderPane implements Observer {
     public GameView(Stage primaryStage) {
         gameInfo = new GameInfo(primaryStage);
         MapView mapView = new MapView();
-
+        System.out.println("Mapview in GameView");
         // Top pane
         label = new Label("0:00");
         setAlignment(label, Pos.CENTER);
