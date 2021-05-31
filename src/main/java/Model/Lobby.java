@@ -52,10 +52,6 @@ public class Lobby implements Observable {
             detachListener();
             // remove yourself from the room
             firebaseService.removePlayer(player_uuid, roomCode);
-
-            // if you were the last player remove the room
-
-
         }
     }
 
