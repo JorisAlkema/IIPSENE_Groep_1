@@ -104,10 +104,10 @@ public class GameInfo implements Observable {
         });
     }
 
-    private String timerFormat(int timer) {
-        int minutes = (int) Math.floor(timer / 60);
-        int seconds = (timer % 60);
-        return String.format("%d:%02d", minutes, seconds);
+    private String timerFormat(int seconds) {
+        int minutes = (int) Math.floor(seconds / 60.0);
+        int displaySeconds = (seconds % 60);
+        return String.format("%d:%02d", minutes, displaySeconds);
     }
 
     @Override

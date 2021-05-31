@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 
 public class LoginView extends StackPane implements Observer {
     private LoginController controller;
-    private Text message;
+    private Text message;   
 
     public LoginView(Stage primaryStage, Boolean host) {
         controller = new LoginController(primaryStage);
