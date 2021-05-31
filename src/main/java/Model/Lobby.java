@@ -39,7 +39,7 @@ public class Lobby implements Observable {
             partyCode.put("partyCode", roomCode);
             partyCode.put("Retrieving data...\n", roomCode);
             notifyAllObservers(partyCode);
-            
+
             attachListener();
         });
     }
@@ -82,18 +82,19 @@ public class Lobby implements Observable {
     private void update(Map<String, Object> data) {
         Map<String, Object> all_players = (Map<String, Object>) data.get("players");
 
-        Set<String> uuids = all_players.keySet();
-        Player[] players = new Player[uuids.size()];
+//        Set<String> uuids = all_players.keySet();
+//        Player[] players = new Player[uuids.size()];
+//
+//        int index = 0;
+//        for (String id : uuids) {
+//            Map<String, Object> playerData = (Map<String, Object>) all_players.get(id);
+//            String username = (String) playerData.get("username");
+//            players[index] = new Player(username, id);
+//            index++;
+//        }
+//
+//        this.players = players;
 
-        int index = 0;
-        for (String id : uuids) {
-            Map<String, Object> playerData = (Map<String, Object>) all_players.get(id);
-            String username = (String) playerData.get("username");
-            players[index] = new Player(username, id);
-            index++;
-        }
-
-        this.players = players;
         notifyAllObservers(data);
 
     }
