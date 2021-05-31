@@ -30,6 +30,7 @@ public class Lobby implements Observable {
         this.roomCode = roomCode;
         this.player_uuid = player_uuid;
         this.firebaseService = new FirebaseService();
+
         // Disconnect when player closes the program!
         this.primaryStage.setOnCloseRequest(e -> {
             disconnect();
@@ -41,6 +42,8 @@ public class Lobby implements Observable {
             updateMessage("Retrieving room data...\n");
         });
     }
+
+    // Accessible to controller
 
     public void disconnect() {
         if (player_uuid != null && roomCode != null) {
@@ -63,7 +66,7 @@ public class Lobby implements Observable {
     }
 
     public void attachListener() {
-        playerEventListener = firebaseService.getDocumentReference(roomCode, "players").addSnapshotListener((document, e) -> {
+        playerEventListener = firebaseService.getDocumentReference("rooms", roomCode).addSnapshotListener((document, e) -> {
             if (document != null && document.getData() != null) {
                 updatePlayers(document.getData());
             }
@@ -74,20 +77,16 @@ public class Lobby implements Observable {
         playerEventListener.remove();
     }
 
-    // Parse Object to Map<String, Object>
-    private Map<String, Object> parseObjectToMap(Object o) {
-        TypeReference<Map<String,Object>> typeRef = new TypeReference<>() {};
-        return new ObjectMapper().convertValue(o, typeRef);
-    }
-
-    // Handle new data
+    // Handle new data from eventlistener
     private void updatePlayers(Map<String, Object> data) {
-        Set<String> uuids = data.keySet();
+        Map<String, Object> all_players = (Map<String, Object>) data.get("players");
+
+        Set<String> uuids = all_players.keySet();
         Player[] players = new Player[uuids.size()];
 
         int index = 0;
         for (String id : uuids) {
-            Map<String, Object> playerData = parseObjectToMap(data.get(id));
+            Map<String, Object> playerData = (Map<String, Object>) all_players.get(id);
             String username = (String) playerData.get("username");
             players[index] = new Player(username, id);
             index++;
@@ -102,17 +101,23 @@ public class Lobby implements Observable {
 
     }
 
+    // Update message on the view
     private void updateMessage(String message) {
         Map<String, Object> viewData = new HashMap<>();
         viewData.put("message", message);
         notifyAllObservers(viewData);
     }
 
+    // Update partycode on the view
     private void updatePartyCode(String partycode) {
         Map<String, Object> viewData = new HashMap<>();
         viewData.put("partycode", partycode);
         notifyAllObservers(viewData);
     }
+
+    /*
+    Observer functions
+    */
 
     @Override
     public void registerObserver(Observer observer) {

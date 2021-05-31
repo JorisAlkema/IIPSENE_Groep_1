@@ -8,16 +8,16 @@ import View.MainMenuView;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 import java.util.*;
 
 public class Login implements Observable {
-    private ArrayList<Observer> observers = new ArrayList<>();
     private Stage primaryStage;
+    private ArrayList<Observer> observers = new ArrayList<>();
     private FirebaseService firebaseService;
+
     private String player_uuid;
     private String roomCode;
+
     private Boolean busy = false;
 
     public Login(Stage primaryStage) {
@@ -27,24 +27,26 @@ public class Login implements Observable {
 
     // Methods seen by the controller
     public void returnToMenu() {
-        // Remove in production testing purposes
-        Scene scene = new Scene(new MainMenuView(primaryStage), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
-        String css = "css/styling.css";
-        scene.getStylesheets().add(css);
+        MainMenuView menuView = new MainMenuView(primaryStage);
+        double sceneWidth = primaryStage.getScene().getWidth();
+        double sceneHeight = primaryStage.getScene().getHeight();
+        Scene scene = new Scene(menuView, sceneWidth, sceneHeight);
+        scene.getStylesheets().add("css/styling.css");
         primaryStage.setScene(scene);
     }
 
     public void join(String username, String code) {
         if (username.isBlank() || code.isBlank()) {
-            notifyAllObservers("Fill in all the required fields");
+            showMessage("Fill in all the required fields");
             return;
         }
+
         if (!busy) {
             // Spam protection
             busy = true;
 
             // Joining lobby... loading animation
-            Timer joiningLobby = getLoadingAnimation("Joining lobby");
+            Timer joiningLobbyAnimation = getLoadingAnimation("Joining lobby");
 
             TimerTask task = new TimerTask() {
                 @Override
@@ -59,19 +61,19 @@ public class Login implements Observable {
                         exception = e.getMessage();
                     }
 
-                    joiningLobby.cancel();
+                    joiningLobbyAnimation.cancel();
 
                     // Process finished
                     busy = false;
 
                     if (exception != null) {
-                        notifyAllObservers(exception);
+                        showMessage(exception);
                         return;
                     }
 
                     // At this point player can join the lobby.
                     roomCode = code;
-                    Platform.runLater(() -> initLobbyView(player_uuid, roomCode));
+                    Platform.runLater(() -> showLobbyView(player_uuid, roomCode));
                 }
             };
             // Run function after 1sec, give space for the fetching animation to run.
@@ -81,7 +83,7 @@ public class Login implements Observable {
 
     public void host(String username) {
         if (username.isBlank()) {
-            notifyAllObservers("Fill in all the required fields");
+            showMessage("Fill in all the required fields");
             return;
         }
 
@@ -111,7 +113,7 @@ public class Login implements Observable {
 
                     creatingLobbyAnimation.cancel();
                     // Go to lobby view
-                    Platform.runLater(() -> initLobbyView(player_uuid, roomCode));
+                    Platform.runLater(() -> showLobbyView(player_uuid, roomCode));
                 }
             };
 
@@ -154,12 +156,20 @@ public class Login implements Observable {
         return timer;
     }
 
-    private void initLobbyView(String player_uuid, String roomCode) {
+    private void showLobbyView(String player_uuid, String roomCode) {
         Scene scene = new Scene(new LobbyView(primaryStage, player_uuid, roomCode), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
         String css = "css/styling.css";
         scene.getStylesheets().add(css);
         primaryStage.setScene(scene);
     }
+
+    private void showMessage(String message) {
+        notifyAllObservers(message);
+    }
+
+    /*
+    Observer functions
+    */
 
     @Override
     public void registerObserver(Observer observer) {
