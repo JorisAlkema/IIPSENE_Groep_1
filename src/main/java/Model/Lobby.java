@@ -4,12 +4,10 @@ import Service.FirebaseService;
 import Service.Observable;
 import Service.Observer;
 import View.MainMenuView;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.cloud.firestore.*;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 
