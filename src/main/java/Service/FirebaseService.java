@@ -87,7 +87,11 @@ public class FirebaseService {
         DocumentReference documentReference = db.collection("rooms").document(code);
         Map<String, Object> snapShot = getDocumentData("rooms", code);
         Map<String, Object> players = (Map<String, Object>) snapShot.get("players");
-        if (players != null) {
+
+        // if you were the last player remove the room
+        if (players.size() == 1) {
+            db.collection("rooms").document(code).delete();
+        } else if (players != null) {
             players.remove(playerUUID);
             snapShot.put("players", players);
             documentReference.update(snapShot);
