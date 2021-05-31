@@ -111,6 +111,7 @@ public class FirebaseService {
                 players.put(uuid, host);
 
                 data.put("ongoing", false);
+                data.put("message", "Waiting for the host to start the game");
                 data.put("players", players);
 
                 rooms.document(code).set(data);
@@ -122,6 +123,13 @@ public class FirebaseService {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public void updateMessageInLobby(String code, String message) {
+        DocumentReference documentReference = db.collection("rooms").document(code);
+        Map<String, Object> snapShot = getDocumentData("rooms", code);
+        snapShot.put("message", message);
+        documentReference.update(snapShot);
     }
 
     public void removeLobby(String code) {
