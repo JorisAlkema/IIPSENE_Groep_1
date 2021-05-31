@@ -36,7 +36,7 @@ public class GameSetupService {
     // Lees routecell file, maak routes met routecells
     public GameSetupService() {
         this.cities = readCitiesFromFile(citiesFile);
-        this.cityOverlays = createCityOverlays();
+//        this.cityOverlays = createCityOverlays();
 
         this.routes = readRoutesFromFile(routeCellFile);
 
@@ -94,21 +94,6 @@ public class GameSetupService {
         return tickets;
     }
 
-    private ArrayList<Circle> createCityOverlays() {
-        ArrayList<Circle> circleList = new ArrayList<>();
-        for (City city : this.cities) {
-            circleList.add(createCityOverlay(city));
-        }
-        return circleList;
-    }
-
-    private Circle createCityOverlay(City city) {
-        Circle circle = new Circle();
-        circle.setTranslateX(city.getxOffset() / 2);
-        circle.setTranslateY(city.getyOffset() / 2);
-        circle.setFill(Color.TRANSPARENT);
-        return circle;
-    }
 
     private ArrayList<City> readCitiesFromFile(String filename) {
         ArrayList<City> cities = new ArrayList<>();
@@ -146,39 +131,14 @@ public class GameSetupService {
         return cities;
     }
 
-    private ArrayList<Rectangle> createRouteCellOverlays() {
-        ArrayList<Rectangle> routeCells = new ArrayList<>();
-        for (RouteCell routeCell : this.routeCells) {
-            routeCells.add( createRectangleOverlay(routeCell) );
-        }
-        return routeCells;
-    }
 
-    /**
-     * Creates a Rectangle object to overlay on the MapView background image. The rectangle
-     * overlay represents the user to interact with the given RouteCell or the Route that
-     * it is a part of. The rectangles height, width and EventHandler are currently added
-     * in the MapView class
-     * @param routeCell an individual RouteCell
-     * @return a javafx Rectangle object corresponding to the given RouteCell
-     */
-    private Rectangle createRectangleOverlay(RouteCell routeCell) {
-        Rectangle rectangle = new Rectangle();
-        // Divide by two because the file contains offsets for the large map,
-        // and the MapView starts by showing the small map.
-        rectangle.setTranslateX(routeCell.getOffsetX());
-        rectangle.setTranslateY(routeCell.getOffsetY());
-        rectangle.setRotate(routeCell.getRotation());
-        rectangle.setFill(Color.TRANSPARENT);
-        return rectangle;
-    }
 
     public ArrayList<Group> createRouteGroups() {
         ArrayList<Group> groups = new ArrayList<>();
         for (Route route : routes) {
             Group group = new Group();
             for (RouteCell routeCell : route.getRouteCells()) {
-                group.getChildren().add(createRectangleOverlay(routeCell));
+//                group.getChildren().add(createRectangleOverlay(routeCell));
             }
 //            for (Node node : group.getChildren()) {
 //                System.out.println(node.getTranslateX() + " " + node.getTranslateY());
@@ -243,8 +203,11 @@ public class GameSetupService {
                     }
                     splitLine = line.split(" ");
                 }
-
-                routes.add(new Route(firstCity, secondCity, routeCells, color, type, locomotives));
+                Route route = new Route(firstCity, secondCity, routeCells, color, type, locomotives);
+                for (RouteCell routeCell : routeCells) {
+                    routeCell.setParentRoute(route);
+                }
+                routes.add(route);
             }
             bufferedReader.close();
         } catch (IOException ioException) {
@@ -308,5 +271,13 @@ public class GameSetupService {
 
     public ArrayList<DestinationTicket> getDestinationTickets() {
         return destinationTickets;
+    }
+
+    public ArrayList<Route> getRoutes() {
+        return routes;
+    }
+
+    public ArrayList<City> getCities() {
+        return cities;
     }
 }

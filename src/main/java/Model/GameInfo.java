@@ -1,5 +1,6 @@
 package Model;
 
+import Service.GameSetupService;
 import Service.Observable;
 import Service.Observer;
 import javafx.application.Platform;
@@ -18,11 +19,19 @@ public class GameInfo implements Observable {
     private int playerCount = players.size();
 
     private int turnCount = 0;
+    private GameSetupService gameSetupService;
+    private final ArrayList<City> cities;
+    private final ArrayList<Route> routes;
 
     private int seconds;
     private Timer timer;
 
     public GameInfo(Stage primaryStage) {
+        // Move (part of) this to initGame later
+        gameSetupService = new GameSetupService();
+        cities = gameSetupService.getCities();
+        routes = gameSetupService.getRoutes();
+
         primaryStage.setOnCloseRequest(event -> timer.cancel());
     }
 
@@ -116,5 +125,9 @@ public class GameInfo implements Observable {
         for (Observer observer : observers) {
             observer.update(this, o);
         }
+    }
+
+    public GameSetupService getGameSetupService() {
+        return gameSetupService;
     }
 }

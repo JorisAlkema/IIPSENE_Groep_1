@@ -11,7 +11,7 @@ public class Route {
     private final String color;
     private final String type; // STANDARD, TUNNEL or FERRY
     private final int locomotives; // 0 if not of type FERRY
-//    private Player owner;
+    private Player owner;
 
     public Route(City firstCity, City secondCity, ArrayList<RouteCell> routeCells, String color, String type, int locomotives) {
         this.firstCity = firstCity;
@@ -24,5 +24,13 @@ public class Route {
 
     public ArrayList<RouteCell> getRouteCells() {
         return routeCells;
+    }
+
+    public void setOwner(Player owner) {
+        this.owner = owner;
+    }
+
+    public Player getOwner() {
+        return owner;
     }
 }
