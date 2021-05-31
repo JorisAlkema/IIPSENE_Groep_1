@@ -65,7 +65,7 @@ public class GameView extends BorderPane implements Observer {
         setLeft(vBox);
         setRight(new CardView());
 
-        gameInfo.addObserver(this);
+        gameInfo.registerObserver(this);
         // Change to gameinfo.initGame() when player implementation is finished
         gameInfo.countdownTimer();
         gameInfo.setTimerText(gameInfo.getTimer());

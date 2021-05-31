@@ -16,6 +16,6 @@ public class LobbyController {
     }
 
     public void addObserver(Observer observer) {
-        lobby.addObserver(observer);
+        lobby.registerObserver(observer);
     }
 }
