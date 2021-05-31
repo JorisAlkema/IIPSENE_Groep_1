@@ -1,15 +1,15 @@
 package Model;
 
+import Service.Observable;
 import Service.Observer;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import java.util.*;
 
-public class GameInfo {
-
-    private List<Service.Observer> observers = new ArrayList<>();
+public class GameInfo implements Observable {
     private String timerText;
+    private ArrayList<Observer> observers = new ArrayList<>();
 
     // TODO: Add Firebase compatibility
     /* 'REAL' ARRAYLIST GETS GENERATED IN THE LOBBY
@@ -19,8 +19,8 @@ public class GameInfo {
 
     private int turnCount = 0;
 
-    static int seconds;
-    static Timer timer;
+    private int seconds;
+    private Timer timer;
 
     public GameInfo(Stage primaryStage) {
         primaryStage.setOnCloseRequest(event -> timer.cancel());
@@ -84,12 +84,14 @@ public class GameInfo {
         return timerFormat(setSeconds());
     }
 
+    public void stopTimer() {
+        timer.cancel();
+    }
+
     public void setTimerText(String timerText) {
         this.timerText = timerText;
         Platform.runLater(() -> {
-            for (Service.Observer observer : this.observers) {
-                observer.update(this.timerText);
-            }
+            notifyAllObservers(this.timerText);
         });
     }
 
@@ -99,11 +101,20 @@ public class GameInfo {
         return String.format("%d:%02d", minutes, seconds);
     }
 
-    public void addObserver(Service.Observer observer) {
-        this.observers.add(observer);
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
     }
 
-    public void removeObserver(Observer observer) {
-        this.observers.remove(observer);
+    @Override
+    public void unregisterObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyAllObservers(Object o) {
+        for (Observer observer : observers) {
+            observer.update(this, o);
+        }
     }
 }

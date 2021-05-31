@@ -59,3 +59,7 @@
     -fx-padding: 15;
     -fx-background-color: #000000b9;
 }
+
+#black_bg {
+    -fx-background-color: #000000b9;
+}

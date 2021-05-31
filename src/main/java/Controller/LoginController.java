@@ -2,9 +2,8 @@ package Controller;
 
 import Model.Login;
 import Service.FirebaseService;
-import View.LoginObserver;
+import Service.Observer;
 import View.MainMenuView;
-import View.Observer;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -39,7 +38,7 @@ public class LoginController {
         login.host(username);
     }
 
-    public void addObserver(LoginObserver loginObserver) {
-        login.addObserver(loginObserver);
+    public void addObserver(Observer observer) {
+        login.registerObserver(observer);
     }
 }

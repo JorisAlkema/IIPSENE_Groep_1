@@ -95,17 +95,13 @@ public class FirebaseService {
     }
 
     // Remove a player using it's UUID and the roomcode.
-    // It is possible to remove other players than urself, but that is outside the scope.
+    // It is possible to remove other players, but that is outside the scope.
     public void removePlayer(String playerUUID, String code) {
         DocumentReference documentReference = db.collection(code).document("players");
         Map<String, Object> updates = new HashMap<>();
         updates.put(playerUUID, FieldValue.delete());
         // Update and delete the "capital" field in the document
         ApiFuture<WriteResult> writeResult = documentReference.update(updates);
-    }
-
-    public void updatePlayerData() {
-
     }
 
     // if lobby is created succesfully it return true
@@ -136,5 +132,13 @@ public class FirebaseService {
 
     public void removeLobby(String code) {
 
+    }
+
+    public void updatePlayerData() {
+
+    }
+
+    public DocumentReference getDocumentReference(String room_code, String path) {
+        return db.collection(room_code).document(path);
     }
 }

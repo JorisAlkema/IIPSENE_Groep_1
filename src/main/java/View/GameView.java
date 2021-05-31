@@ -1,6 +1,7 @@
 package View;
 
 import Model.GameInfo;
+import Service.Observable;
 import Service.Observer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -64,14 +65,14 @@ public class GameView extends BorderPane implements Observer {
         setLeft(vBox);
         setRight(new CardView());
 
-        gameInfo.addObserver(this);
+        gameInfo.registerObserver(this);
         // Change to gameinfo.initGame() when player implementation is finished
         gameInfo.countdownTimer();
         gameInfo.setTimerText(gameInfo.getTimer());
     }
 
     @Override
-    public void update(Object timerText) {
+    public void update(Observable observable, Object timerText) {
         label.setText((String) timerText);
     }
 }
