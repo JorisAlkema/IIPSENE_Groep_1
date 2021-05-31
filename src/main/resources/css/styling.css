@@ -63,3 +63,8 @@
 #black_bg {
     -fx-background-color: #000000b9;
 }
+
+#playerbox {
+    -fx-background-color: #000000b9;
+    -fx-padding: 30 15;
+}

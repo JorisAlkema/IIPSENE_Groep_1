@@ -5,6 +5,7 @@ import Controller.LoginController;
 import Model.Player;
 import Service.Observable;
 import Service.Observer;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -22,9 +23,10 @@ import java.util.Set;
 public class LobbyView extends StackPane implements Observer {
 
     private LobbyController controller;
-    private Text playerText;
     private Text message;
     private Text partyCode;
+    private VBox players_wrapper;
+    private VBox players;
 
     public LobbyView(Stage primaryStage, String player_uuid, String roomCode) {
         controller = new LobbyController(primaryStage, player_uuid, roomCode);
@@ -53,10 +55,9 @@ public class LobbyView extends StackPane implements Observer {
         title.setFitWidth(title.getImage().getWidth() * 0.4);
         title.setFitHeight(title.getImage().getHeight() * 0.4);
 
-        VBox players = new VBox(10);
-        players.setId("black_bg");
-        players.setAlignment(Pos.TOP_CENTER);
-        players.setPadding(new Insets(10));
+        players_wrapper = new VBox(10);
+        players_wrapper.setId("black_bg");
+        players_wrapper.setAlignment(Pos.TOP_CENTER);
 
         VBox info = new VBox(10);
 //        info.setId("black_bg");
@@ -109,13 +110,15 @@ public class LobbyView extends StackPane implements Observer {
         info.getChildren().add(messageBox);
         info.getChildren().add(buttons);
 
-        // Test eventlisteners
-        playerText = new Text();
-        playerText.setId("text");
-        players.getChildren().add(playerText);
+
+        players_wrapper.getChildren().add(createPlayerName("Players", "0/5"));
+        players = new VBox(10);
+        players.setPadding(new Insets(10));
+
+        players_wrapper.getChildren().add(players);
 
         grid.add(title, 0,0,1,1);
-        grid.add(players, 0,1,1,1);
+        grid.add(players_wrapper, 0,1,1,1);
         grid.add(info, 1,1,1,1);
 
 
@@ -130,17 +133,24 @@ public class LobbyView extends StackPane implements Observer {
         Map<String, Object> data = (Map<String, Object>) o;
 
         if (data.containsKey("players")) {
-            Map<String, Object> players = (Map<String, Object>) data.get("players");
-            Set<String> players_uuids = players.keySet();
+            Map<String, Object> all_players = (Map<String, Object>) data.get("players");
+            Set<String> players_uuids = all_players.keySet();
 
-            StringBuilder player_names = new StringBuilder();
-            for (String id : players_uuids) {
-                Map<String, Object> player = (Map<String, Object>) players.get(id);
-                player_names.append(player.get("username"));
-                player_names.append("\n");
-            }
-
-            this.playerText.setText(player_names.toString());
+            Platform.runLater(() -> {
+                players_wrapper.getChildren().removeAll(players_wrapper.getChildren());
+                players_wrapper.getChildren().add(createPlayerName("Players", String.format("%s/5", all_players.size())));
+                players_wrapper.getChildren().add(players);
+                players.getChildren().removeAll(players.getChildren());
+                for (String id : players_uuids) {
+                    Map<String, Object> player = (Map<String, Object>) all_players.get(id);
+                    String info = (Boolean) player.get("host") ? "Host" : "Player";
+                    if ((Boolean) player.get("host")) {
+                        players.getChildren().add(0, createPlayerName((String) player.get("username"), info));
+                    } else {
+                        players.getChildren().add(createPlayerName((String) player.get("username"), info));
+                    }
+                }
+            });
         }
 
         if (data.containsKey("message")) {
@@ -150,5 +160,23 @@ public class LobbyView extends StackPane implements Observer {
         if (data.containsKey("partyCode")) {
             this.partyCode.setText((String) data.get("partyCode"));
         }
+    }
+
+    public HBox createPlayerName(String name, String info) {
+        HBox player_box = new HBox();
+        player_box.setId("playerbox");
+        Text player_name = new Text(name);
+        player_name.setId("text");
+
+        Text player_info = new Text(info);
+        player_info.setId("text");
+
+        Region r = new Region();
+        HBox.setHgrow(r, Priority.ALWAYS);
+
+        player_box.getChildren().add(player_name);
+        player_box.getChildren().add(r);
+        player_box.getChildren().add(player_info);
+        return player_box;
     }
 }
