@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 public class LobbyView extends StackPane implements Observer {
 
@@ -126,20 +127,28 @@ public class LobbyView extends StackPane implements Observer {
     }
     @Override
     public void update(Observable observable, Object o) {
-        Map<String, Object> viewData = (Map<String, Object>) o;
-        if (viewData.get("players") != null) {
+        Map<String, Object> data = (Map<String, Object>) o;
+
+        if (data.containsKey("players")) {
+            Map<String, Object> players = (Map<String, Object>) data.get("players");
+            Set<String> players_uuids = players.keySet();
+
             StringBuilder player_names = new StringBuilder();
-            for (Player player : (Player[]) viewData.get("players")) {
-                player_names.append(player.getName());
+            for (String id : players_uuids) {
+                Map<String, Object> player = (Map<String, Object>) players.get(id);
+                player_names.append(player.get("username"));
                 player_names.append("\n");
             }
+
             this.playerText.setText(player_names.toString());
         }
-        if (viewData.get("partycode") != null) {
-            this.partyCode.setText((String) viewData.get("partycode"));
+
+        if (data.containsKey("message")) {
+            this.message.setText((String) data.get("message"));
         }
-        if (viewData.get("message") != null) {
-            this.message.setText((String) viewData.get("message"));
+
+        if (data.containsKey("partyCode")) {
+            this.partyCode.setText((String) data.get("partyCode"));
         }
     }
 }

@@ -87,7 +87,11 @@ public class FirebaseService {
         DocumentReference documentReference = db.collection("rooms").document(code);
         Map<String, Object> snapShot = getDocumentData("rooms", code);
         Map<String, Object> players = (Map<String, Object>) snapShot.get("players");
-        if (players != null) {
+
+        // if you were the last player remove the room
+        if (players.size() == 1) {
+            db.collection("rooms").document(code).delete();
+        } else if (players != null) {
             players.remove(playerUUID);
             snapShot.put("players", players);
             documentReference.update(snapShot);
@@ -111,6 +115,7 @@ public class FirebaseService {
                 players.put(uuid, host);
 
                 data.put("ongoing", false);
+                data.put("message", "Waiting for the host to start the game");
                 data.put("players", players);
 
                 rooms.document(code).set(data);
@@ -122,6 +127,13 @@ public class FirebaseService {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public void updateMessageInLobby(String code, String message) {
+        DocumentReference documentReference = db.collection("rooms").document(code);
+        Map<String, Object> snapShot = getDocumentData("rooms", code);
+        snapShot.put("message", message);
+        documentReference.update(snapShot);
     }
 
     public void removeLobby(String code) {

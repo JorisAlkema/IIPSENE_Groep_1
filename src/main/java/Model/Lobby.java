@@ -4,12 +4,10 @@ import Service.FirebaseService;
 import Service.Observable;
 import Service.Observer;
 import View.MainMenuView;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.cloud.firestore.*;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 
@@ -37,9 +35,12 @@ public class Lobby implements Observable {
         });
 
         Platform.runLater(() -> {
+            Map<String, Object> partyCode = new HashMap<>();
+            partyCode.put("partyCode", roomCode);
+            partyCode.put("Retrieving data...\n", roomCode);
+            notifyAllObservers(partyCode);
+
             attachListener();
-            updatePartyCode(roomCode);
-            updateMessage("Retrieving room data...\n");
         });
     }
 
@@ -51,10 +52,6 @@ public class Lobby implements Observable {
             detachListener();
             // remove yourself from the room
             firebaseService.removePlayer(player_uuid, roomCode);
-
-            // if you were the last player remove the room
-
-
         }
     }
 
@@ -68,7 +65,7 @@ public class Lobby implements Observable {
     public void attachListener() {
         playerEventListener = firebaseService.getDocumentReference("rooms", roomCode).addSnapshotListener((document, e) -> {
             if (document != null && document.getData() != null) {
-                updatePlayers(document.getData());
+                update(document.getData());
             }
         });
     }
@@ -78,41 +75,24 @@ public class Lobby implements Observable {
     }
 
     // Handle new data from eventlistener
-    private void updatePlayers(Map<String, Object> data) {
+    private void update(Map<String, Object> data) {
         Map<String, Object> all_players = (Map<String, Object>) data.get("players");
 
-        Set<String> uuids = all_players.keySet();
-        Player[] players = new Player[uuids.size()];
+//        Set<String> uuids = all_players.keySet();
+//        Player[] players = new Player[uuids.size()];
+//
+//        int index = 0;
+//        for (String id : uuids) {
+//            Map<String, Object> playerData = (Map<String, Object>) all_players.get(id);
+//            String username = (String) playerData.get("username");
+//            players[index] = new Player(username, id);
+//            index++;
+//        }
+//
+//        this.players = players;
 
-        int index = 0;
-        for (String id : uuids) {
-            Map<String, Object> playerData = (Map<String, Object>) all_players.get(id);
-            String username = (String) playerData.get("username");
-            players[index] = new Player(username, id);
-            index++;
-        }
+        notifyAllObservers(data);
 
-        this.players = players;
-
-        Map<String, Object> viewData = new HashMap<>();
-        viewData.put("players", players);
-        viewData.put("message", "Waiting for host to start the game");
-        notifyAllObservers(viewData);
-
-    }
-
-    // Update message on the view
-    private void updateMessage(String message) {
-        Map<String, Object> viewData = new HashMap<>();
-        viewData.put("message", message);
-        notifyAllObservers(viewData);
-    }
-
-    // Update partycode on the view
-    private void updatePartyCode(String partycode) {
-        Map<String, Object> viewData = new HashMap<>();
-        viewData.put("partycode", partycode);
-        notifyAllObservers(viewData);
     }
 
     /*
