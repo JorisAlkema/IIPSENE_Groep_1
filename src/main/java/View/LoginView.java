@@ -22,6 +22,13 @@ public class LoginView extends StackPane implements Observer {
     public LoginView(Stage primaryStage, Boolean host) {
         controller = new LoginController(primaryStage);
         controller.addObserver(this);
+        createView(host);
+
+        // Unfocus textfield when clicked outside the textfield
+        setOnMousePressed(e -> requestFocus());
+    }
+
+    private void createView(Boolean host) {
         // Logo
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(40));
@@ -47,26 +54,18 @@ public class LoginView extends StackPane implements Observer {
         Button returnToMenu = new Button("Return to menu");
 
         // if player wants to join a game
-        if (!host) {
-            app.getChildren().add(joinScreen());
-        } else {
-            app.getChildren().add(hostScreen());
-        }
+        VBox input = (host) ? hostScreen() : joinScreen();
 
-
+        app.getChildren().add(input);
         app.getChildren().add(returnToMenu);
-
         getChildren().add(background);
         getChildren().add(grid);
         getChildren().add(app);
 
-        //returnToMenu
+        /*
+         * Functions for buttons
+         * */
         returnToMenu.setOnMouseClicked(e -> controller.returnToMenu());
-
-        // Unfocus textfield when clicked outside the textfield
-        setOnMousePressed(e -> {
-            requestFocus();
-        });
     }
 
     private VBox joinScreen() {
