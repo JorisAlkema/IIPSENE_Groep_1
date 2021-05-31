@@ -35,9 +35,12 @@ public class Lobby implements Observable {
         });
 
         Platform.runLater(() -> {
+            Map<String, Object> partyCode = new HashMap<>();
+            partyCode.put("partyCode", roomCode);
+            partyCode.put("Retrieving data...\n", roomCode);
+            notifyAllObservers(partyCode);
+            
             attachListener();
-            updatePartyCode(roomCode);
-            updateMessage("Retrieving room data...\n");
         });
     }
 
@@ -66,7 +69,7 @@ public class Lobby implements Observable {
     public void attachListener() {
         playerEventListener = firebaseService.getDocumentReference("rooms", roomCode).addSnapshotListener((document, e) -> {
             if (document != null && document.getData() != null) {
-                updatePlayers(document.getData());
+                update(document.getData());
             }
         });
     }
@@ -76,7 +79,7 @@ public class Lobby implements Observable {
     }
 
     // Handle new data from eventlistener
-    private void updatePlayers(Map<String, Object> data) {
+    private void update(Map<String, Object> data) {
         Map<String, Object> all_players = (Map<String, Object>) data.get("players");
 
         Set<String> uuids = all_players.keySet();
@@ -91,26 +94,8 @@ public class Lobby implements Observable {
         }
 
         this.players = players;
+        notifyAllObservers(data);
 
-        Map<String, Object> viewData = new HashMap<>();
-        viewData.put("players", players);
-        viewData.put("message", "Waiting for host to start the game");
-        notifyAllObservers(viewData);
-
-    }
-
-    // Update message on the view
-    private void updateMessage(String message) {
-        Map<String, Object> viewData = new HashMap<>();
-        viewData.put("message", message);
-        notifyAllObservers(viewData);
-    }
-
-    // Update partycode on the view
-    private void updatePartyCode(String partycode) {
-        Map<String, Object> viewData = new HashMap<>();
-        viewData.put("partycode", partycode);
-        notifyAllObservers(viewData);
     }
 
     /*
