@@ -17,14 +17,15 @@ import java.util.ArrayList;
 
 public class MapModel implements Observable {
 
+    private ArrayList<Observer> observers;
     private final ArrayList<Route> routes;
     private final ArrayList<City> cities;
 //    private final GameSetupService gameSetupService;
 
 
 //    private ImageView backgroundImage;
-//    private ArrayList<Rectangle> rectangleOverlays;
-//    private ArrayList<Circle> circleOverlays;
+    private ArrayList<RouteCell> routeCellOverlays;
+    private final ArrayList<Circle> cityOverlays;
 //    private StackPane stackPane;
 
     private boolean zoomedIn;
@@ -42,8 +43,11 @@ public class MapModel implements Observable {
 
 
     public MapModel(ArrayList<Route> routes, ArrayList<City> cities) {
+        this.observers = new ArrayList<>();
         this.cities = cities;
         this.routes = routes;
+        this.cityOverlays = createCityOverlays();
+        this.routeCellOverlays = createRouteCellOverlays();
         this.zoomedIn = false;
 
     }
@@ -56,8 +60,8 @@ public class MapModel implements Observable {
         this.backgroundImage = bigBackgroundImage;
         for (Route route : routes) {
             for (RouteCell routeCell : route.getRouteCells()) {
-                routeCell.setOffsetX(routeCell.getOffsetX() * 2);
-                routeCell.setOffsetY(routeCell.getOffsetY() * 2);
+                routeCell.setTranslateX(routeCell.getTranslateX() * 2);
+                routeCell.setTranslateY(routeCell.getTranslateY() * 2);
             }
         }
 
@@ -78,8 +82,8 @@ public class MapModel implements Observable {
         this.backgroundImage = smallBackgroundImage;
         for (Route route : routes) {
             for (RouteCell routeCell : route.getRouteCells()) {
-                routeCell.setOffsetX(routeCell.getOffsetX() / 2);
-                routeCell.setOffsetY(routeCell.getOffsetY() / 2);
+                routeCell.setTranslateX(routeCell.getTranslateX() / 2);
+                routeCell.setTranslateY(routeCell.getTranslateY() / 2);
             }
         }
 
@@ -91,9 +95,35 @@ public class MapModel implements Observable {
         zoomedIn = false;
     }
 
+    private ArrayList<Circle> createCityOverlays() {
+        ArrayList<Circle> circleList = new ArrayList<>();
+        for (City city : this.cities) {
+            Circle circle = new Circle();
+            circle.setTranslateX(city.getOffsetX() / 2);
+            circle.setTranslateY(city.getOffsetY() / 2);
+            circle.setFill(Color.TRANSPARENT);
+            circleList.add(circle);
+        }
+        return circleList;
+    }
+
+    private ArrayList<RouteCell> createRouteCellOverlays() {
+        ArrayList<RouteCell> overlays = new ArrayList<>();
+
+        for (Route route : routes) {
+            for (RouteCell routeCell : route.getRouteCells()) {
+                routeCell.setTranslateX(routeCell.getTranslateX() / 2);
+                routeCell.setTranslateY(routeCell.getTranslateY() / 2);
+                routeCell.setFill(Color.TRANSPARENT);
+                overlays.add( routeCell );
+            }
+        }
+        return overlays;
+    }
+
     @Override
     public void registerObserver(Observer observer) {
-
+        this.observers.add(observer);
     }
 
     @Override
@@ -103,11 +133,24 @@ public class MapModel implements Observable {
 
     @Override
     public void notifyAllObservers(Object o) {
-
+        for(Observer observer : this.observers) {
+            observer.update(this, o);
+        }
     }
 
+    public ImageView getBackgroundImage() {
+        return backgroundImage;
+    }
 
-//    public void zoomIn() {
+    public ArrayList<Circle> getCityOverlays() {
+        return cityOverlays;
+    }
+
+    public ArrayList<RouteCell> getRouteCellOverlays() {
+        return routeCellOverlays;
+    }
+
+    //    public void zoomIn() {
 //        if (zoomedIn) {
 //            return;
 //        }
