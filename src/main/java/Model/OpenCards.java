@@ -3,7 +3,7 @@ package Model;
 import java.util.ArrayList;
 
 public class OpenCards {
-    ArrayList<TrainCard> openCards = new ArrayList<TrainCard>();
+    public ArrayList<TrainCard> openCards = new ArrayList<TrainCard>();
     private TrainCardDeck deck;
 
     public OpenCards(TrainCardDeck deck) {

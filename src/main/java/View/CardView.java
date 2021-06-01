@@ -1,6 +1,7 @@
 package View;
 
 import Model.OpenCards;
+import Model.TrainCard;
 import Model.TrainCardDeck;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -24,40 +25,36 @@ public static ArrayList<Button> buttons = new ArrayList<Button>();
         OpenCards openCards = new OpenCards(deck);
 
         getTrainCard.setOnAction(e -> {
-            //todo: give the player a card app.getRandomCard(deck);
+            TrainCard randomCard = deck.getRandomCard();
+            System.out.println(randomCard);
+            System.out.println(randomCard.getColor());
         });
 
-        buttons = createButtons(buttons,openCards);
+        createButtons(openCards);
 
-        for (Button clickedButton: buttons){
-            clickedButton.setOnAction(e ->{
-                System.out.println(clickedButton);
-                updateButtons(clickedButton);
-            });
-        }
-
-
-//        for (int i = 0; i < 5; i++) {
-//            buttons.get(i).setOnAction(e -> {
-//                //dit is een schande voor de mensheid, maar ik mag geen normale for-loop gebruiken want ik kan geen [i] gebuikren in een event. heluuup!
-//                System.out.println(openCards.getOpenCards().get(i));
-//                openCards.getOpenCards().remove(i);
-//                openCards.fillOpenCards();
-//            });
-//        }
+        clickedButtons(deck,openCards);
     }
 
-    public ArrayList<Button> createButtons(ArrayList<Button> buttons, OpenCards openCards){
+    public void createButtons(OpenCards openCards){
         //forloop die knoppen maakt van de opencardsarray
         for (int i = 0; i < openCards.getOpenCards().size(); i++) {
             CardView.buttons.add(new Button(openCards.getOpenCards().get(i).getColor()));
         }
         getChildren().addAll(buttons);
-        return buttons;
     }
 
-    public void updateButtons(Button clickedButton){
-        getChildren().remove(clickedButton);
-
+    public void clickedButtons(TrainCardDeck deck,OpenCards openCards){
+        for (Button clickedButton: buttons){
+            clickedButton.setOnAction(e ->{
+                System.out.println(openCards.openCards.get(buttons.indexOf(clickedButton)));
+                System.out.println(openCards.openCards.get(buttons.indexOf(clickedButton)).getColor());
+                getChildren().remove(clickedButton);
+                buttons.remove(clickedButton);
+                Button newButton = new Button(deck.getRandomCard().getColor());
+                buttons.add(newButton);
+                getChildren().add(newButton);
+                clickedButtons(deck,openCards);
+            });
+        }
     }
 }
