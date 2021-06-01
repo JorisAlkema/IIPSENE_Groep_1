@@ -2,6 +2,7 @@ package Controller;
 
 import Model.Login;
 import Service.FirebaseService;
+import Service.Observer;
 import View.MainMenuView;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
@@ -12,22 +13,32 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class LoginController {
-    private Login login = new Login();
+    private Login login;
+
+    public LoginController(Stage primaryStage) {
+        this.login = new Login(primaryStage);
+    }
 
     // Return to Menu
-    public void returnToMenu(Stage primaryStage) {
-        login.returnToMenu(primaryStage);
+    public void returnToMenu() {
+        login.returnToMenu();
     }
 
     // Join game
     public void join(TextField inputUsername, TextField inputCode) {
         // Try to join lobby using these 2 arguments
-        login.join(inputUsername, inputCode);
-
+        String username = inputUsername.getText();
+        String code = inputCode.getText();
+        login.join(username, code);
     }
 
     //Host game
     public void host(TextField inputUsername) {
-        System.out.println(String.format("%s wants to host a game", inputUsername.getText()));
+        String username = inputUsername.getText();
+        login.host(username);
+    }
+
+    public void addObserver(Observer observer) {
+        login.registerObserver(observer);
     }
 }

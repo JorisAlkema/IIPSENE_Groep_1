@@ -1,8 +1,15 @@
 package View;
 
+import Controller.MapController;
+import Model.MapModel;
+import Model.RouteCell;
 import Service.GameSetupService;
+import Service.Observable;
+import Service.Observer;
 import Service.OverlayEventHandler;
 import javafx.event.Event;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,10 +23,11 @@ import javafx.scene.shape.Rectangle;
 import java.util.ArrayList;
 
 /** Constructs a scene with a pannable Map background. */
-public class MapView extends ScrollPane {
-    private final GameSetupService gameSetupService;
+public class MapView extends ScrollPane implements Observer {
+    private final MapController mapController;
+//    private final GameSetupService gameSetupService;
     private ImageView backgroundImage;
-    private ArrayList<Rectangle> rectangleOverlays;
+    private ArrayList<RouteCell> routeCellOverlays;
     private ArrayList<Circle> circleOverlays;
     private StackPane stackPane;
     private boolean zoomedIn;
@@ -34,15 +42,19 @@ public class MapView extends ScrollPane {
     private static final double smallRadius = 7;
     private static final double bigRadius = 15;
 
-    public MapView() {
+    public MapView(MapController mapController) {
         super();
-        this.gameSetupService = new GameSetupService();
+        this.mapController = mapController;
+        this.mapController.getMapModel().registerObserver(this);
+//        this.gameSetupService = new GameSetupService();
         this.backgroundImage = smallBackgroundImage;
         this.setContent(initStackPane());
         // Hide scrollbars
         this.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         this.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         this.zoomedIn = false;
+//        MapModel model = new MapModel();
+//        model.registerObserver(this);
     }
 
     public void zoomIn() {
@@ -52,7 +64,7 @@ public class MapView extends ScrollPane {
         this.backgroundImage = bigBackgroundImage;
         stackPane.getChildren().set(0, this.backgroundImage);
         setPannable(true);
-        for (Rectangle rectangle : rectangleOverlays) {
+        for (Rectangle rectangle : routeCellOverlays) {
             rectangle.setWidth(bigCellWidth);
             rectangle.setHeight(bigCellHeight);
             rectangle.setTranslateX(rectangle.getTranslateX() * 2);
@@ -79,7 +91,7 @@ public class MapView extends ScrollPane {
         this.backgroundImage = smallBackgroundImage;
         stackPane.getChildren().set(0, this.backgroundImage);
         setPannable(false);
-        for (Rectangle rectangle : rectangleOverlays) {
+        for (Rectangle rectangle : routeCellOverlays) {
             rectangle.setWidth(smallCellWidth);
             rectangle.setHeight(smallCellHeight);
             rectangle.setTranslateX(rectangle.getTranslateX() / 2);
@@ -100,23 +112,8 @@ public class MapView extends ScrollPane {
         // Stack overlays on top of the background image
         stackPane = new StackPane();
         stackPane.getChildren().add(backgroundImage);
-        rectangleOverlays = gameSetupService.getRouteCellOverlays();
-        for (Rectangle rectangle : rectangleOverlays) {
-            rectangle.setWidth(smallCellWidth);
-            rectangle.setHeight(smallCellHeight);
-            rectangle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
-                    e -> {
-                        if (rectangle.getFill().equals(Color.TRANSPARENT)) {
-                            rectangle.setFill( zoomedIn ? bigImagePattern : smallImagePattern );
-                        } else {
-                            rectangle.setFill(Color.TRANSPARENT);
-                        }
-                    },
-                    Event::consume)
-            );
-        }
-        stackPane.getChildren().addAll(rectangleOverlays);
-        circleOverlays = gameSetupService.getCityOverlays();
+
+        circleOverlays = mapController.getMapModel().getCityOverlays();
         for (Circle circle : circleOverlays) {
             circle.setRadius(smallRadius);
             circle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
@@ -131,7 +128,36 @@ public class MapView extends ScrollPane {
             );
         }
         stackPane.getChildren().addAll(circleOverlays);
+
+        routeCellOverlays = mapController.getMapModel().getRouteCellOverlays();
+        for (RouteCell routeCellOverlay : routeCellOverlays) {
+            routeCellOverlay.setWidth(smallCellWidth);
+            routeCellOverlay.setHeight(smallCellHeight);
+            routeCellOverlay.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
+                    e -> {
+                        if (routeCellOverlay.getFill().equals(Color.TRANSPARENT)) {
+                            for (RouteCell routeCell : routeCellOverlay.getParentRoute().getRouteCells()) {
+                                routeCell.setFill(zoomedIn ? bigImagePattern : smallImagePattern);
+                            }
+                        } else {
+                            for (RouteCell routeCell : routeCellOverlay.getParentRoute().getRouteCells()) {
+                                routeCell.setFill(Color.TRANSPARENT);
+                            }
+                        }
+                    },
+                    Event::consume)
+            );
+        }
+        stackPane.getChildren().addAll(routeCellOverlays);
+
         return stackPane;
+    }
+
+
+    @Override
+    public void update(Observable observable, Object o) {
+        this.backgroundImage = ((MapModel) observable).getBackgroundImage();
+        this.zoomedIn = ((MapModel) observable).isZoomedIn();
     }
 
     public boolean isZoomedIn() {
