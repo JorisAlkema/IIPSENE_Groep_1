@@ -20,7 +20,6 @@ public class MapModel implements Observable {
     private ArrayList<Observer> observers;
     private final ArrayList<Route> routes;
     private final ArrayList<City> cities;
-//    private final GameSetupService gameSetupService;
 
 
 //    private ImageView backgroundImage;
@@ -71,7 +70,7 @@ public class MapModel implements Observable {
         }
 
         zoomedIn = true;
-        notifyAllObservers(this.backgroundImage);
+        notifyAllObservers(this);
     }
 
     public void zoomOut() {
@@ -93,6 +92,7 @@ public class MapModel implements Observable {
         }
 
         zoomedIn = false;
+        notifyAllObservers(this);
     }
 
     private ArrayList<Circle> createCityOverlays() {
@@ -200,4 +200,9 @@ public class MapModel implements Observable {
 //        }
 //        zoomedIn = false;
 //    }
+
+
+    public boolean isZoomedIn() {
+        return zoomedIn;
+    }
 }
