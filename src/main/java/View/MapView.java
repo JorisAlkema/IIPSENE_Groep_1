@@ -129,55 +129,21 @@ public class MapView extends ScrollPane implements Observer {
         }
         stackPane.getChildren().addAll(circleOverlays);
 
-        ArrayList<Group> groups = null;//gameSetupService.createRouteGroups();
-//        for (Group group : groups) {
-//            for (int i = 0; i < group.getChildren().size(); i++) {
-//                int half = group.getChildren().size() / 2;
-////            for (Node node : group.getChildren()) {
-//                Node node = group.getChildren().get(i);
-//                Rectangle rectangle = (Rectangle) node;
-////                if (i == half) {
-////                    group.setTranslateX(rectangle.getTranslateX());
-////                    group.setTranslateY(rectangle.getTranslateY());
-////                }
-//                rectangle.setWidth(bigCellWidth);
-//                rectangle.setHeight(bigCellHeight);
-//                rectangle.setFill(smallImagePattern);
-//                System.out.println(rectangle.getTranslateX());
-//            }
-//            group.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
-//                    e -> {
-//                        for (Node node : group.getChildren()) {
-//                            Rectangle rectangle = (Rectangle) node;
-//                            if (rectangle.getFill().equals(Color.TRANSPARENT)) {
-//                                rectangle.setFill( zoomedIn ? bigImagePattern : smallImagePattern );
-//                            } else {
-//                                rectangle.setFill(Color.TRANSPARENT);
-//                            }
-//                        }
-//                    },
-//                    Event::consume
-//            ));
-//
-//
-//        }
-
-//        stackPane.getChildren().addAll(groups);
-
         routeCellOverlays = mapController.getMapModel().getRouteCellOverlays();
-        for (RouteCell routeCell : routeCellOverlays) {
-            routeCell.setWidth(smallCellWidth);
-            routeCell.setHeight(smallCellHeight);
-            routeCell.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
+        for (RouteCell routeCellOverlay : routeCellOverlays) {
+            routeCellOverlay.setWidth(smallCellWidth);
+            routeCellOverlay.setHeight(smallCellHeight);
+            routeCellOverlay.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
                     e -> {
-                        for (RouteCell cell : routeCell.getParentRoute().getRouteCells()) {
-                            cell.setFill(bigImagePattern);
+                        if (routeCellOverlay.getFill().equals(Color.TRANSPARENT)) {
+                            for (RouteCell routeCell : routeCellOverlay.getParentRoute().getRouteCells()) {
+                                routeCell.setFill(zoomedIn ? bigImagePattern : smallImagePattern);
+                            }
+                        } else {
+                            for (RouteCell routeCell : routeCellOverlay.getParentRoute().getRouteCells()) {
+                                routeCell.setFill(Color.TRANSPARENT);
+                            }
                         }
-//                        if (rectangle.getFill().equals(Color.TRANSPARENT)) {
-//                            rectangle.setFill( zoomedIn ? bigImagePattern : smallImagePattern );
-//                        } else {
-//                            rectangle.setFill(Color.TRANSPARENT);
-//                        }
                     },
                     Event::consume)
             );
@@ -191,6 +157,7 @@ public class MapView extends ScrollPane implements Observer {
     @Override
     public void update(Observable observable, Object o) {
         this.backgroundImage = ((MapModel) observable).getBackgroundImage();
+        this.zoomedIn = ((MapModel) observable).isZoomedIn();
     }
 
     public boolean isZoomedIn() {

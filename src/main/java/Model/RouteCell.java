@@ -7,7 +7,7 @@ import javafx.scene.shape.Rectangle;
 // The location of the RouteCell on the map is determined by its offsetX, offsetY and rotation.
 public class RouteCell extends Rectangle {
 
-    private Route parent;
+    private Route parentRoute;
 
     public RouteCell(double translateX, double translateY, double rotation) {
         super();
@@ -17,11 +17,11 @@ public class RouteCell extends Rectangle {
 
     }
 
-    public void setParentRoute(Route parent) {
-        this.parent = parent;
+    public void setParentRoute(Route parentRoute) {
+        this.parentRoute = parentRoute;
     }
 
     public Route getParentRoute() {
-        return parent;
+        return parentRoute;
     }
 }
