@@ -1,8 +1,15 @@
 package View;
 
+import Controller.MapController;
+import Model.GameInfo;
+import Model.MapModel;
+import Service.Observable;
+import Service.Observer;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -10,9 +17,25 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class GameView extends BorderPane {
+public class GameView extends BorderPane implements Observer {
+
+    Label label;
+    GameInfo gameInfo;
+    MapModel mapModel;
+
     public GameView(Stage primaryStage) {
-        MapView mapView = new MapView();
+        gameInfo = new GameInfo(primaryStage);
+        mapModel = new MapModel(gameInfo.getGameSetupService().getRoutes(),
+                    gameInfo.getGameSetupService().getCities());
+        MapController mapController = new MapController(mapModel);
+        MapView mapView = new MapView(mapController);
+        // Top pane
+        label = new Label("0:00");
+        setAlignment(label, Pos.CENTER);
+        label.setStyle("-fx-font-family: Merriweather;" +
+                "-fx-font-weight: bold;" +
+                "-fx-font-size: 30;");
+        setTop(label);
 
         // Center pane
         setCenter(mapView);
@@ -46,5 +69,15 @@ public class GameView extends BorderPane {
 
         setLeft(vBox);
         setRight(new CardView());
+
+        gameInfo.registerObserver(this);
+        // Change to gameinfo.initGame() when player implementation is finished
+        gameInfo.countdownTimer();
+        gameInfo.setTimerText(gameInfo.getTimer());
+    }
+
+    @Override
+    public void update(Observable observable, Object timerText) {
+        label.setText((String) timerText);
     }
 }

@@ -1,6 +1,8 @@
 package View;
 
 import Controller.LoginController;
+import Service.Observable;
+import Service.Observer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,13 +15,20 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class LoginView extends StackPane {
-    private Stage primaryStage;
-    private LoginController controller = new LoginController();
+public class LoginView extends StackPane implements Observer {
+    private LoginController controller;
+    private Text message;   
 
     public LoginView(Stage primaryStage, Boolean host) {
-        this.primaryStage = primaryStage;
+        controller = new LoginController(primaryStage);
+        controller.addObserver(this);
+        createView(host);
 
+        // Unfocus textfield when clicked outside the textfield
+        setOnMousePressed(e -> requestFocus());
+    }
+
+    private void createView(Boolean host) {
         // Logo
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(40));
@@ -45,26 +54,18 @@ public class LoginView extends StackPane {
         Button returnToMenu = new Button("Return to menu");
 
         // if player wants to join a game
-        if (!host) {
-            app.getChildren().add(joinScreen());
-        } else {
-            app.getChildren().add(hostScreen());
-        }
+        VBox input = (host) ? hostScreen() : joinScreen();
 
-
+        app.getChildren().add(input);
         app.getChildren().add(returnToMenu);
-
         getChildren().add(background);
         getChildren().add(grid);
         getChildren().add(app);
 
-        //returnToMenu
-        returnToMenu.setOnMouseClicked(e -> controller.returnToMenu(primaryStage));
-
-        // Unfocus textfield when clicked outside the textfield
-        setOnMousePressed(e -> {
-            requestFocus();
-        });
+        /*
+         * Functions for buttons
+         * */
+        returnToMenu.setOnMouseClicked(e -> controller.returnToMenu());
     }
 
     private VBox joinScreen() {
@@ -73,6 +74,9 @@ public class LoginView extends StackPane {
         textFields.setId("textFields");
         Text explaination = new Text("Enter username and room code to join a game with your friends");
         explaination.setId("text");
+
+        message = new Text("Waiting for user input");
+        message.setId("message");
 
         TextField inputUsername = new TextField();
         inputUsername.setPromptText("Username...");
@@ -88,15 +92,17 @@ public class LoginView extends StackPane {
         HBox.setHgrow(join, Priority.ALWAYS);
 
         // Add margins
-        VBox.setMargin(explaination, new Insets(20, 10, 20, 10));
+        VBox.setMargin(explaination, new Insets(20, 10, 0, 10));
+        VBox.setMargin(message, new Insets(20, 0, 0, 10));
         VBox.setMargin(inputWithJoin, new Insets(0, 0, 20, 0));
-        VBox.setMargin(textFields, new Insets(60, 0, 60, 0));
+        VBox.setMargin(textFields, new Insets(40, 0, 40, 0));
 
         // Add all
         inputWithJoin.getChildren().add(inputCode);
         inputWithJoin.getChildren().add(join);
 
         textFields.getChildren().add(explaination);
+        textFields.getChildren().add(message);
         textFields.getChildren().add(inputUsername);
         textFields.getChildren().add(inputWithJoin);
 
@@ -118,6 +124,9 @@ public class LoginView extends StackPane {
         Text explaination = new Text("Enter a username to host a game with your friends");
         explaination.setId("text");
 
+        message = new Text("Waiting for user input");
+        message.setId("message");
+
         // input and join button next to each other
         HBox inputWithHost = new HBox();
         Button host = new Button("Host");
@@ -128,15 +137,17 @@ public class LoginView extends StackPane {
         HBox.setHgrow(host, Priority.ALWAYS);
 
         // Add margins
-        VBox.setMargin(explaination, new Insets(20, 10, 20, 10));
+        VBox.setMargin(explaination, new Insets(20, 10, 0, 10));
+        VBox.setMargin(message, new Insets(20, 0, 0, 10));
         VBox.setMargin(inputWithHost, new Insets(0, 0, 20, 0));
-        VBox.setMargin(textFields, new Insets(60, 0, 60, 0));
+        VBox.setMargin(textFields, new Insets(40, 0, 40, 0));
 
         // Add all
         inputWithHost.getChildren().add(inputUsername);
         inputWithHost.getChildren().add(host);
 
         textFields.getChildren().add(explaination);
+        textFields.getChildren().add(message);
         textFields.getChildren().add(inputWithHost);
 
         // Event Handlers
@@ -145,5 +156,10 @@ public class LoginView extends StackPane {
         host.setOnMouseClicked(e -> controller.host(inputUsername));
 
         return textFields;
+    }
+
+    @Override
+    public void update(Observable observable, Object message) {
+        this.message.setText((String) message);
     }
 }

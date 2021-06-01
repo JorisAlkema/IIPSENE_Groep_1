@@ -1,28 +1,45 @@
 package Model;
 
-import View.HelloFX;
+import Service.GameSetupService;
+import Service.Observable;
+import Service.Observer;
+import javafx.application.Platform;
+import javafx.stage.Stage;
+
 import java.util.*;
 
-public class GameInfo {
-
-    private List<Observer> observers = new ArrayList<>();
+public class GameInfo implements Observable {
     private String timerText;
+    private ArrayList<Observer> observers = new ArrayList<>();
 
+    // TODO: Add Firebase compatibility
     /* 'REAL' ARRAYLIST GETS GENERATED IN THE LOBBY
     FINAL ARRAYLIST WILL BE PULLED FROM FIREBASE */
     private ArrayList<Player> players = new ArrayList<Player>();
     private int playerCount = players.size();
 
     private int turnCount = 0;
+    private GameSetupService gameSetupService;
+    private final ArrayList<City> cities;
+    private final ArrayList<Route> routes;
 
-    static int seconds;
-    static Timer timer;
+    private int seconds;
+    private Timer timer;
 
-    public void initGame() {
-        setTurn(getPlayer());
+    public GameInfo(Stage primaryStage) {
+        // Move (part of) this to initGame later
+        gameSetupService = new GameSetupService();
+        cities = gameSetupService.getCities();
+        routes = gameSetupService.getRoutes();
+
+        primaryStage.setOnCloseRequest(event -> timer.cancel());
     }
 
-    private Player getPlayer() {
+    public void initGame() {
+        startTurn(getCurrentPlayer());
+    }
+
+    private Player getCurrentPlayer() {
         if (turnCount == 0) {
             return players.get(0);
         } else {
@@ -30,8 +47,15 @@ public class GameInfo {
         }
     }
 
-    private void setTurn(Player player) {
+    private void startTurn(Player player) {
+        player.setTurn(true);
         countdownTimer();
+    }
+
+    private void endTurn(Player player) {
+        player.setTurn(false);
+        timer.cancel();
+        turnCount++;
     }
 
     public void countdownTimer() {
@@ -40,20 +64,18 @@ public class GameInfo {
         int period = 1000;
 
         // Increase time by 1, since 0:00 is counted as the final second
-        seconds = 180 + 1;
+        seconds = 90 + 1;
 
         // Schedules the timer for repeated fixed-rate execution, beginning after the specified delay
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 if (seconds > 0 ) {
-                    System.out.println(timerFormat(setSeconds()));
                     setTimerText(timerFormat(setSeconds()));
                 } else if (seconds == 0) {
                     // Code that gets executed after the countdown has hit 0
-
                     setTimerText(timerFormat(setSeconds()));
-                    turnCount++;
-                    timer.cancel();
+                    endTurn(getCurrentPlayer());
+                    startTurn(getCurrentPlayer());
                 }
             }
         }, delay, period);
@@ -62,6 +84,7 @@ public class GameInfo {
     private int setSeconds() {
         if (seconds == 0) {
             timer.cancel();
+            return seconds;
         }
         return --seconds;
     }
@@ -70,35 +93,41 @@ public class GameInfo {
         return timerFormat(setSeconds());
     }
 
-    public void addObserver(Observer observer) {
-        this.observers.add(observer);
-    }
-
-    public void removeObserver(Observer observer) {
-        this.observers.remove(observer);
+    public void stopTimer() {
+        timer.cancel();
     }
 
     public void setTimerText(String timerText) {
         this.timerText = timerText;
-        for (Observer observer : this.observers) {
-            observer.update(this.timerText);
+        Platform.runLater(() -> {
+            notifyAllObservers(this.timerText);
+        });
+    }
+
+    private String timerFormat(int seconds) {
+        int minutes = (int) Math.floor(seconds / 60.0);
+        int displaySeconds = (seconds % 60);
+        return String.format("%d:%02d", minutes, displaySeconds);
+    }
+
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void unregisterObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyAllObservers(Object o) {
+        for (Observer observer : observers) {
+            observer.update(this, o);
         }
     }
 
-    private String timerFormat(int timer) {
-        int minutes = (int) Math.floor(timer / 60);
-        int seconds = (timer % 60);
-        return String.format("%d:%02d", minutes, seconds);
+    public GameSetupService getGameSetupService() {
+        return gameSetupService;
     }
-
-//    // TESTING
-//    public static void main(String[] args) {
-//        GameInfo observable = new GameInfo();
-//        HelloFX observer = new HelloFX();
-//
-//        observable.countdownTimer();
-//
-//        observable.addObserver(observer);
-//        observable.setTimerText(observable.getTimer());
-//    }
 }
