@@ -10,16 +10,16 @@ public class Route {
     private final ArrayList<RouteCell> routeCells;
     private final String color;
     private final String type; // STANDARD, TUNNEL or FERRY
-    private final int locomotives; // 0 if not of type FERRY
+    private final int requiredLocomotives; // 0 if not of type FERRY
     private Player owner;
 
-    public Route(City firstCity, City secondCity, ArrayList<RouteCell> routeCells, String color, String type, int locomotives) {
+    public Route(City firstCity, City secondCity, ArrayList<RouteCell> routeCells, String color, String type, int requiredLocomotives) {
         this.firstCity = firstCity;
         this.secondCity = secondCity;
         this.routeCells = routeCells;
         this.color = color;
         this.type = type;
-        this.locomotives = locomotives;
+        this.requiredLocomotives = requiredLocomotives;
     }
 
     public ArrayList<RouteCell> getRouteCells() {
@@ -32,5 +32,21 @@ public class Route {
 
     public Player getOwner() {
         return owner;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public int getRequiredLocomotives() {
+        return requiredLocomotives;
+    }
+
+    public int getLength() {
+        return routeCells.size();
     }
 }
