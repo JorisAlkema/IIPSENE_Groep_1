@@ -1,5 +1,6 @@
 package Model;
 
+import App.MainState;
 import Service.FirebaseService;
 import Service.Observable;
 import Service.Observer;
@@ -20,16 +21,14 @@ public class Lobby implements Observable {
     private ListenerRegistration playerEventListener;
     private String roomCode;
     private String player_uuid;
-    private Stage primaryStage;
 
-    public Lobby(Stage primaryStage, String player_uuid, String roomCode) {
-        this.primaryStage = primaryStage;
+    public Lobby(String player_uuid, String roomCode) {
         this.roomCode = roomCode;
         this.player_uuid = player_uuid;
         this.firebaseService = new FirebaseService();
 
         // Disconnect when player closes the program!
-        this.primaryStage.setOnCloseRequest(e -> {
+        MainState.primaryStage.setOnCloseRequest(e -> {
             disconnect();
         });
 
@@ -55,10 +54,10 @@ public class Lobby implements Observable {
     }
 
     public void returnToMenu() {
-        Scene scene = new Scene(new MainMenuView(primaryStage), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
+        Scene scene = new Scene(new MainMenuView(), MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
         String css = "css/styling.css";
         scene.getStylesheets().add(css);
-        primaryStage.setScene(scene);
+        MainState.primaryStage.setScene(scene);
     }
 
     public void attachListener() {

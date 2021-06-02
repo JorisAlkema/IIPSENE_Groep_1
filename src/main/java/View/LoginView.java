@@ -19,8 +19,8 @@ public class LoginView extends StackPane implements Observer {
     private LoginController controller;
     private Text message;   
 
-    public LoginView(Stage primaryStage, Boolean host) {
-        controller = new LoginController(primaryStage);
+    public LoginView(Boolean host) {
+        controller = new LoginController();
         controller.addObserver(this);
         createView(host);
 
