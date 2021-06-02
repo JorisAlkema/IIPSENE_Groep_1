@@ -99,11 +99,11 @@ public class LobbyView extends StackPane implements Observer {
         VBox buttons = new VBox(20);
         buttons.setAlignment(Pos.BOTTOM_CENTER);
         Button leaveRoom = new Button("Leave Room");
-        Button startGame = new Button("Start Game");
+        Button startRoom = new Button("Start Game");
         leaveRoom.setPrefWidth(300);
-        startGame.setPrefWidth(300);
+        startRoom.setPrefWidth(300);
         buttons.getChildren().add(leaveRoom);
-        buttons.getChildren().add(startGame);
+        buttons.getChildren().add(startRoom);
 
         info.getChildren().add(map);
         info.getChildren().add(party);
@@ -124,7 +124,7 @@ public class LobbyView extends StackPane implements Observer {
 
         // For now it returns to main menu
         leaveRoom.setOnMouseClicked(e -> controller.leaveRoom());
-
+        startRoom.setOnMouseClicked(e -> controller.startRoom());
         getChildren().add(background);
         getChildren().add(grid);
     }
