@@ -9,6 +9,7 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +44,8 @@ public class FirebaseService {
     // If the room has 5 players -> reject
     // If game is ongoing -> reject
     public void addPlayer(Map<String, Object> player_data, String code) throws Exception {
-        DocumentReference documentReference = db.collection("rooms").document(code);
-        Map<String, Object> snapShot = getDocumentData("rooms", code);
+        DocumentReference documentReference = getRoomReference(code);
+        Map<String, Object> snapShot = getRoomData(code);
 
         if (snapShot == null) {
             throw new Exception("Room not found");
@@ -67,11 +68,11 @@ public class FirebaseService {
         documentReference.update(snapShot);
     }
 
-    // Get document data of specifiek collections and document
-    public Map<String, Object> getDocumentData(String collection, String document) {
+    // Get data of room
+    public Map<String, Object> getRoomData(String roomCode) {
         Map<String, Object> Snapshot = null;
         try {
-            Snapshot = db.collection(collection).document(document).get().get().getData();
+            Snapshot = db.collection("rooms").document(roomCode).get().get().getData();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -80,21 +81,29 @@ public class FirebaseService {
         return Snapshot;
     }
 
+    // get all players of room
+    public Map<String, Object> getAllPlayers(String roomCode) {
+        Map<String, Object> roomData = getRoomData(roomCode);
+        Map<String, Object> players = (Map<String, Object>) roomData.get("players");
+        return players;
+    }
+
     // Remove a player using it's UUID and the roomcode.
     // It is possible to remove other players, but that is outside the scope.
     // If you are the last player in the room and this function is called, the room will get deleted
     public void removePlayer(String playerUUID, String code) {
         DocumentReference documentReference = db.collection("rooms").document(code);
-        Map<String, Object> snapShot = getDocumentData("rooms", code);
+        Map<String, Object> snapShot = getRoomData(code);
         Map<String, Object> players = (Map<String, Object>) snapShot.get("players");
-
-        // if you were the last player remove the room
-        if (players.size() == 1) {
-            db.collection("rooms").document(code).delete();
-        } else if (players != null) {
-            players.remove(playerUUID);
-            snapShot.put("players", players);
-            documentReference.update(snapShot);
+        if (players != null) {
+            // if you were the last player remove the room
+            if (players.size() == 1) {
+                db.collection("rooms").document(code).delete();
+            } else if (players != null) {
+                players.remove(playerUUID);
+                snapShot.put("players", players);
+                documentReference.update(snapShot);
+            }
         }
     }
 
@@ -117,6 +126,9 @@ public class FirebaseService {
                 data.put("ongoing", false);
                 data.put("message", "Waiting for the host to start the game");
                 data.put("players", players);
+                data.put("trainCardDeck", new ArrayList<>());
+                data.put("openCards", new ArrayList<>());
+                data.put("closedCards", new ArrayList<>());
 
                 rooms.document(code).set(data);
                 return true;
@@ -129,19 +141,31 @@ public class FirebaseService {
         return false;
     }
 
+    // Update message in the lobby
     public void updateMessageInLobby(String code, String message) {
         DocumentReference documentReference = db.collection("rooms").document(code);
-        Map<String, Object> snapShot = getDocumentData("rooms", code);
+        Map<String, Object> snapShot = getRoomData(code);
         snapShot.put("message", message);
         documentReference.update(snapShot);
     }
 
-    public void updatePlayerData(Map<String, Object> player_data, String code) {
+    // Update Roomdata in the lobby
+    public void updateRoomData(Map<String, Object> roomData, String code) {
+        DocumentReference documentReference = getRoomReference(code);
+        documentReference.update(roomData);
+    }
 
+    public void updatePlayerData(String player_uuid, Map<String, Object> player_data, String code) {
+        DocumentReference documentReference = getRoomReference(code);
+        Map<String, Object> roomData = getRoomData(code);
+        Map<String, Object> players = (Map<String, Object>) roomData.get("players");
+        players.put(player_uuid, player_data);
+        roomData.put("players", players);
+        documentReference.update(roomData);
     }
 
     // Get document reference for the eventlistener
-    public DocumentReference getDocumentReference(String room_code, String path) {
-        return db.collection(room_code).document(path);
+    public DocumentReference getRoomReference(String room_code) {
+        return db.collection("rooms").document(room_code);
     }
 }

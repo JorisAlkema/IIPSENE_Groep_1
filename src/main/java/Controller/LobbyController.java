@@ -15,6 +15,10 @@ public class LobbyController {
         lobby.returnToMenu();
     }
 
+    public void startRoom() {
+        lobby.startRoom();
+    }
+
     public void addObserver(Observer observer) {
         lobby.registerObserver(observer);
     }

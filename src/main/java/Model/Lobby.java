@@ -62,7 +62,7 @@ public class Lobby implements Observable {
     }
 
     public void attachListener() {
-        playerEventListener = firebaseService.getDocumentReference("rooms", roomCode).addSnapshotListener((document, e) -> {
+        playerEventListener = firebaseService.getRoomReference(roomCode).addSnapshotListener((document, e) -> {
             if (document != null && document.getData() != null) {
                 update(document.getData());
             }
@@ -71,6 +71,29 @@ public class Lobby implements Observable {
 
     public void detachListener() {
         playerEventListener.remove();
+    }
+
+    public void startRoom() {
+        // All players in the room
+        Map<String, Object> allPlayers = firebaseService.getAllPlayers(roomCode);
+
+        // Client
+        Map<String, Object> player = (Map<String, Object>) allPlayers.get(player_uuid);
+
+        if ((Boolean) player.get("host")) {
+            if (allPlayers.size() > 3 && allPlayers.size() <= 5) {
+                // Game start
+                firebaseService.updateMessageInLobby(roomCode, "The game will be started");
+                Map<String, Object> roomData = firebaseService.getRoomData(roomCode);
+                roomData.put("ongoing", true);
+                firebaseService.updateRoomData(roomData, roomCode);
+
+                // Change view
+                
+            } else {
+                firebaseService.updateMessageInLobby(roomCode, "3 or more players are needed to start the game");
+            }
+        }
     }
 
     // Handle new data from eventlistener
