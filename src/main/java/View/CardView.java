@@ -24,12 +24,9 @@ public class CardView extends VBox {
         TrainCardDeck app = new TrainCardDeck();
         ArrayList<TrainCard> deck = app.generateDeck();
 
-
         getTrainCard.setOnAction(e -> {
             //todo: give the player a card app.getRandomCard(deck);
         });
-
-
 
     }
 }

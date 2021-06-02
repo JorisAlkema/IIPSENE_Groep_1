@@ -1,6 +1,8 @@
 package View;
 
 import Controller.MainMenuController;
+import Controller.MusicController;
+import Model.MusicPlayer;
 import Service.Observable;
 import Service.Observer;
 import javafx.event.EventHandler;
@@ -21,6 +23,8 @@ import java.io.IOException;
 
 public class MainMenuView extends StackPane implements Observer {
     private MainMenuController mainMenuController = new MainMenuController();
+    private MusicPlayerView musicPlayerView = new MusicPlayerView();
+
     public MainMenuView(Stage primaryStage) {
         super();
         // Main layout
@@ -57,6 +61,8 @@ public class MainMenuView extends StackPane implements Observer {
         buttons.getChildren().add(joinGame);
         buttons.getChildren().add(rules);
         buttons.getChildren().add(quit);
+
+        // music toggle
 
         getChildren().add(background);
         getChildren().add(grid);
