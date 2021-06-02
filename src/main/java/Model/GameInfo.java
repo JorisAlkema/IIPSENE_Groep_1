@@ -1,9 +1,12 @@
 package Model;
 
+import Service.FirebaseService;
 import Service.GameSetupService;
 import Service.Observable;
 import Service.Observer;
+import View.GameView;
 import javafx.application.Platform;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.util.*;
@@ -11,6 +14,8 @@ import java.util.*;
 public class GameInfo implements Observable {
     private String timerText;
     private ArrayList<Observer> observers = new ArrayList<>();
+
+    private FirebaseService firebaseService = new FirebaseService();
 
     // TODO: Add Firebase compatibility
     /* 'REAL' ARRAYLIST GETS GENERATED IN THE LOBBY
@@ -20,22 +25,25 @@ public class GameInfo implements Observable {
 
     private int turnCount = 0;
     private GameSetupService gameSetupService;
-    private final ArrayList<City> cities;
-    private final ArrayList<Route> routes;
+    private ArrayList<City> cities;
+    private ArrayList<Route> routes;
+
+    private Stage primaryStage;
 
     private int seconds;
     private Timer timer;
 
     public GameInfo(Stage primaryStage) {
-        // Move (part of) this to initGame later
-        gameSetupService = new GameSetupService();
-        cities = gameSetupService.getCities();
-        routes = gameSetupService.getRoutes();
-
+        this.primaryStage = primaryStage;
         primaryStage.setOnCloseRequest(event -> timer.cancel());
     }
 
     public void initGame() {
+        gameSetupService = new GameSetupService();
+        cities = gameSetupService.getCities();
+        routes = gameSetupService.getRoutes();
+
+        primaryStage.setScene(new Scene(new GameView(primaryStage)));
         startTurn(getCurrentPlayer());
     }
 
