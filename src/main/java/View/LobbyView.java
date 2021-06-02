@@ -28,8 +28,8 @@ public class LobbyView extends StackPane implements Observer {
     private VBox players_wrapper;
     private VBox players;
 
-    public LobbyView(Stage primaryStage, String player_uuid, String roomCode) {
-        controller = new LobbyController(primaryStage, player_uuid, roomCode);
+    public LobbyView(String player_uuid, String roomCode) {
+        controller = new LobbyController(player_uuid, roomCode);
         controller.addObserver(this);
 
         // Background Effect
