@@ -1,19 +1,18 @@
 package View;
 
+import App.Main;
+import App.MainState;
 import Controller.MainMenuController;
 import Service.Observable;
 import Service.Observer;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.File;
@@ -21,9 +20,9 @@ import java.io.IOException;
 
 public class MainMenuView extends StackPane implements Observer {
     private MainMenuController mainMenuController = new MainMenuController();
-    public MainMenuView(Stage primaryStage) {
+    public MainMenuView() {
         super();
-        // Main layout
+        // App.Main layout
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(40));
         ImageView title = new ImageView("images/main_menu_logo.png");
@@ -63,9 +62,9 @@ public class MainMenuView extends StackPane implements Observer {
         getChildren().add(buttons);
 
         //Events
-        test.setOnMouseClicked(e -> mainMenuController.game(primaryStage));
-        hostGame.setOnMouseClicked(e -> mainMenuController.host(primaryStage));
-        joinGame.setOnMouseClicked(e -> mainMenuController.join(primaryStage));
+        test.setOnMouseClicked(e -> mainMenuController.game());
+        hostGame.setOnMouseClicked(e -> mainMenuController.host());
+        joinGame.setOnMouseClicked(e -> mainMenuController.join());
 
         File rulesPDF = new File("src/main/resources/rules/ticket_to_ride_europe_rules.pdf");
 

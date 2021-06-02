@@ -59,7 +59,7 @@ public class GameView extends BorderPane implements Observer {
 
         Button mainmenu = new Button("Return to menu");
         mainmenu.setOnAction(e -> {
-            Scene newScene = new Scene(new MainMenuView(primaryStage), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
+            Scene newScene = new Scene(new MainMenuView(), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
             String css = "css/styling.css";
             newScene.getStylesheets().add(css);
             primaryStage.setScene(newScene);

@@ -6,8 +6,8 @@ import javafx.stage.Stage;
 
 public class LobbyController {
     private Lobby lobby;
-    public LobbyController(Stage primaryStage, String player_uuid, String roomCode) {
-        lobby = new Lobby(primaryStage, player_uuid, roomCode);
+    public LobbyController(String player_uuid, String roomCode) {
+        lobby = new Lobby(player_uuid, roomCode);
     }
 
     public void leaveRoom() {

@@ -15,8 +15,8 @@ import java.util.concurrent.ExecutionException;
 public class LoginController {
     private Login login;
 
-    public LoginController(Stage primaryStage) {
-        this.login = new Login(primaryStage);
+    public LoginController() {
+        this.login = new Login();
     }
 
     // Return to Menu

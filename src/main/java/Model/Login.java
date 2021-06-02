@@ -1,5 +1,6 @@
 package Model;
 
+import App.MainState;
 import Service.FirebaseService;
 import Service.Observable;
 import Service.Observer;
@@ -11,25 +12,21 @@ import javafx.stage.Stage;
 import java.util.*;
 
 public class Login implements Observable {
-    private Stage primaryStage;
     private ArrayList<Observer> observers = new ArrayList<>();
     private FirebaseService firebaseService;
 
     private Boolean busy = false;
 
-    public Login(Stage primaryStage) {
+    public Login() {
         this.firebaseService = new FirebaseService();
-        this.primaryStage = primaryStage;
     }
 
     // Methods seen by the controller
     public void returnToMenu() {
-        MainMenuView menuView = new MainMenuView(primaryStage);
-        double sceneWidth = primaryStage.getScene().getWidth();
-        double sceneHeight = primaryStage.getScene().getHeight();
-        Scene scene = new Scene(menuView, sceneWidth, sceneHeight);
+        MainMenuView menuView = new MainMenuView();
+        Scene scene = new Scene(menuView, MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
         scene.getStylesheets().add("css/styling.css");
-        primaryStage.setScene(scene);
+        MainState.primaryStage.setScene(scene);
     }
 
     public void join(String username, String code) {
@@ -152,10 +149,10 @@ public class Login implements Observable {
     }
 
     private void showLobbyView(String player_uuid, String roomCode) {
-        Scene scene = new Scene(new LobbyView(primaryStage, player_uuid, roomCode), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
+        Scene scene = new Scene(new LobbyView(player_uuid, roomCode), MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
         String css = "css/styling.css";
         scene.getStylesheets().add(css);
-        primaryStage.setScene(scene);
+        MainState.primaryStage.setScene(scene);
     }
 
     private void showMessage(String message) {
