@@ -1,5 +1,6 @@
 package App;
 
+import Model.Player;
 import Service.FirebaseService;
 import javafx.stage.Stage;
 
@@ -9,7 +10,7 @@ public class MainState {
 
     // For the lobby
     public static String roomCode;
-    public static String player_UUID;
+    public static Player player;
 
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 720;

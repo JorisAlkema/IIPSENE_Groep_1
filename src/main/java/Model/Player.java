@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Player {
     private String name;
     private String UUID;
+    private Boolean host;
     private String playerColor;
     private ArrayList<TrainCard> trainCards;
     private ArrayList<DestinationTicket> destinationTickets;
@@ -84,8 +85,46 @@ public class Player {
         return true;
     }
 
+    public Player(String name, String UUID, Boolean host) {
+        this.name = name;
+        this.UUID = UUID;
+        this.host = host;
+    }
+
+    public Player() {
+
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUUID() {
+        return UUID;
+    }
+
+    public void setUUID(String UUID) {
+        this.UUID = UUID;
+    }
+
+    public Boolean getHost() {
+        return host;
+    }
+
+    public void setHost(Boolean host) {
+        this.host = host;
+    }
+
+    public String getPlayerColor() {
+        return playerColor;
+    }
+
+    public void setPlayerColor(String playerColor) {
+        this.playerColor = playerColor;
     }
 
     public ArrayList<TrainCard> getTrainCards() {
@@ -96,7 +135,31 @@ public class Player {
         this.trainCards = trainCards;
     }
 
-    public boolean getTurn() {
+    public ArrayList<DestinationTicket> getDestinationTickets() {
+        return destinationTickets;
+    }
+
+    public void setDestinationTickets(ArrayList<DestinationTicket> destinationTickets) {
+        this.destinationTickets = destinationTickets;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public int getTrains() {
+        return trains;
+    }
+
+    public void setTrains(int trains) {
+        this.trains = trains;
+    }
+
+    public boolean isTurn() {
         return isTurn;
     }
 
@@ -112,13 +175,11 @@ public class Player {
         this.actionsTaken = actionsTaken;
     }
 
-    public ArrayList<TrainCard> getTrainCards(String color) {
-        ArrayList<TrainCard> cards = new ArrayList<>();
-        for (TrainCard trainCard : this.trainCards) {
-            if (trainCard.getColor().equals(color)) {
-                cards.add(trainCard);
-            }
-        }
-        return cards;
+    public ArrayList<Route> getClaimedRoutes() {
+        return claimedRoutes;
+    }
+
+    public void setClaimedRoutes(ArrayList<Route> claimedRoutes) {
+        this.claimedRoutes = claimedRoutes;
     }
 }

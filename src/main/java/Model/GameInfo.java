@@ -1,5 +1,6 @@
 package Model;
 
+import App.MainState;
 import Service.FirebaseService;
 import Service.GameSetupService;
 import Service.Observable;
@@ -15,8 +16,6 @@ public class GameInfo implements Observable {
     private String timerText;
     private ArrayList<Observer> observers = new ArrayList<>();
 
-    private FirebaseService firebaseService = new FirebaseService();
-
     // TODO: Add Firebase compatibility
     /* 'REAL' ARRAYLIST GETS GENERATED IN THE LOBBY
     FINAL ARRAYLIST WILL BE PULLED FROM FIREBASE */
@@ -28,14 +27,14 @@ public class GameInfo implements Observable {
     private ArrayList<City> cities;
     private ArrayList<Route> routes;
 
-    private Stage primaryStage;
-
     private int seconds;
     private Timer timer;
 
-    public GameInfo(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-        primaryStage.setOnCloseRequest(event -> timer.cancel());
+    public GameInfo() {
+        MainState.primaryStage.setOnCloseRequest(event -> timer.cancel());
+        gameSetupService = new GameSetupService();
+        cities = gameSetupService.getCities();
+        routes = gameSetupService.getRoutes();
     }
 
     public void initGame() {
@@ -43,7 +42,7 @@ public class GameInfo implements Observable {
         cities = gameSetupService.getCities();
         routes = gameSetupService.getRoutes();
 
-        primaryStage.setScene(new Scene(new GameView(primaryStage)));
+        MainState.primaryStage.setScene(new Scene(new GameView()));
         startTurn(getCurrentPlayer());
     }
 

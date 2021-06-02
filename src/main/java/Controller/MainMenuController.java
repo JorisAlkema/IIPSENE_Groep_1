@@ -1,24 +1,47 @@
 package Controller;
 
 import App.MainState;
-import Model.MainMenu;
 import View.GameView;
 import View.LoginView;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+
 public class MainMenuController {
-    private MainMenu mainMenu = new MainMenu();
+
+
+    public void openRules() {
+        File rulesPDF = new File("src/main/resources/rules/ticket_to_ride_europe_rules.pdf");
+        if (Desktop.isDesktopSupported()) {
+            new Thread(() -> {
+                try {
+                    Desktop.getDesktop().open(rulesPDF);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
+    }
+
     public void host() {
-        mainMenu.viewLogin(true);
+        switchScene(true);
     }
 
     public void join() {
-        mainMenu.viewLogin(false);
+        switchScene(false);
     }
 
     public void game() {
-        Scene scene = new Scene(new GameView(MainState.primaryStage), MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
+        Scene scene = new Scene(new GameView(), MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
+        MainState.primaryStage.setScene(scene);
+    }
+
+    private void switchScene(Boolean isHost) {
+        Scene scene = new Scene(new LoginView(isHost), MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
+        scene.getStylesheets().add(MainState.MenuCSS);
         MainState.primaryStage.setScene(scene);
     }
 }
