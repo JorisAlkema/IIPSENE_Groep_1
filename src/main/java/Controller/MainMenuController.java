@@ -16,7 +16,7 @@ public class MainMenuController {
         mainMenu.viewLogin(primaryStage, false);
     }
 
-    public void test(Stage primaryStage) {
+    public void game(Stage primaryStage) {
         Scene scene = new Scene(new GameView(primaryStage), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
         primaryStage.setScene(scene);
     }
