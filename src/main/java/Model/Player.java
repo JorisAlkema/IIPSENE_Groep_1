@@ -28,6 +28,10 @@ public class Player {
         this.claimedRoutes = claimedRoutes;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public ArrayList<TrainCard> getTrainCards() {
         return trainCards;
     }

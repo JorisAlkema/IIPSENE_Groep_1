@@ -1,6 +1,8 @@
 package View;
 
+import Controller.MapController;
 import Model.GameInfo;
+import Model.MapModel;
 import Service.Observable;
 import Service.Observer;
 import javafx.geometry.Insets;
@@ -19,11 +21,14 @@ public class GameView extends BorderPane implements Observer {
 
     Label label;
     GameInfo gameInfo;
+    MapModel mapModel;
 
     public GameView(Stage primaryStage) {
         gameInfo = new GameInfo(primaryStage);
-        MapView mapView = new MapView();
-
+        mapModel = new MapModel(gameInfo.getGameSetupService().getRoutes(),
+                    gameInfo.getGameSetupService().getCities());
+        MapController mapController = new MapController(mapModel);
+        MapView mapView = new MapView(mapController);
         // Top pane
         label = new Label("0:00");
         setAlignment(label, Pos.CENTER);
@@ -65,7 +70,7 @@ public class GameView extends BorderPane implements Observer {
         setLeft(vBox);
         setRight(new CardView());
 
-        gameInfo.addObserver(this);
+        gameInfo.registerObserver(this);
         // Change to gameinfo.initGame() when player implementation is finished
         gameInfo.countdownTimer();
         gameInfo.setTimerText(gameInfo.getTimer());

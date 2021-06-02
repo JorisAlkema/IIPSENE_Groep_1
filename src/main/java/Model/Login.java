@@ -2,118 +2,118 @@ package Model;
 
 import Service.FirebaseService;
 import Service.Observable;
+import Service.Observer;
+import View.LobbyView;
 import View.MainMenuView;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 import java.util.*;
 
-public class Login extends Observable {
+public class Login implements Observable {
     private Stage primaryStage;
+    private ArrayList<Observer> observers = new ArrayList<>();
     private FirebaseService firebaseService;
-    private String player_uuid;
-    private String room_code;
+
+    private Boolean busy = false;
 
     public Login(Stage primaryStage) {
         this.firebaseService = new FirebaseService();
         this.primaryStage = primaryStage;
-
-        // Might be moving this to lobby
-        this.primaryStage.setOnCloseRequest(e -> {
-            disconnect();
-        });
     }
 
     // Methods seen by the controller
     public void returnToMenu() {
-        // Remove in production testing purposes
-        disconnect();
-        Scene scene = new Scene(new MainMenuView(primaryStage), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
-        String css = "css/styling.css";
-        scene.getStylesheets().add(css);
+        MainMenuView menuView = new MainMenuView(primaryStage);
+        double sceneWidth = primaryStage.getScene().getWidth();
+        double sceneHeight = primaryStage.getScene().getHeight();
+        Scene scene = new Scene(menuView, sceneWidth, sceneHeight);
+        scene.getStylesheets().add("css/styling.css");
         primaryStage.setScene(scene);
     }
 
-    // TODO: LobbyView
     public void join(String username, String code) {
         if (username.isBlank() || code.isBlank()) {
-            notifyAllObservers("Fill in all the required fields");
+            showMessage("Fill in all the required fields");
             return;
         }
 
-        // Joining lobby... loading animation
-        Timer joiningLobby = getLoadingAnimation("Joining lobby");
+        if (!busy) {
+            // Spam protection
+            busy = true;
 
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                String exception = null;
-                player_uuid = generateUUID();
+            // Joining lobby... loading animation
+            Timer joiningLobbyAnimation = getLoadingAnimation("Joining lobby");
 
-                // Tries to add player to the lobby
-                try {
-                    firebaseService.addPlayer(generatePlayerMap(player_uuid, username, false), code);
-                } catch (Exception e) {
-                    exception = e.getMessage();
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    String exception = null;
+                    String player_uuid = generateUUID();
+
+                    // Tries to add player to the lobby
+                    try {
+                        firebaseService.addPlayer(generatePlayerMap(player_uuid, username, false), code);
+                    } catch (Exception e) {
+                        exception = e.getMessage();
+                    }
+
+                    joiningLobbyAnimation.cancel();
+
+                    // Process finished
+                    busy = false;
+
+                    if (exception != null) {
+                        showMessage(exception);
+                        return;
+                    }
+
+                    // At this point player can join the lobby.
+                    Platform.runLater(() -> showLobbyView(player_uuid, code));
                 }
-
-                joiningLobby.cancel();
-
-                if (exception != null) {
-                    notifyAllObservers(exception);
-                    return;
-                }
-
-                // At this point player can join the lobby.
-                room_code = code;
-
-
-            }
-        };
-        // Run function after 1sec, give space for the fetching animation to run.
-        new Timer().schedule(task, 1000);
+            };
+            // Run function after 1sec, give space for the fetching animation to run.
+            new Timer().schedule(task, 1000);
+        }
     }
 
     public void host(String username) {
         if (username.isBlank()) {
-            notifyAllObservers("Fill in all the required fields");
+            showMessage("Fill in all the required fields");
             return;
         }
 
-        // Creating lobby... loading animation
-        Timer creatingLobbyAnimation = getLoadingAnimation("Creating lobby");
+        if (!busy) {
+            // Spam protection
+            busy = true;
 
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                player_uuid = generateUUID();
+            // Creating lobby... loading animation
+            Timer creatingLobbyAnimation = getLoadingAnimation("Creating lobby");
 
-                // If a room already exists with a random code then create a new one
-                String code = generateCode();
-                boolean created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
-                while(!created) {
-                    code = generateCode();
-                    created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    String player_uuid = generateUUID();
+                    // If a room already exists with a random code then create a new one
+                    String code = generateCode();
+
+                    boolean created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
+                    while(!created) {
+                        code = generateCode();
+                        created = firebaseService.addLobby(code, generatePlayerMap(player_uuid, username, true));
+                    }
+
+                    // Process finished
+                    busy = false;
+                    String roomCode = code;
+                    creatingLobbyAnimation.cancel();
+                    // Go to lobby view
+                    Platform.runLater(() -> showLobbyView(player_uuid, roomCode));
                 }
+            };
 
-                room_code = code;
-                creatingLobbyAnimation.cancel();
-
-                // Go to lobby view
-            }
-        };
-        // Run function after 1sec, give space for the fetching animation to run.
-        new Timer().schedule(task, 1000);
-    }
-
-    public void disconnect() {
-        if (player_uuid != null && room_code != null) {
-            firebaseService.removePlayer(player_uuid, room_code);
-            player_uuid = null;
-            room_code = null;
-
-            // if you were the last player remove the room
+            // Run function after 1sec, give space for the fetching animation to run.
+            new Timer().schedule(task, 1000);
         }
     }
 
@@ -149,5 +149,37 @@ public class Login extends Observable {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 0, 200);
         return timer;
+    }
+
+    private void showLobbyView(String player_uuid, String roomCode) {
+        Scene scene = new Scene(new LobbyView(primaryStage, player_uuid, roomCode), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
+        String css = "css/styling.css";
+        scene.getStylesheets().add(css);
+        primaryStage.setScene(scene);
+    }
+
+    private void showMessage(String message) {
+        notifyAllObservers(message);
+    }
+
+    /*
+    Observer functions
+    */
+
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void unregisterObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyAllObservers(Object o) {
+        for (Observer observer : observers) {
+            observer.update(this, o);
+        }
     }
 }

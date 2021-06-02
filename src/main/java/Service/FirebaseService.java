@@ -5,13 +5,9 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.*;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserRecord;
 import com.google.firebase.cloud.FirestoreClient;
-import javafx.concurrent.Task;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -43,49 +39,39 @@ public class FirebaseService {
         this.db = FirestoreClient.getFirestore();
     }
 
-    // DEPRECATED
-    public List<QueryDocumentSnapshot> fetchRoom(String code) {
-        try {
-            // Get all documents from collection
-            ApiFuture<QuerySnapshot> future = db.collection(code).get();
-            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-            return documents;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
     // Add a player to a room
     // If the room has 5 players -> reject
     // If game is ongoing -> reject
     public void addPlayer(Map<String, Object> player_data, String code) throws Exception {
-        DocumentReference documentReference = db.collection(code).document("players");
-        Map statusSnapshot = getDocumentData(code, "status");
-        Map playerSnapshot = getDocumentData(code, "players");
+        DocumentReference documentReference = db.collection("rooms").document(code);
+        Map<String, Object> snapShot = getDocumentData("rooms", code);
 
-        if (statusSnapshot == null || playerSnapshot == null) {
+        if (snapShot == null) {
             throw new Exception("Room not found");
         }
 
-        if ((Boolean) statusSnapshot.get("ongoing")) {
+        if ((Boolean) snapShot.get("ongoing")) {
             throw new Exception("Room is ongoing");
         }
 
-        if (playerSnapshot.size() == 5) {
+        Map<String, Object> players = (Map<String, Object>) snapShot.get("players");
+
+        if (players.size() == 5) {
             throw new Exception("Room is full");
         }
 
-        documentReference.update(player_data);
+        String uuid = player_data.keySet().iterator().next();
+        Object data = player_data.get(uuid);
+        players.put(uuid, data);
+        snapShot.put("players", players);
+        documentReference.update(snapShot);
     }
 
-    public Map<String, Object> getDocumentData(String room_code, String path) {
-        Map Snapshot = null;
+    // Get document data of specifiek collections and document
+    public Map<String, Object> getDocumentData(String collection, String document) {
+        Map<String, Object> Snapshot = null;
         try {
-            Snapshot = db.collection(room_code).document(path).get().get().getData();
+            Snapshot = db.collection(collection).document(document).get().get().getData();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -95,17 +81,21 @@ public class FirebaseService {
     }
 
     // Remove a player using it's UUID and the roomcode.
-    // It is possible to remove other players than urself, but that is outside the scope.
+    // It is possible to remove other players, but that is outside the scope.
+    // If you are the last player in the room and this function is called, the room will get deleted
     public void removePlayer(String playerUUID, String code) {
-        DocumentReference documentReference = db.collection(code).document("players");
-        Map<String, Object> updates = new HashMap<>();
-        updates.put(playerUUID, FieldValue.delete());
-        // Update and delete the "capital" field in the document
-        ApiFuture<WriteResult> writeResult = documentReference.update(updates);
-    }
+        DocumentReference documentReference = db.collection("rooms").document(code);
+        Map<String, Object> snapShot = getDocumentData("rooms", code);
+        Map<String, Object> players = (Map<String, Object>) snapShot.get("players");
 
-    public void updatePlayerData() {
-
+        // if you were the last player remove the room
+        if (players.size() == 1) {
+            db.collection("rooms").document(code).delete();
+        } else if (players != null) {
+            players.remove(playerUUID);
+            snapShot.put("players", players);
+            documentReference.update(snapShot);
+        }
     }
 
     // if lobby is created succesfully it return true
@@ -114,16 +104,21 @@ public class FirebaseService {
     public boolean addLobby(String code, Map<String, Object> host_data) {
         try {
             // Get all documents from collection
-            ApiFuture<QuerySnapshot> future = db.collection(code).get();
-            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-            if (documents.size() == 0) {
+            CollectionReference rooms = db.collection("rooms");
+            List<QueryDocumentSnapshot> all_rooms = rooms.get().get().getDocuments();
+            if (!all_rooms.contains(code)) {
+                Map<String, Object> data = new HashMap<String, Object>();
+                Map<String, Object> players = new HashMap<String, Object>();
 
-                Map<String, Object> status = new HashMap<>();
-                status.put("ongoing", false);
+                String uuid = host_data.keySet().iterator().next();
+                Object host = host_data.get(uuid);
+                players.put(uuid, host);
 
-                db.collection(code).document("status").set(status);
-                db.collection(code).document("players").set(host_data);
+                data.put("ongoing", false);
+                data.put("message", "Waiting for the host to start the game");
+                data.put("players", players);
 
+                rooms.document(code).set(data);
                 return true;
             }
         } catch (InterruptedException e) {
@@ -134,7 +129,19 @@ public class FirebaseService {
         return false;
     }
 
-    public void removeLobby(String code) {
+    public void updateMessageInLobby(String code, String message) {
+        DocumentReference documentReference = db.collection("rooms").document(code);
+        Map<String, Object> snapShot = getDocumentData("rooms", code);
+        snapShot.put("message", message);
+        documentReference.update(snapShot);
+    }
 
+    public void updatePlayerData(Map<String, Object> player_data, String code) {
+
+    }
+
+    // Get document reference for the eventlistener
+    public DocumentReference getDocumentReference(String room_code, String path) {
+        return db.collection(room_code).document(path);
     }
 }

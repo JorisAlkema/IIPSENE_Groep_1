@@ -1,5 +1,6 @@
 package Model;
 
+import Service.GameSetupService;
 import Service.Observable;
 import Service.Observer;
 import javafx.application.Platform;
@@ -7,8 +8,9 @@ import javafx.stage.Stage;
 
 import java.util.*;
 
-public class GameInfo extends Observable {
+public class GameInfo implements Observable {
     private String timerText;
+    private ArrayList<Observer> observers = new ArrayList<>();
 
     // TODO: Add Firebase compatibility
     /* 'REAL' ARRAYLIST GETS GENERATED IN THE LOBBY
@@ -17,11 +19,19 @@ public class GameInfo extends Observable {
     private int playerCount = players.size();
 
     private int turnCount = 0;
+    private GameSetupService gameSetupService;
+    private final ArrayList<City> cities;
+    private final ArrayList<Route> routes;
 
     private int seconds;
     private Timer timer;
 
     public GameInfo(Stage primaryStage) {
+        // Move (part of) this to initGame later
+        gameSetupService = new GameSetupService();
+        cities = gameSetupService.getCities();
+        routes = gameSetupService.getRoutes();
+
         primaryStage.setOnCloseRequest(event -> timer.cancel());
     }
 
@@ -94,9 +104,30 @@ public class GameInfo extends Observable {
         });
     }
 
-    private String timerFormat(int timer) {
-        int minutes = (int) Math.floor(timer / 60);
-        int seconds = (timer % 60);
-        return String.format("%d:%02d", minutes, seconds);
+    private String timerFormat(int seconds) {
+        int minutes = (int) Math.floor(seconds / 60.0);
+        int displaySeconds = (seconds % 60);
+        return String.format("%d:%02d", minutes, displaySeconds);
+    }
+
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void unregisterObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyAllObservers(Object o) {
+        for (Observer observer : observers) {
+            observer.update(this, o);
+        }
+    }
+
+    public GameSetupService getGameSetupService() {
+        return gameSetupService;
     }
 }
