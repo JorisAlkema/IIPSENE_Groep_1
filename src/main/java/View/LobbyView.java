@@ -1,10 +1,13 @@
 package View;
 
+import App.MainState;
 import Controller.LobbyController;
 import Controller.LoginController;
+import Model.GameState;
 import Model.Player;
 import Service.Observable;
 import Service.Observer;
+import com.google.cloud.firestore.DocumentSnapshot;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,16 +25,13 @@ import java.util.Set;
 
 public class LobbyView extends StackPane implements Observer {
 
-    private LobbyController controller;
+    private LobbyController controller = new LobbyController(this);;
     private Text message;
     private Text partyCode;
     private VBox players_wrapper;
     private VBox players;
 
-    public LobbyView(String player_uuid, String roomCode) {
-        controller = new LobbyController(player_uuid, roomCode);
-        controller.addObserver(this);
-
+    public LobbyView() {
         // Background Effect
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
@@ -91,7 +91,7 @@ public class LobbyView extends StackPane implements Observer {
         messageBox.setId("black_bg");
         messageBox.setAlignment(Pos.CENTER);
         messageBox.setPadding(new Insets(10));
-        message = new Text();
+        message = new Text("Retrieving data...\n");
         message.setWrappingWidth(300);
         message.setId("text");
         messageBox.getChildren().add(message);
@@ -128,38 +128,33 @@ public class LobbyView extends StackPane implements Observer {
         getChildren().add(background);
         getChildren().add(grid);
     }
+
     @Override
     public void update(Observable observable, Object o) {
-        Map<String, Object> data = (Map<String, Object>) o;
+        Platform.runLater(() -> {
+            DocumentSnapshot documentSnapshot = (DocumentSnapshot) o;
+            GameState roomData = documentSnapshot.toObject(GameState.class);
+            ArrayList<Player> allPlayers = roomData.getPlayers();
 
-        if (data.containsKey("players")) {
-            Map<String, Object> all_players = (Map<String, Object>) data.get("players");
-            Set<String> players_uuids = all_players.keySet();
+            players.getChildren().removeAll(players.getChildren());
+            players_wrapper.getChildren().removeAll(players_wrapper.getChildren());
+            players_wrapper.getChildren().add(createPlayerName("Players", String.format("%s/5", allPlayers.size())));
+            players_wrapper.getChildren().add(players);
 
-            Platform.runLater(() -> {
-                players_wrapper.getChildren().removeAll(players_wrapper.getChildren());
-                players_wrapper.getChildren().add(createPlayerName("Players", String.format("%s/5", all_players.size())));
-                players_wrapper.getChildren().add(players);
-                players.getChildren().removeAll(players.getChildren());
-                for (String id : players_uuids) {
-                    Map<String, Object> player = (Map<String, Object>) all_players.get(id);
-                    String info = (Boolean) player.get("host") ? "Host" : "Player";
-                    if ((Boolean) player.get("host")) {
-                        players.getChildren().add(0, createPlayerName((String) player.get("username"), info));
-                    } else {
-                        players.getChildren().add(createPlayerName((String) player.get("username"), info));
-                    }
+            for (Player x : allPlayers) {
+                String username = x.getName();
+                String info = x.getHost() ? "Host" : "Player";
+                HBox player_card = createPlayerName(username, info);
+                if (x.getHost()) {
+                    players.getChildren().add(0, player_card);
+                } else {
+                    players.getChildren().add(player_card);
                 }
-            });
-        }
+            }
 
-        if (data.containsKey("message")) {
-            this.message.setText((String) data.get("message"));
-        }
-
-        if (data.containsKey("partyCode")) {
-            this.partyCode.setText((String) data.get("partyCode"));
-        }
+            this.message.setText(roomData.getMessage());
+            this.partyCode.setText(MainState.roomCode);
+        });
     }
 
     public HBox createPlayerName(String name, String info) {

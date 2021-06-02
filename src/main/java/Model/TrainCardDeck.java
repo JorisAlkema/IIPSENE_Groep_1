@@ -20,6 +20,7 @@ public class TrainCardDeck {
     }
 
     private ArrayList<TrainCard> generateDeck() {
+        ArrayList<TrainCard> trainCards = new ArrayList<>();
         for (String color : colors) {
             for (int i = 0; i < 12; i++) {
                 trainCards.add(new TrainCard(color));
