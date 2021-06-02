@@ -23,7 +23,7 @@ import java.io.IOException;
 
 public class MainMenuView extends StackPane implements Observer {
     private MainMenuController mainMenuController = new MainMenuController();
-    private MusicPlayerView musicPlayerView = new MusicPlayerView();
+    private MusicPlayerView musicPlayerView = new MusicPlayerView(new MusicController());
 
     public MainMenuView(Stage primaryStage) {
         super();
@@ -62,11 +62,15 @@ public class MainMenuView extends StackPane implements Observer {
         buttons.getChildren().add(rules);
         buttons.getChildren().add(quit);
 
+
         // music toggle
+
 
         getChildren().add(background);
         getChildren().add(grid);
         getChildren().add(buttons);
+        getChildren().add(musicPlayerView.createMusicButton());
+
 
         //Events
         test.setOnMouseClicked(e -> mainMenuController.test(primaryStage));
