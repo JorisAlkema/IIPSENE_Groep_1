@@ -1,9 +1,6 @@
 package Controller;
 
-import Model.City;
-import Model.MapModel;
-import Model.Route;
-import Model.RouteCell;
+import Model.*;
 import Service.GameSetupService;
 import Service.OverlayEventHandler;
 import View.MapView;
@@ -19,6 +16,7 @@ public class MapController {
     private final MapModel mapModel;
     private final MapView mapView;
     private final GameSetupService gameSetupService;
+    private GameController gameController;
 
     public MapController(MapView mapView) {
         this.gameSetupService = new GameSetupService();
@@ -84,6 +82,7 @@ public class MapController {
      * Handles click event for when the user clicks on a RouteCell on the mapView
      * @param routeCell The routeCell overlay that was clicked on
      */
+    // TODO: Call claimRoute from this function
     public void handleRouteCellClickEvent(RouteCell routeCell) {
         if (routeCell.getFill().equals(Color.TRANSPARENT)) {
             for (RouteCell cellInSameRoute : routeCell.getParentRoute().getRouteCells()) {
@@ -94,6 +93,72 @@ public class MapController {
                 cellInSameRoute.setFill(Color.TRANSPARENT);
             }
         }
+    }
+
+
+    // When this method is called, we assume that the player has already selected the color
+    // with which they want to build the route, in case it is grey.
+    public boolean claimRoute(Route route, String color) {
+        // Route already claimed
+        if (route.getOwner() != null) {
+            return false;
+        }
+        String routeColor = route.getColor();
+        // If the Route is grey, check for cards of the given color
+        if (routeColor.equals("GREY")) {
+            routeColor = color;
+        }
+        String type = route.getType();
+        int requiredLocos = route.getRequiredLocomotives();
+        int routeLength = route.getLength();
+        Player currentPlayer = this.gameController.getCurrentPlayer();
+        ArrayList<TrainCard> playerHand = currentPlayer.getTrainCards();
+        ArrayList<TrainCard> correctColorCards = new ArrayList<>();
+        ArrayList<TrainCard> locosInHand = new ArrayList<>();
+        for (TrainCard trainCard : playerHand) {
+            if (trainCard.getColor().equals(routeColor)) {
+                correctColorCards.add(trainCard);
+            } else if (trainCard.getColor().equals("LOCO")) {
+                locosInHand.add(trainCard);
+            }
+            if (correctColorCards.size() >= routeLength && locosInHand.size() >= requiredLocos) {
+                break;
+            }
+        }
+        // Not enough cards of the right color
+        if (correctColorCards.size() + locosInHand.size() < routeLength) {
+            return false;
+        }
+        if (type.equals("TUNNEL")) {
+            // TODO
+            // Something like gameController.getTrainCardDeck.drawTunnelCards() ?
+        }
+        if (type.equals("FERRY") && locosInHand.size() < requiredLocos) {
+            return false;
+        }
+        // Remove cards from hand
+        // TODO: probably in handController?
+        int cardsToRemove = routeLength - requiredLocos;
+        int locosToRemove = requiredLocos;
+        for (TrainCard trainCard : correctColorCards) {
+            if (cardsToRemove > 0) {
+                playerHand.remove(trainCard);
+                cardsToRemove--;
+            }
+        }
+        // Remove locos for ferries, or as extra for standard routes
+        for (TrainCard trainCard : locosInHand) {
+            if (cardsToRemove > 0 || locosToRemove > 0) {
+                playerHand.remove(trainCard);
+                cardsToRemove--;
+                locosToRemove--;
+            }
+        }
+
+        currentPlayer.getClaimedRoutes().add(route);
+        route.setOwner(currentPlayer);
+
+        return true;
     }
 
     /**
@@ -157,5 +222,9 @@ public class MapController {
 
     public MapModel getMapModel() {
         return mapModel;
+    }
+
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
     }
 }

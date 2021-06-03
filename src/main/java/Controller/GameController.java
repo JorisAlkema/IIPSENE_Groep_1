@@ -33,7 +33,7 @@ public class GameController implements Observable {
         startTurn(getCurrentPlayer());
     }
 
-    private Player getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         if (turnCount == 0) {
             return players.get(0);
         } else {

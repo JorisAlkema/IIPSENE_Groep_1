@@ -25,6 +25,7 @@ public class GameView extends BorderPane implements Observer {
     public GameView() {
         gameController = new GameController();
         MapView mapView = new MapView();
+        mapView.getMapController().setGameController(gameController);
 
         // Top pane
         label = new Label("0:00");
