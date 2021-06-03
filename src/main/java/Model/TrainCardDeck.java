@@ -13,29 +13,17 @@ import java.util.Random;
 // TODO: Think about implementation type of the deck. List<TrainCard>, Map<TrainCard, Integer> or something else?
 public class TrainCardDeck {
     ArrayList<TrainCard> trainCards;
-    String[] colors  = {"PURPLE", "WHITE", "BLUE", "YELLOW", "ORANGE", "BLACK", "RED", "GREEN"};
+//    String[] colors  = {"PURPLE", "WHITE", "BLUE", "YELLOW", "ORANGE", "BLACK", "RED", "GREEN"};
 
     public TrainCardDeck() {
-        trainCards = generateDeck();
+        trainCards = new ArrayList<>();
     }
 
-    private ArrayList<TrainCard> generateDeck() {
-        ArrayList<TrainCard> trainCards = new ArrayList<>();
-        for (String color : colors) {
-            for (int i = 0; i < 12; i++) {
-                trainCards.add(new TrainCard(color));
-            }
-        }
-        for (int i = 0; i < 14; i++) {
-            trainCards.add(new TrainCard("LOCO"));
-        }
+    public ArrayList<TrainCard> getTrainCards() {
         return trainCards;
     }
 
-     public TrainCard getRandomCard(){
-        Random rand = new Random();
-        TrainCard randomCard = trainCards.get(rand.nextInt(trainCards.size()));
-        trainCards.remove(randomCard);
-        return randomCard;
-     }
+    public void setTrainCards(ArrayList<TrainCard> trainCards) {
+        this.trainCards = trainCards;
+    }
 }

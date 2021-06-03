@@ -4,9 +4,12 @@ import App.MainState;
 import Model.City;
 import Model.Player;
 import Model.Route;
+import Model.TrainCardDeck;
+import Service.FirebaseService;
 import Service.GameSetupService;
 import Service.Observable;
 import Service.Observer;
+import View.CardView;
 import View.GameView;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -24,9 +27,17 @@ public class GameController implements Observable {
     private int seconds;
     private Timer timer;
 
+    private GameView gameView;
+
+    public GameController(GameView gameView) {
+        this.gameView = gameView;
+        initGame();
+    }
+
     public void initGame() {
         MainState.primaryStage.setOnCloseRequest(event -> timer.cancel());
-        MainState.primaryStage.setScene(new Scene(new GameView()));
+
+        gameView.setRight(new CardView());
 
         players = MainState.firebaseService.getAllPlayers(MainState.roomCode);
 
