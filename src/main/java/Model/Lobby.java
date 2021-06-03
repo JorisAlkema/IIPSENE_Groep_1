@@ -1,5 +1,6 @@
 package Model;
 
+import App.MainState;
 import Service.FirebaseService;
 import Service.Observable;
 import Service.Observer;
@@ -16,66 +17,15 @@ import java.util.*;
 // Possible methods: join, leave, start, (changeHost?), ..
 public class Lobby implements Observable {
     private ArrayList<Observer> observers = new ArrayList<>();
-    private FirebaseService firebaseService;
+
     private ListenerRegistration playerEventListener;
-    private String roomCode;
-    private String player_uuid;
-    private Stage primaryStage;
 
-    public Lobby(Stage primaryStage, String player_uuid, String roomCode) {
-        this.primaryStage = primaryStage;
-        this.roomCode = roomCode;
-        this.player_uuid = player_uuid;
-        this.firebaseService = new FirebaseService();
-
-        // Disconnect when player closes the program!
-        this.primaryStage.setOnCloseRequest(e -> {
-            disconnect();
-        });
-
-        Platform.runLater(() -> {
-            Map<String, Object> partyCode = new HashMap<>();
-            partyCode.put("partyCode", roomCode);
-            partyCode.put("Retrieving data...\n", roomCode);
-            notifyAllObservers(partyCode);
-
-            attachListener();
-        });
+    public void setPlayerEventListener(ListenerRegistration playerEventListener) {
+        this.playerEventListener = playerEventListener;
     }
 
-    // Accessible to controller
-
-    public void disconnect() {
-        if (player_uuid != null && roomCode != null) {
-            // remove listener
-            detachListener();
-            // remove yourself from the room
-            firebaseService.removePlayer(player_uuid, roomCode);
-        }
-    }
-
-    public void returnToMenu() {
-        Scene scene = new Scene(new MainMenuView(primaryStage), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
-        String css = "css/styling.css";
-        scene.getStylesheets().add(css);
-        primaryStage.setScene(scene);
-    }
-
-    public void attachListener() {
-        playerEventListener = firebaseService.getDocumentReference("rooms", roomCode).addSnapshotListener((document, e) -> {
-            if (document != null && document.getData() != null) {
-                update(document.getData());
-            }
-        });
-    }
-
-    public void detachListener() {
-        playerEventListener.remove();
-    }
-
-    // Handle new data from eventlistener
-    private void update(Map<String, Object> data) {
-        notifyAllObservers(data);
+    public ListenerRegistration getPlayerEventListener() {
+        return playerEventListener;
     }
 
     /*

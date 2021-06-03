@@ -4,6 +4,7 @@ package Model;
 // hand, in the TrainCardDeck or as one of the five open TrainCards next to the game board.
 // TrainCard only has a color.
 public class TrainCard {
+    // Color can be PURPLE, WHITE, BLUE, YELLOW, ORANGE, BLACK, RED, GREEN or LOCO
     private final String color;
 
     public TrainCard(String color) {

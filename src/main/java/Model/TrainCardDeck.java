@@ -12,21 +12,22 @@ import java.util.Random;
 // Possible methods: drawTrainCard(), shuffle(), ...
 // TODO: Think about implementation type of the deck. List<TrainCard>, Map<TrainCard, Integer> or something else?
 public class TrainCardDeck {
-    ArrayList<TrainCard> trainCards = new ArrayList<TrainCard>();
-    String[] colors  = {"purple", "white", "blue", "yellow", "orange", "black", "red", "green"};
+    ArrayList<TrainCard> trainCards;
+    String[] colors  = {"PURPLE", "WHITE", "BLUE", "YELLOW", "ORANGE", "BLACK", "RED", "GREEN"};
 
     public TrainCardDeck() {
         trainCards = generateDeck();
     }
 
-    public ArrayList<TrainCard> generateDeck() {
+    private ArrayList<TrainCard> generateDeck() {
+        ArrayList<TrainCard> trainCards = new ArrayList<>();
         for (String color : colors) {
             for (int i = 0; i < 12; i++) {
                 trainCards.add(new TrainCard(color));
             }
         }
         for (int i = 0; i < 14; i++) {
-            trainCards.add(new TrainCard("locomotive"));
+            trainCards.add(new TrainCard("LOCO"));
         }
         return trainCards;
     }

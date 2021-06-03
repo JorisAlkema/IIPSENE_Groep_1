@@ -16,12 +16,11 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class LoginView extends StackPane implements Observer {
-    private LoginController controller;
+    private LoginController loginController;
     private Text message;   
 
-    public LoginView(Stage primaryStage, Boolean host) {
-        controller = new LoginController(primaryStage);
-        controller.addObserver(this);
+    public LoginView(Boolean host) {
+        loginController = new LoginController(this);
         createView(host);
 
         // Unfocus textfield when clicked outside the textfield
@@ -65,7 +64,7 @@ public class LoginView extends StackPane implements Observer {
         /*
          * Functions for buttons
          * */
-        returnToMenu.setOnMouseClicked(e -> controller.returnToMenu());
+        returnToMenu.setOnMouseClicked(e -> loginController.returnToMenu());
     }
 
     private VBox joinScreen() {
@@ -112,7 +111,7 @@ public class LoginView extends StackPane implements Observer {
         });
 
         //join
-        join.setOnMouseClicked(e -> controller.join(inputUsername, inputCode));
+        join.setOnMouseClicked(e -> loginController.join(inputUsername, inputCode));
 
         return textFields;
     }
@@ -153,7 +152,7 @@ public class LoginView extends StackPane implements Observer {
         // Event Handlers
 
         //join
-        host.setOnMouseClicked(e -> controller.host(inputUsername));
+        host.setOnMouseClicked(e -> loginController.host(inputUsername));
 
         return textFields;
     }

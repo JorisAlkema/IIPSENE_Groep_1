@@ -29,4 +29,8 @@ public class DestinationTicket {
         this.type = type;
         this.connected = connected;
     }
+
+    public String getFileName() {
+        return "eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase();
+    }
 }
