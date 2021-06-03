@@ -23,7 +23,7 @@ public class GameView extends BorderPane implements Observer {
     GameController gameController;
 
     public GameView() {
-        gameController = new GameController();
+        gameController = new GameController(this);
         MapView mapView = new MapView();
         mapView.getMapController().setGameController(gameController);
 
@@ -66,10 +66,7 @@ public class GameView extends BorderPane implements Observer {
         vBox.getChildren().addAll(imageView,mainmenu);
 
         setLeft(vBox);
-
-        // Right pane
-        setRight(new CardView());
-
+        
         // Bottom pane
         setBottom(new HandView());
 

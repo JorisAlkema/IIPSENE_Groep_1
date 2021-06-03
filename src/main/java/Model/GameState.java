@@ -6,6 +6,8 @@ public class GameState {
     private String message;
     private Boolean ongoing;
     private ArrayList<Player> players;
+    private ArrayList<TrainCard> openDeck;
+    private ArrayList<TrainCard> closedDeck;
 
     public GameState(String message, Boolean ongoing, ArrayList<Player> players) {
         this.message = message;
@@ -39,5 +41,21 @@ public class GameState {
 
     public void setOngoing(Boolean ongoing) {
         this.ongoing = ongoing;
+    }
+
+    public ArrayList<TrainCard> getOpenDeck() {
+        return openDeck;
+    }
+
+    public void setOpenDeck(ArrayList<TrainCard> openDeck) {
+        this.openDeck = openDeck;
+    }
+
+    public ArrayList<TrainCard> getClosedDeck() {
+        return closedDeck;
+    }
+
+    public void setClosedDeck(ArrayList<TrainCard> closedDeck) {
+        this.closedDeck = closedDeck;
     }
 }
