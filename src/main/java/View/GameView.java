@@ -22,14 +22,10 @@ public class GameView extends BorderPane implements Observer {
 
     Label label;
     GameInfo gameInfo;
-    MapModel mapModel;
 
     public GameView() {
         gameInfo = new GameInfo();
-        mapModel = new MapModel(gameInfo.getGameSetupService().getRoutes(),
-                    gameInfo.getGameSetupService().getCities());
-        MapController mapController = new MapController(mapModel);
-        MapView mapView = new MapView(mapController);
+        MapView mapView = new MapView();
         // Top pane
         label = new Label("0:00");
         setAlignment(label, Pos.CENTER);
@@ -49,11 +45,11 @@ public class GameView extends BorderPane implements Observer {
         ImageView imageView = new ImageView(zoomInImage);
 
         imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            if (mapView.isZoomedIn()) {
-                mapView.zoomOut();
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapView.getMapController().zoomOut();
                 imageView.setImage(zoomInImage);
             } else {
-                mapView.zoomIn();
+                mapView.getMapController().zoomIn();
                 imageView.setImage(zoomOutImage);
             }
         });
