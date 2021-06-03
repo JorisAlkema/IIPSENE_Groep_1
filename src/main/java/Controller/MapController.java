@@ -20,15 +20,19 @@ public class MapController {
     private final MapView mapView;
     private final GameSetupService gameSetupService;
 
-
     public MapController(MapView mapView) {
         this.gameSetupService = new GameSetupService();
         this.mapView = mapView;
-        this.mapModel = new MapModel(this, gameSetupService.getRoutes(), gameSetupService.getCities());
+        this.mapModel = new MapModel(gameSetupService.getRoutes(), gameSetupService.getCities());
         this.mapModel.setCityOverlays(createCityOverlays());
         this.mapModel.setRouteCellOverlays(createRouteCellOverlays());
     }
 
+    /**
+     * Create the overlays for the cities on the map.
+     * Sets the correct location, size and adds event handler
+     * @return A list of Circle objects which represent the overlays
+     */
     private ArrayList<Circle> createCityOverlays() {
         ArrayList<Circle> circleList = new ArrayList<>();
         for (City city : this.mapModel.getCities()) {
@@ -52,6 +56,11 @@ public class MapController {
         return circleList;
     }
 
+    /**
+     * Creates the overlays for the individual routecells on the map.
+     * Sets the correct location, size, rotation and adds event handler
+     * @return A list of RouteCell object which represent the overlays
+     */
     private ArrayList<RouteCell> createRouteCellOverlays() {
         ArrayList<RouteCell> overlays = new ArrayList<>();
         for (Route route : this.mapModel.getRoutes()) {
@@ -60,22 +69,10 @@ public class MapController {
                 routeCell.setTranslateY(routeCell.getTranslateY() / 2);
                 routeCell.setWidth(this.mapModel.getCellWidth());
                 routeCell.setHeight(this.mapModel.getCellHeight());
-
                 routeCell.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
-                        e -> {
-                            if (routeCell.getFill().equals(Color.TRANSPARENT)) {
-                                for (RouteCell cellInSameRoute : routeCell.getParentRoute().getRouteCells()) {
-                                    cellInSameRoute.setFill(this.mapModel.getImagePattern());
-                                }
-                            } else {
-                                for (RouteCell cellInSameRoute : routeCell.getParentRoute().getRouteCells()) {
-                                    cellInSameRoute.setFill(Color.TRANSPARENT);
-                                }
-                            }
-                        },
-                        Event::consume)
-                );
-
+                        e -> handleRouteCellClickEvent(routeCell),
+                        Event::consume
+                ));
                 routeCell.setFill(Color.TRANSPARENT);
                 overlays.add( routeCell );
             }
@@ -83,6 +80,25 @@ public class MapController {
         return overlays;
     }
 
+    /**
+     * Handles click event for when the user clicks on a RouteCell on the mapView
+     * @param routeCell The routeCell overlay that was clicked on
+     */
+    public void handleRouteCellClickEvent(RouteCell routeCell) {
+        if (routeCell.getFill().equals(Color.TRANSPARENT)) {
+            for (RouteCell cellInSameRoute : routeCell.getParentRoute().getRouteCells()) {
+                cellInSameRoute.setFill(this.mapModel.getImagePattern());
+            }
+        } else {
+            for (RouteCell cellInSameRoute : routeCell.getParentRoute().getRouteCells()) {
+                cellInSameRoute.setFill(Color.TRANSPARENT);
+            }
+        }
+    }
+
+    /**
+     * Zooms in on the mapModel and updates the mapView
+     */
     public void zoomIn() {
         if (this.mapModel.isZoomedIn()) {
             return;
@@ -111,6 +127,9 @@ public class MapController {
         this.mapView.setVvalue(this.mapView.getVmin() + (this.mapView.getVmax() - this.mapView.getVmin()) / 2);
     }
 
+    /**
+     * Zooms out on the mapModel and updates the mapView
+     */
     public void zoomOut() {
         if (! this.mapModel.isZoomedIn()) {
             return;
