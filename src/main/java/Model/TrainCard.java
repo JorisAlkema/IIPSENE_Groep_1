@@ -5,7 +5,11 @@ package Model;
 // TrainCard only has a color.
 public class TrainCard {
     // Color can be PURPLE, WHITE, BLUE, YELLOW, ORANGE, BLACK, RED, GREEN or LOCO
-    private final String color;
+    private String color;
+
+    public TrainCard() {
+
+    }
 
     public TrainCard(String color) {
         this.color = color;

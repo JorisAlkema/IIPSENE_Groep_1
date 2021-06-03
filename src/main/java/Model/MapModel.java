@@ -11,9 +11,7 @@ import javafx.scene.shape.Circle;
 import java.util.ArrayList;
 
 public class MapModel implements Observable {
-    private final MapController mapController;
-    private ArrayList<Observer> observers;
-
+    private final ArrayList<Observer> observers;
     private final ArrayList<Route> routes;
     private final ArrayList<City> cities;
     private ArrayList<RouteCell> routeCellOverlays;
@@ -30,8 +28,7 @@ public class MapModel implements Observable {
     private static final double smallRadius = 7;
     private static final double bigRadius = 15;
 
-    public MapModel(MapController mapController, ArrayList<Route> routes, ArrayList<City> cities) {
-        this.mapController = mapController;
+    public MapModel(ArrayList<Route> routes, ArrayList<City> cities) {
         this.observers = new ArrayList<>();
         this.cities = cities;
         this.routes = routes;

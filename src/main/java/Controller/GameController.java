@@ -2,6 +2,10 @@ package Controller;
 
 import App.MainState;
 import Model.Player;
+import Model.Route;
+import Model.TrainCardDeck;
+import Service.FirebaseService;
+import Service.GameSetupService;
 import Service.Observable;
 import Service.Observer;
 import View.CardView;
@@ -41,7 +45,7 @@ public class GameController implements Observable {
         startTurn(getCurrentPlayer());
     }
 
-    private Player getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         if (turnCount == 0) {
             return players.get(0);
         } else {

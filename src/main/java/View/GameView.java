@@ -26,6 +26,7 @@ public class GameView extends BorderPane implements Observer {
     public GameView() {
         gameController = new GameController(this);
         MapView mapView = new MapView();
+        mapView.getMapController().setGameController(gameController);
 
         // Top pane
         timerLabel = new Label("0:00");
@@ -68,7 +69,9 @@ public class GameView extends BorderPane implements Observer {
         vBox.getChildren().addAll(imageView, mainmenu, playerLabel);
 
         setLeft(vBox);
-        setRight(new CardView());
+        
+        // Bottom pane
+        setBottom(new HandView());
 
         gameController.registerObserver(this);
         gameController.setTimerText(gameController.getTimer());
