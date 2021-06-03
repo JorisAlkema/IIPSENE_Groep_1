@@ -22,7 +22,7 @@ import java.io.IOException;
 
 public class MainMenuView extends StackPane {
     private MainMenuController mainMenuController = new MainMenuController();
-    private MusicPlayerView musicPlayerView = new MusicPlayerView(new MusicController());
+    private MusicPlayerView musicPlayerView = new MusicPlayerView();
 
     public MainMenuView() {
 
@@ -68,7 +68,7 @@ public class MainMenuView extends StackPane {
         VBox musicButtonContainer = new VBox(10);
         musicButtonContainer.setAlignment(Pos.BOTTOM_RIGHT);
         musicButtonContainer.setPadding(new Insets(20));
-        musicButtonContainer.getChildren().add(musicPlayerView.musicButton);
+        musicButtonContainer.getChildren().add(musicPlayerView.getMusicImageView());
 
         getChildren().add(background);
         getChildren().add(grid);

@@ -15,27 +15,32 @@ import javafx.scene.layout.VBox;
 
 public class MusicPlayerView implements Observer {
     private MusicController musicController;
-    public ImageView musicButton = new ImageView(new Image("images/music-on.png"));
+    private static final Image musicOnImage = new Image("images/music-on.png");
+    private static final Image musicOffImage = new Image("images/music-off.png");
+    public ImageView musicImageView;
 
-    public MusicPlayerView(MusicController musicController) {
-        this.musicController = musicController;
+    public MusicPlayerView() {
+        this.musicController = new MusicController(this);
+        this.musicImageView = new ImageView(musicOnImage);
         this.createMusicButton();
     }
 
-    public void changeMusicButton(boolean musicIsPlaying) {
-        System.out.println(musicIsPlaying);
-        Image image = new Image("images/music-off.png");
-        musicButton.setImage(image);
+    public void changeMusicButton() {
+//        System.out.println(musicIsPlaying);
+        musicImageView.setImage(musicController.getMusicPlayer().isPlaying() ? musicOnImage : musicOffImage);
     }
 
     public void createMusicButton() {
-        musicButton.setId("musicbutton");
-        musicButton.setOnMouseClicked(event -> musicController.toggleMusic());
+        musicImageView.setId("musicbutton");
+        musicImageView.setOnMouseClicked(event -> musicController.toggleMusic());
     }
 
+    public ImageView getMusicImageView() {
+        return musicImageView;
+    }
 
     @Override
     public void update(Observable observable, Object o, String type) {
-        this.changeMusicButton((boolean) o);
+        this.changeMusicButton();
     }
 }

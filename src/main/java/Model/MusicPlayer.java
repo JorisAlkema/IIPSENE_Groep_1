@@ -11,7 +11,15 @@ import java.util.ArrayList;
 
 public class MusicPlayer implements Observable {
     private boolean isPlaying = true;
-    private ArrayList<Observer> observers = new ArrayList<Observer>();
+    private ArrayList<Observer> observers = new ArrayList<>();
+    private Media media;
+    private MediaPlayer mediaPlayer;
+
+    public MusicPlayer() {
+        media = new Media(new File("src/main/resources/music/europe.mp3").toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.play();
+    }
 
     public void toggleMusic() {
         isPlaying = !isPlaying;
@@ -20,11 +28,17 @@ public class MusicPlayer implements Observable {
     }
 
     public void playAudio(boolean isPlaying) {
-        Media media = new Media("https://www.chalitandu.nu/iipsene/MenuMusic.mp3");
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
         if(isPlaying) {
+            mediaPlayer.play();
             mediaPlayer.setAutoPlay(true);
+        } else {
+            // Mute, pause or stop? What is most logical
+            mediaPlayer.pause();
         }
+    }
+
+    public boolean isPlaying() {
+        return isPlaying;
     }
 
     @Override
