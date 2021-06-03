@@ -158,7 +158,7 @@ public class LoginView extends StackPane implements Observer {
     }
 
     @Override
-    public void update(Observable observable, Object message) {
+    public void update(Observable observable, Object message, String type) {
         this.message.setText((String) message);
     }
 }

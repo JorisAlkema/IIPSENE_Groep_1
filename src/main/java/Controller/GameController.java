@@ -1,61 +1,61 @@
-package Model;
+package Controller;
 
 import App.MainState;
+import Model.Player;
+import Model.Route;
+import Model.TrainCardDeck;
 import Service.FirebaseService;
 import Service.GameSetupService;
 import Service.Observable;
 import Service.Observer;
+import View.CardView;
 import View.GameView;
 import javafx.application.Platform;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 
 import java.util.*;
 
-public class GameInfo implements Observable {
+public class GameController implements Observable {
     private String timerText;
     private ArrayList<Observer> observers = new ArrayList<>();
 
-    // TODO: Add Firebase compatibility
-    /* 'REAL' ARRAYLIST GETS GENERATED IN THE LOBBY
-    FINAL ARRAYLIST WILL BE PULLED FROM FIREBASE */
-    private ArrayList<Player> players = new ArrayList<Player>();
-    private int playerCount = players.size();
+    private ArrayList<Player> players;
 
     private int turnCount = 0;
-    private GameSetupService gameSetupService;
-    private ArrayList<City> cities;
-    private ArrayList<Route> routes;
 
     private int seconds;
     private Timer timer;
 
-    public GameInfo() {
+    private GameView gameView;
+
+    public GameController(GameView gameView) {
+        this.gameView = gameView;
         MainState.primaryStage.setOnCloseRequest(event -> timer.cancel());
-        gameSetupService = new GameSetupService();
-        cities = gameSetupService.getCities();
-        routes = gameSetupService.getRoutes();
+        initGame();
     }
 
     public void initGame() {
-        gameSetupService = new GameSetupService();
-        cities = gameSetupService.getCities();
-        routes = gameSetupService.getRoutes();
+        gameView.setRight(new CardView());
 
-        MainState.primaryStage.setScene(new Scene(new GameView()));
+        players = MainState.firebaseService.getAllPlayers(MainState.roomCode);
+
+        for (Player player : players) {
+            player.setTurn(false);
+        }
+
         startTurn(getCurrentPlayer());
     }
 
-    private Player getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         if (turnCount == 0) {
             return players.get(0);
         } else {
-            return players.get(turnCount % playerCount);
+            return players.get(turnCount % players.size());
         }
     }
 
     private void startTurn(Player player) {
         player.setTurn(true);
+        setPlayerName(getCurrentPlayer().getName());
         countdownTimer();
     }
 
@@ -90,7 +90,6 @@ public class GameInfo implements Observable {
 
     private int setSeconds() {
         if (seconds == 0) {
-            timer.cancel();
             return seconds;
         }
         return --seconds;
@@ -107,7 +106,7 @@ public class GameInfo implements Observable {
     public void setTimerText(String timerText) {
         this.timerText = timerText;
         Platform.runLater(() -> {
-            notifyAllObservers(this.timerText);
+            notifyAllObservers(this.timerText, "timer");
         });
     }
 
@@ -115,6 +114,12 @@ public class GameInfo implements Observable {
         int minutes = (int) Math.floor(seconds / 60.0);
         int displaySeconds = (seconds % 60);
         return String.format("%d:%02d", minutes, displaySeconds);
+    }
+
+    public void setPlayerName(String playerName) {
+        Platform.runLater(() -> {
+            notifyAllObservers(playerName, "playername");
+        });
     }
 
     @Override
@@ -128,13 +133,9 @@ public class GameInfo implements Observable {
     }
 
     @Override
-    public void notifyAllObservers(Object o) {
+    public void notifyAllObservers(Object o, String type) {
         for (Observer observer : observers) {
-            observer.update(this, o);
+            observer.update(this, o, type);
         }
-    }
-
-    public GameSetupService getGameSetupService() {
-        return gameSetupService;
     }
 }

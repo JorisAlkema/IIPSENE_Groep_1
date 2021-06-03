@@ -7,9 +7,10 @@ public class TrainCard {
     // Color can be PURPLE, WHITE, BLUE, YELLOW, ORANGE, BLACK, RED, GREEN or LOCO
     private String color;
 
-    public TrainCard(){
+    public TrainCard() {
 
     }
+
     public TrainCard(String color) {
         this.color = color;
     }

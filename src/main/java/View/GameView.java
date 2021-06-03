@@ -2,7 +2,7 @@ package View;
 
 import App.MainState;
 import Controller.MapController;
-import Model.GameInfo;
+import Controller.GameController;
 import Model.MapModel;
 import Service.Observable;
 import Service.Observer;
@@ -16,27 +16,25 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 public class GameView extends BorderPane implements Observer {
 
-    Label label;
-    GameInfo gameInfo;
-    MapModel mapModel;
+    Label timerLabel;
+    Label playerLabel;
+    GameController gameController;
 
     public GameView() {
-        gameInfo = new GameInfo();
-        mapModel = new MapModel(gameInfo.getGameSetupService().getRoutes(),
-                    gameInfo.getGameSetupService().getCities());
-        MapController mapController = new MapController(mapModel);
-        MapView mapView = new MapView(mapController);
+        gameController = new GameController(this);
+        MapView mapView = new MapView();
+        mapView.getMapController().setGameController(gameController);
+
         // Top pane
-        label = new Label("0:00");
-        setAlignment(label, Pos.CENTER);
-        label.setStyle("-fx-font-family: Merriweather;" +
-                "-fx-font-weight: bold;" +
-                "-fx-font-size: 30;");
-        setTop(label);
+        timerLabel = new Label("0:00");
+        setAlignment(timerLabel, Pos.CENTER);
+        timerLabel.setStyle(    "-fx-font-family: Merriweather;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-font-size: 30;");
+        setTop(timerLabel);
 
         // Center pane
         setCenter(mapView);
@@ -49,11 +47,11 @@ public class GameView extends BorderPane implements Observer {
         ImageView imageView = new ImageView(zoomInImage);
 
         imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            if (mapView.isZoomedIn()) {
-                mapView.zoomOut();
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapView.getMapController().zoomOut();
                 imageView.setImage(zoomInImage);
             } else {
-                mapView.zoomIn();
+                mapView.getMapController().zoomIn();
                 imageView.setImage(zoomOutImage);
             }
         });
@@ -66,19 +64,28 @@ public class GameView extends BorderPane implements Observer {
             MainState.primaryStage.setScene(newScene);
         });
 
-        vBox.getChildren().addAll(imageView,mainmenu);
+        playerLabel = new Label("Current player: ");
+
+        vBox.getChildren().addAll(imageView, mainmenu, playerLabel);
 
         setLeft(vBox);
-        setRight(new CardView());
+        
+        // Bottom pane
+        setBottom(new HandView());
 
-        gameInfo.registerObserver(this);
-        // Change to gameinfo.initGame() when player implementation is finished
-        gameInfo.countdownTimer();
-        gameInfo.setTimerText(gameInfo.getTimer());
+        gameController.registerObserver(this);
+        gameController.setTimerText(gameController.getTimer());
     }
 
     @Override
-    public void update(Observable observable, Object timerText) {
-        label.setText((String) timerText);
+    public void update(Observable observable, Object object, String type) {
+        if (type.equals("timer")) {
+            System.out.println("Timer updated!" + java.time.LocalTime.now());
+            timerLabel.setText((String) object);
+        } else if (type.equals("playername")) {
+            System.out.println("Player text updated!");
+            playerLabel.setText("Current player: " + object.toString());
+        }
+
     }
 }

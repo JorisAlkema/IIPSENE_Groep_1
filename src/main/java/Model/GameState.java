@@ -8,8 +8,6 @@ public class GameState {
     private ArrayList<Player> players;
     private ArrayList<TrainCard> openDeck;
     private ArrayList<TrainCard> closedDeck;
-    private ArrayList<TrainCard> discardedDeck;
-
 
     public GameState(String message, Boolean ongoing, ArrayList<Player> players) {
         this.message = message;
@@ -59,13 +57,5 @@ public class GameState {
 
     public void setClosedDeck(ArrayList<TrainCard> closedDeck) {
         this.closedDeck = closedDeck;
-    }
-
-    public ArrayList<TrainCard> getDiscardedDeck() {
-        return discardedDeck;
-    }
-
-    public void setDiscardedDeck(ArrayList<TrainCard> discardedDeck) {
-        this.discardedDeck = discardedDeck;
     }
 }

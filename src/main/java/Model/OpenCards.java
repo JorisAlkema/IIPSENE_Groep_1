@@ -1,31 +1,20 @@
 package Model;
 
-import App.MainState;
-
 import java.util.ArrayList;
 
 public class OpenCards {
-    public ArrayList<TrainCard> openCards = new ArrayList<TrainCard>();
-    private TrainCardDeck deck;
+    public ArrayList<TrainCard> openCards;
 
-
-    public OpenCards(TrainCardDeck deck) {
-        GameState gameState = MainState.firebaseService.getGameState(MainState.roomCode);
-        this.deck = deck;
-        openCards = fillOpenCards();
-        gameState.setOpenDeck(openCards);
-        MainState.firebaseService.updateGameState(MainState.roomCode,gameState);
-    }
-
-    public ArrayList<TrainCard> fillOpenCards() {
-        while(openCards.size() < 5){
-            openCards.add(deck.getRandomCard());
-        }
-        return openCards;
+    public OpenCards() {
+        openCards = new ArrayList<TrainCard>();
     }
 
     public ArrayList<TrainCard> getOpenCards() {
         return openCards;
+    }
+
+    public void setOpenCards(ArrayList<TrainCard> openCards) {
+        this.openCards = openCards;
     }
 
 

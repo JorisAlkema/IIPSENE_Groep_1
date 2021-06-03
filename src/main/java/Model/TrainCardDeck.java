@@ -1,7 +1,5 @@
 package Model;
 
-import App.MainState;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -15,38 +13,17 @@ import java.util.Random;
 // TODO: Think about implementation type of the deck. List<TrainCard>, Map<TrainCard, Integer> or something else?
 public class TrainCardDeck {
     ArrayList<TrainCard> trainCards;
-    String[] colors  = {"PURPLE", "WHITE", "BLUE", "YELLOW", "ORANGE", "BLACK", "RED", "GREEN"};
-    GameState gameState = MainState.firebaseService.getGameState(MainState.roomCode);
+//    String[] colors  = {"PURPLE", "WHITE", "BLUE", "YELLOW", "ORANGE", "BLACK", "RED", "GREEN"};
+
     public TrainCardDeck() {
-        trainCards = generateDeck();
-        gameState.setClosedDeck(trainCards);
-        MainState.firebaseService.updateGameState(MainState.roomCode,gameState);
+        trainCards = new ArrayList<>();
     }
 
-    private ArrayList<TrainCard> generateDeck() {
-        ArrayList<TrainCard> trainCards = new ArrayList<>();
-        for (String color : colors) {
-            for (int i = 0; i < 12; i++) {
-                trainCards.add(new TrainCard(color));
-            }
-        }
-        for (int i = 0; i < 14; i++) {
-            trainCards.add(new TrainCard("LOCO"));
-        }
+    public ArrayList<TrainCard> getTrainCards() {
         return trainCards;
     }
 
-    private ArrayList<TrainCard> reshuffleDeck(){
-        ArrayList<TrainCard> trainCards = new ArrayList<>();
-        //TODO: use the old cards and shuffle them into a new deck.
-        return trainCards;
-    }
-
-    public TrainCard getRandomCard(){
-        Random rand = new Random();
-        TrainCard randomCard = gameState.getClosedDeck().get(rand.nextInt(trainCards.size()));
-        gameState.getClosedDeck().remove(randomCard);
-        MainState.firebaseService.updateGameState(MainState.roomCode,gameState);
-        return randomCard;
+    public void setTrainCards(ArrayList<TrainCard> trainCards) {
+        this.trainCards = trainCards;
     }
 }
