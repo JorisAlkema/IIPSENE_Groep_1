@@ -145,6 +145,17 @@ public class FirebaseService {
         documentReference.update("ongoing", isOngoing);
     }
 
+    public GameState getGameState(String code) {
+        try {
+            return getRoomReference(code).get().get().toObject(GameState.class);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void updateGameState(String code, GameState gameState) {
         DocumentReference documentReference = getRoomReference(code);
         documentReference.set(gameState);
