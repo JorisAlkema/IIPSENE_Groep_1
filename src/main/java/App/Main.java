@@ -1,9 +1,10 @@
+package App;
+
+import App.MainState;
 import View.MainMenuView;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class Main extends Application {
 
@@ -12,27 +13,19 @@ public class Main extends Application {
 //    public static void main(String[] args) {
 //        HelloFX.main(args);
 //    }
-
-    private final int SCREEN_WIDTH = 1280;
-    private final int SCREEN_HEIGHT = 720;
-    private final String CSS = "css/styling.css";
-
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) {
-        Scene scene = new Scene(new MainMenuView(primaryStage), SCREEN_WIDTH, SCREEN_HEIGHT);
-        scene.getStylesheets().add(CSS);
+        MainState.primaryStage = primaryStage;
+        MainMenuView mainMenuView = new MainMenuView();
+        Scene scene = new Scene(mainMenuView, MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
+        scene.getStylesheets().add(MainState.MenuCSS);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Ticket to Ride");
         primaryStage.setResizable(false);
         primaryStage.show();
-    }
-
-    @Override
-    public void stop() throws Exception {
-        super.stop();
     }
 }

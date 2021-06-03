@@ -1,49 +1,43 @@
-package Model;
+package Controller;
 
+import App.MainState;
+import Model.City;
+import Model.Player;
+import Model.Route;
 import Service.GameSetupService;
 import Service.Observable;
 import Service.Observer;
+import View.GameView;
 import javafx.application.Platform;
-import javafx.stage.Stage;
+import javafx.scene.Scene;
 
 import java.util.*;
 
-public class GameInfo implements Observable {
+public class GameController implements Observable {
     private String timerText;
     private ArrayList<Observer> observers = new ArrayList<>();
 
-    // TODO: Add Firebase compatibility
-    /* 'REAL' ARRAYLIST GETS GENERATED IN THE LOBBY
-    FINAL ARRAYLIST WILL BE PULLED FROM FIREBASE */
-    private ArrayList<Player> players = new ArrayList<Player>();
-    private int playerCount = players.size();
+    private ArrayList<Player> players;
 
     private int turnCount = 0;
-    private GameSetupService gameSetupService;
-    private final ArrayList<City> cities;
-    private final ArrayList<Route> routes;
 
     private int seconds;
     private Timer timer;
 
-    public GameInfo(Stage primaryStage) {
-        // Move (part of) this to initGame later
-        gameSetupService = new GameSetupService();
-        cities = gameSetupService.getCities();
-        routes = gameSetupService.getRoutes();
-
-        primaryStage.setOnCloseRequest(event -> timer.cancel());
-    }
-
     public void initGame() {
+        MainState.primaryStage.setOnCloseRequest(event -> timer.cancel());
+        MainState.primaryStage.setScene(new Scene(new GameView()));
+
+        players = MainState.firebaseService.getAllPlayers(MainState.roomCode);
+
         startTurn(getCurrentPlayer());
     }
 
-    private Player getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         if (turnCount == 0) {
             return players.get(0);
         } else {
-            return players.get(turnCount % playerCount);
+            return players.get(turnCount % players.size());
         }
     }
 
@@ -75,6 +69,7 @@ public class GameInfo implements Observable {
                     // Code that gets executed after the countdown has hit 0
                     setTimerText(timerFormat(setSeconds()));
                     endTurn(getCurrentPlayer());
+                    timer.cancel();
                     startTurn(getCurrentPlayer());
                 }
             }
@@ -104,10 +99,10 @@ public class GameInfo implements Observable {
         });
     }
 
-    private String timerFormat(int timer) {
-        int minutes = (int) Math.floor(timer / 60);
-        int seconds = (timer % 60);
-        return String.format("%d:%02d", minutes, seconds);
+    private String timerFormat(int seconds) {
+        int minutes = (int) Math.floor(seconds / 60.0);
+        int displaySeconds = (seconds % 60);
+        return String.format("%d:%02d", minutes, displaySeconds);
     }
 
     @Override
@@ -125,9 +120,5 @@ public class GameInfo implements Observable {
         for (Observer observer : observers) {
             observer.update(this, o);
         }
-    }
-
-    public GameSetupService getGameSetupService() {
-        return gameSetupService;
     }
 }

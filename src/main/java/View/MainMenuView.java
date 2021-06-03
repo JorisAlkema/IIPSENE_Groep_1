@@ -1,38 +1,39 @@
 package View;
 
+import App.Main;
+import App.MainState;
 import Controller.MainMenuController;
 import Controller.MusicController;
 import Model.MusicPlayer;
 import Service.Observable;
 import Service.Observer;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class MainMenuView extends StackPane implements Observer {
+public class MainMenuView extends StackPane {
     private MainMenuController mainMenuController = new MainMenuController();
     private MusicPlayerView musicPlayerView = new MusicPlayerView(new MusicController());
 
-    public MainMenuView(Stage primaryStage) {
-        super();
-        // Main layout
+    public MainMenuView() {
+
+        // App.Main layout
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(40));
+
         ImageView title = new ImageView("images/main_menu_logo.png");
         title.setFitWidth(title.getImage().getWidth() * 0.9);
         title.setFitHeight(title.getImage().getHeight() * 0.9);
+
         grid.add(title, 0,0,2,1);
 
         // Background
@@ -76,37 +77,10 @@ public class MainMenuView extends StackPane implements Observer {
 
 
         //Events
-        test.setOnMouseClicked(e -> mainMenuController.test(primaryStage));
-        hostGame.setOnMouseClicked(e -> mainMenuController.host(primaryStage));
-        joinGame.setOnMouseClicked(e -> mainMenuController.join(primaryStage));
-
-        File rulesPDF = new File("src/main/resources/rules/ticket_to_ride_europe_rules.pdf");
-
-        rules.setOnMouseClicked(e -> {
-            try {
-                openFile(rulesPDF);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
-
+        test.setOnMouseClicked(e -> mainMenuController.game());
+        hostGame.setOnMouseClicked(e -> mainMenuController.host());
+        joinGame.setOnMouseClicked(e -> mainMenuController.join());
+        rules.setOnMouseClicked(e -> mainMenuController.openRules());
         quit.setOnMouseClicked(e -> System.exit(0));
-    }
-
-    public static void openFile(File file) throws Exception {
-        if (Desktop.isDesktopSupported()) {
-            new Thread(() -> {
-                try {
-                    Desktop.getDesktop().open(file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-        }
-    }
-
-    @Override
-    public void update(Observable observable, Object o) {
-
     }
 }

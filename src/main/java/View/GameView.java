@@ -1,7 +1,8 @@
 package View;
 
+import App.MainState;
 import Controller.MapController;
-import Model.GameInfo;
+import Controller.GameController;
 import Model.MapModel;
 import Service.Observable;
 import Service.Observer;
@@ -15,26 +16,23 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 public class GameView extends BorderPane implements Observer {
 
     Label label;
-    GameInfo gameInfo;
-    MapModel mapModel;
+    GameController gameController;
 
-    public GameView(Stage primaryStage) {
-        gameInfo = new GameInfo(primaryStage);
-        mapModel = new MapModel(gameInfo.getGameSetupService().getRoutes(),
-                    gameInfo.getGameSetupService().getCities());
-        MapController mapController = new MapController(mapModel);
-        MapView mapView = new MapView(mapController);
+    public GameView() {
+        gameController = new GameController();
+        MapView mapView = new MapView();
+        mapView.getMapController().setGameController(gameController);
+
         // Top pane
         label = new Label("0:00");
         setAlignment(label, Pos.CENTER);
-        label.setStyle("-fx-font-family: Merriweather;" +
-                "-fx-font-weight: bold;" +
-                "-fx-font-size: 30;");
+        label.setStyle( "-fx-font-family: Merriweather;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-size: 30;");
         setTop(label);
 
         // Center pane
@@ -48,32 +46,36 @@ public class GameView extends BorderPane implements Observer {
         ImageView imageView = new ImageView(zoomInImage);
 
         imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            if (mapView.isZoomedIn()) {
-                mapView.zoomOut();
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapView.getMapController().zoomOut();
                 imageView.setImage(zoomInImage);
             } else {
-                mapView.zoomIn();
+                mapView.getMapController().zoomIn();
                 imageView.setImage(zoomOutImage);
             }
         });
 
         Button mainmenu = new Button("Return to menu");
         mainmenu.setOnAction(e -> {
-            Scene newScene = new Scene(new MainMenuView(primaryStage), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
+            Scene newScene = new Scene(new MainMenuView());
             String css = "css/styling.css";
             newScene.getStylesheets().add(css);
-            primaryStage.setScene(newScene);
+            MainState.primaryStage.setScene(newScene);
         });
 
         vBox.getChildren().addAll(imageView,mainmenu);
 
         setLeft(vBox);
+
+        // Right pane
         setRight(new CardView());
 
-        gameInfo.registerObserver(this);
-        // Change to gameinfo.initGame() when player implementation is finished
-        gameInfo.countdownTimer();
-        gameInfo.setTimerText(gameInfo.getTimer());
+        // Bottom pane
+        setBottom(new HandView());
+
+        gameController.registerObserver(this);
+        gameController.countdownTimer();
+        gameController.setTimerText(gameController.getTimer());
     }
 
     @Override
