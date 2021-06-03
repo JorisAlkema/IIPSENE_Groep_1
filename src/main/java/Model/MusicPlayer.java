@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class MusicPlayer implements Observable {
-    private boolean isPlaying = true;
+    private boolean isPlaying;
     private ArrayList<Observer> observers = new ArrayList<>();
     private Media media;
     private MediaPlayer mediaPlayer;
@@ -19,6 +19,7 @@ public class MusicPlayer implements Observable {
         media = new Media(new File("src/main/resources/music/europe.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         mediaPlayer.play();
+        isPlaying = true;
     }
 
     public void toggleMusic() {
@@ -48,13 +49,13 @@ public class MusicPlayer implements Observable {
 
     @Override
     public void unregisterObserver(Observer observer) {
-
+        observers.remove(observer);
     }
 
     @Override
     public void notifyAllObservers(Object o, String type) {
         for(Observer observer : observers) {
-            observer.update( this, o, "update");
+            observer.update( this, o, "");
         }
     }
 }

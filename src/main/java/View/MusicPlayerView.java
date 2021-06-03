@@ -1,8 +1,10 @@
 package View;
 
 import Controller.MusicController;
+import Model.MusicPlayer;
 import Service.Observable;
 import Service.Observer;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -13,7 +15,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-public class MusicPlayerView implements Observer {
+import javax.swing.*;
+
+public class MusicPlayerView extends VBox implements Observer {
     private MusicController musicController;
     private static final Image musicOnImage = new Image("images/music-on.png");
     private static final Image musicOffImage = new Image("images/music-off.png");
@@ -23,6 +27,7 @@ public class MusicPlayerView implements Observer {
         this.musicController = new MusicController(this);
         this.musicImageView = new ImageView(musicOnImage);
         this.createMusicButton();
+        getChildren().add(musicImageView);
     }
 
     public void changeMusicButton() {
