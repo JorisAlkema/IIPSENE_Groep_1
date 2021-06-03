@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 // Route represents a single route on the map, connecting two Cities with a
 // given amount of RouteCells of a given color. It can be claimed by a Player.
@@ -20,6 +21,31 @@ public class Route {
         this.color = color;
         this.type = type;
         this.requiredLocomotives = requiredLocomotives;
+    }
+
+    @Override
+    public String toString() {
+        return "Route: " + firstCity + "-" + secondCity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return  false;
+        }
+        if (o instanceof Route) {
+            Route route = (Route) o;
+            return this.firstCity.equals(route.firstCity) && this.secondCity.equals(route.secondCity);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstCity, secondCity);
     }
 
     public ArrayList<RouteCell> getRouteCells() {
