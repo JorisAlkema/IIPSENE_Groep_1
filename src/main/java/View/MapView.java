@@ -21,8 +21,8 @@ public class MapView extends ScrollPane implements Observer {
         this.stackPane.getChildren().add(this.mapController.getMapModel().getBackgroundImage());
         this.setContent(initStackPane());
         // Hide scrollbars
-        this.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        this.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        this.setHbarPolicy(ScrollBarPolicy.NEVER);
+        this.setVbarPolicy(ScrollBarPolicy.NEVER);
     }
 
     private StackPane initStackPane() {

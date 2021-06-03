@@ -29,62 +29,6 @@ public class Player {
         this.actionsTaken = 0;
     }
 
-    public boolean claimRoute(Route route, String color) {
-        // Route already claimed
-        if (route.getOwner() != null) {
-            return false;
-        }
-        String routeColor = route.getColor();
-        // If the Route is grey, check for cards of the given color
-        if (routeColor.equals("GREY")) {
-            routeColor = color;
-        }
-        String type = route.getType();
-        int requiredLocos = route.getRequiredLocomotives();
-        int routeLength = route.getLength();
-        ArrayList<TrainCard> correctColorCards = new ArrayList<>();
-        ArrayList<TrainCard> locosInHand = new ArrayList<>();
-        for (TrainCard trainCard : this.trainCards) {
-            if (trainCard.getColor().equals(routeColor)) {
-                correctColorCards.add(trainCard);
-            } else if (trainCard.getColor().equals("LOCO")) {
-                locosInHand.add(trainCard);
-            }
-            if (correctColorCards.size() >= routeLength && locosInHand.size() >= requiredLocos) {
-                break;
-            }
-        }
-        // Not enough cards of the right color
-        if (correctColorCards.size() + locosInHand.size() < routeLength) {
-            return false;
-        }
-        if (type.equals("TUNNEL")) {
-            // TODO
-        }
-        if (type.equals("FERRY") && locosInHand.size() < requiredLocos) {
-            return false;
-        }
-        // Remove cards from hand
-        int cardsToRemove = routeLength;
-        for (TrainCard trainCard : correctColorCards) {
-            if (cardsToRemove > 0) {
-                this.trainCards.remove(trainCard);
-                cardsToRemove--;
-            }
-        }
-        for (TrainCard trainCard : locosInHand) {
-            if (cardsToRemove > 0) {
-                this.trainCards.remove(trainCard);
-                cardsToRemove--;
-            }
-        }
-
-        claimedRoutes.add(route);
-        route.setOwner(this);
-
-        return true;
-    }
-
     public Player(String name, String UUID, Boolean host) {
         this.name = name;
         this.UUID = UUID;
