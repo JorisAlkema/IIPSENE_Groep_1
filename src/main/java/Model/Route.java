@@ -26,6 +26,14 @@ public class Route {
         return routeCells;
     }
 
+    public City getFirstCity() {
+        return firstCity;
+    }
+
+    public City getSecondCity() {
+        return secondCity;
+    }
+
     public void setOwner(Player owner) {
         this.owner = owner;
     }
