@@ -2,7 +2,7 @@ package View;
 
 import App.MainState;
 import Controller.MapController;
-import Model.GameInfo;
+import Controller.GameController;
 import Model.MapModel;
 import Service.Observable;
 import Service.Observer;
@@ -16,26 +16,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 public class GameView extends BorderPane implements Observer {
 
     Label label;
-    GameInfo gameInfo;
-    MapModel mapModel;
+    GameController gameController;
 
     public GameView() {
-        gameInfo = new GameInfo();
-        mapModel = new MapModel(gameInfo.getGameSetupService().getRoutes(),
-                    gameInfo.getGameSetupService().getCities());
-        MapController mapController = new MapController(mapModel);
-        MapView mapView = new MapView(mapController);
+        gameController = new GameController();
+        MapView mapView = new MapView();
+
         // Top pane
         label = new Label("0:00");
         setAlignment(label, Pos.CENTER);
-        label.setStyle("-fx-font-family: Merriweather;" +
-                "-fx-font-weight: bold;" +
-                "-fx-font-size: 30;");
+        label.setStyle( "-fx-font-family: Merriweather;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-size: 30;");
         setTop(label);
 
         // Center pane
@@ -49,11 +45,11 @@ public class GameView extends BorderPane implements Observer {
         ImageView imageView = new ImageView(zoomInImage);
 
         imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            if (mapView.isZoomedIn()) {
-                mapView.zoomOut();
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapView.getMapController().zoomOut();
                 imageView.setImage(zoomInImage);
             } else {
-                mapView.zoomIn();
+                mapView.getMapController().zoomIn();
                 imageView.setImage(zoomOutImage);
             }
         });
@@ -71,10 +67,9 @@ public class GameView extends BorderPane implements Observer {
         setLeft(vBox);
         setRight(new CardView());
 
-        gameInfo.registerObserver(this);
-        // Change to gameinfo.initGame() when player implementation is finished
-        gameInfo.countdownTimer();
-        gameInfo.setTimerText(gameInfo.getTimer());
+        gameController.registerObserver(this);
+        gameController.countdownTimer();
+        gameController.setTimerText(gameController.getTimer());
     }
 
     @Override

@@ -8,7 +8,6 @@ public class MainState {
     public static FirebaseService firebaseService = new FirebaseService();
     public static Stage primaryStage;
 
-    // For the lobby
     public static String roomCode;
     public static Player player;
 
