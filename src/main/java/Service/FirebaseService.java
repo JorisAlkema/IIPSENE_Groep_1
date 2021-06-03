@@ -65,8 +65,8 @@ public class FirebaseService {
         roomReference.update("players", FieldValue.arrayUnion(player));
     }
 
-    // Get data of room
-    public Map<String, Object> getRoomData(String roomCode) {
+    // if = null room doesnt exists, used for addPlayer
+    private Map<String, Object> getRoomData(String roomCode) {
         Map<String, Object> Snapshot = null;
         try {
             Snapshot = db.collection("rooms").document(roomCode).get().get().getData();
@@ -131,10 +131,8 @@ public class FirebaseService {
 
     // Update message in the lobby
     public void updateMessageInLobby(String code, String message) {
-        DocumentReference documentReference = db.collection("rooms").document(code);
-        Map<String, Object> snapShot = getRoomData(code);
-        snapShot.put("message", message);
-        documentReference.update(snapShot);
+        DocumentReference documentReference = getRoomReference(code);
+        documentReference.update("message", message);
     }
 
     // Update Roomdata in the lobby

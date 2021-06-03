@@ -1,5 +1,6 @@
 package View;
 
+import Controller.CardController;
 import Model.OpenCards;
 import Model.TrainCard;
 import Model.TrainCardDeck;
@@ -10,29 +11,27 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 
 public class CardView extends VBox {
-public static ArrayList<Button> buttons = new ArrayList<Button>();
+    public static ArrayList<Button> buttons = new ArrayList<Button>();
+    private CardController cardController = new CardController(this);
+    private TrainCard randomCard = null;
 
     public CardView() {
         super();
         displayCards();
     }
+
     public void displayCards() {
         setPadding(new Insets(30));
         Button getTrainCard = new Button("Get closed train card");
         getChildren().addAll(getTrainCard);
-
-        TrainCardDeck deck = new TrainCardDeck();
-        OpenCards openCards = new OpenCards(deck);
-
         getTrainCard.setOnAction(e -> {
-            TrainCard randomCard = deck.getRandomCard();
+            randomCard = this.cardController.getRandomCard();
             System.out.println(randomCard);
             System.out.println(randomCard.getColor());
         });
 
-        createButtons(openCards);
-
-        clickedButtons(deck,openCards);
+        createButtons(this.cardController.getOpenDeck());
+        clickedButtons();
     }
 
     public void createButtons(OpenCards openCards){
@@ -43,17 +42,21 @@ public static ArrayList<Button> buttons = new ArrayList<Button>();
         getChildren().addAll(buttons);
     }
 
-    public void clickedButtons(TrainCardDeck deck,OpenCards openCards){
+    public void clickedButtons(){
         for (Button clickedButton: buttons){
             clickedButton.setOnAction(e ->{
-                System.out.println(openCards.openCards.get(buttons.indexOf(clickedButton)));
-                System.out.println(openCards.openCards.get(buttons.indexOf(clickedButton)).getColor());
+                System.out.println(this.cardController.getOpenDeck().openCards.get(buttons.indexOf(clickedButton)));
+                System.out.println(this.cardController.getOpenDeck().openCards.get(buttons.indexOf(clickedButton)).getColor());
+
                 getChildren().remove(clickedButton);
                 buttons.remove(clickedButton);
-                Button newButton = new Button(deck.getRandomCard().getColor());
+
+                Button newButton = new Button(this.cardController.getRandomCard().getColor());
+
                 buttons.add(newButton);
                 getChildren().add(newButton);
-                clickedButtons(deck,openCards);
+
+                clickedButtons();
             });
         }
     }
