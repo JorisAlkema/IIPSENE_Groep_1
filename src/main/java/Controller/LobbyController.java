@@ -1,10 +1,12 @@
 package Controller;
 
+import App.Main;
 import App.MainState;
 import Model.GameState;
 import Model.Lobby;
 import Model.Player;
 import Service.Observer;
+import View.GameView;
 import View.LobbyView;
 import View.LoginView;
 import View.MainMenuView;
@@ -19,7 +21,6 @@ import java.util.Map;
 public class LobbyController {
 
     private Lobby lobby = new Lobby();
-    private GameController gameController = new GameController();
 
     public LobbyController(LobbyView lobbyView) {
         lobby.registerObserver(lobbyView);
@@ -57,10 +58,11 @@ public class LobbyController {
         lobby.setPlayerEventListener(MainState.firebaseService.getRoomReference(MainState.roomCode).addSnapshotListener((document, e) -> {
             System.out.println("Update");
             if (document != null && document.getData() != null) {
-                lobby.notifyAllObservers(document);
+                lobby.notifyAllObservers(document, "updateDocument");
 
                 if ((Boolean) document.getData().get("ongoing")) {
-                    gameController.initGame();
+                    detachListener();
+                    Platform.runLater(() -> MainState.primaryStage.setScene(new Scene(new GameView())));
                 }
             }
         }));
@@ -79,11 +81,13 @@ public class LobbyController {
     public void startRoom() {
         ArrayList<Player> allPlayers = MainState.firebaseService.getAllPlayers(MainState.roomCode);
 
-        if (MainState.player.getHost() && allPlayers.size() >= 3) {
-            MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "Game will start..\n");
-            MainState.firebaseService.updateOngoing(MainState.roomCode, true);
-        } else {
-            MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "3 - 5 players are needed to start the game");
-        }
+//        if (MainState.player.getHost() && allPlayers.size() >=  1) {
+//            MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "Game will start..\n");
+//            MainState.firebaseService.updateOngoing(MainState.roomCode, true);
+//        } else {
+//            MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "3 - 5 players are needed to start the game");
+//        }
+
+        MainState.firebaseService.updateOngoing(MainState.roomCode, true);
     }
 }

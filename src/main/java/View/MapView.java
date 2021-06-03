@@ -9,7 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 /** Constructs a scene with a pannable Map background. */
-public class MapView extends ScrollPane implements Observer {
+public class MapView extends ScrollPane {
     private final MapController mapController;
     private StackPane stackPane;
 
@@ -17,7 +17,6 @@ public class MapView extends ScrollPane implements Observer {
         super();
         this.mapController = new MapController(this);
         this.stackPane = new StackPane();
-        this.mapController.getMapModel().registerObserver(this);
         this.stackPane.getChildren().add(this.mapController.getMapModel().getBackgroundImage());
         this.setContent(initStackPane());
         // Hide scrollbars
@@ -39,11 +38,6 @@ public class MapView extends ScrollPane implements Observer {
 
     public void setBackgroundImage(ImageView backgroundImage) {
         this.stackPane.getChildren().set(0, backgroundImage);
-    }
-
-    @Override
-    public void update(Observable observable, Object o) {
-
     }
 
     public MapController getMapController() {

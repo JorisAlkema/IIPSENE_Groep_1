@@ -38,9 +38,9 @@ public class Login implements Observable {
     }
 
     @Override
-    public void notifyAllObservers(Object o) {
+    public void notifyAllObservers(Object o, String type) {
         for (Observer observer : observers) {
-            observer.update(this, o);
+            observer.update(this, o, type);
         }
     }
 }

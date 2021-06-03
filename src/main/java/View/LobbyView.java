@@ -130,7 +130,7 @@ public class LobbyView extends StackPane implements Observer {
     }
 
     @Override
-    public void update(Observable observable, Object o) {
+    public void update(Observable observable, Object o, String type) {
         Platform.runLater(() -> {
             DocumentSnapshot documentSnapshot = (DocumentSnapshot) o;
             GameState roomData = documentSnapshot.toObject(GameState.class);
