@@ -46,20 +46,12 @@ public class MapModel implements Observable {
         return (zoomedIn ? bigCellHeight : smallCellHeight);
     }
 
-    public double getBigRadius() {
-        return bigRadius;
+    public double getRadius() {
+        return (zoomedIn ? bigRadius : smallRadius);
     }
 
-    public double getSmallRadius() {
-        return smallRadius;
-    }
-
-    public ImagePattern getBigImagePattern() {
-        return bigImagePattern;
-    }
-
-    public ImagePattern getSmallImagePattern() {
-        return smallImagePattern;
+    public ImagePattern getImagePattern() {
+        return (zoomedIn ? bigImagePattern : smallImagePattern);
     }
 
     public ImageView getBackgroundImage() {

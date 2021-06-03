@@ -5,7 +5,10 @@ import Model.MapModel;
 import Model.Route;
 import Model.RouteCell;
 import Service.GameSetupService;
+import Service.OverlayEventHandler;
 import View.MapView;
+import javafx.event.Event;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -32,7 +35,18 @@ public class MapController {
             Circle circle = new Circle();
             circle.setTranslateX(city.getOffsetX() / 2);
             circle.setTranslateY(city.getOffsetY() / 2);
+            circle.setRadius(this.mapModel.getRadius());
             circle.setFill(Color.TRANSPARENT);
+            circle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
+                    e -> {
+                        if (circle.getFill().equals(Color.TRANSPARENT)) {
+                            circle.setFill( Color.BLACK);
+                        } else {
+                            circle.setFill(Color.TRANSPARENT);
+                        }
+                    },
+                    Event::consume)
+            );
             circleList.add(circle);
         }
         return circleList;
@@ -44,6 +58,24 @@ public class MapController {
             for (RouteCell routeCell : route.getRouteCells()) {
                 routeCell.setTranslateX(routeCell.getTranslateX() / 2);
                 routeCell.setTranslateY(routeCell.getTranslateY() / 2);
+                routeCell.setWidth(this.mapModel.getCellWidth());
+                routeCell.setHeight(this.mapModel.getCellHeight());
+
+                routeCell.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
+                        e -> {
+                            if (routeCell.getFill().equals(Color.TRANSPARENT)) {
+                                for (RouteCell cellInSameRoute : routeCell.getParentRoute().getRouteCells()) {
+                                    cellInSameRoute.setFill(this.mapModel.getImagePattern());
+                                }
+                            } else {
+                                for (RouteCell cellInSameRoute : routeCell.getParentRoute().getRouteCells()) {
+                                    cellInSameRoute.setFill(Color.TRANSPARENT);
+                                }
+                            }
+                        },
+                        Event::consume)
+                );
+
                 routeCell.setFill(Color.TRANSPARENT);
                 overlays.add( routeCell );
             }
@@ -65,12 +97,12 @@ public class MapController {
             rectangle.setTranslateX(rectangle.getTranslateX() * 2);
             rectangle.setTranslateY(rectangle.getTranslateY() * 2);
             if ( ! rectangle.getFill().equals(Color.TRANSPARENT)) {
-                rectangle.setFill(this.mapModel.getBigImagePattern());
+                rectangle.setFill(this.mapModel.getImagePattern());
             }
         }
 
         for (Circle circle : this.mapModel.getCityOverlays()) {
-            circle.setRadius(this.mapModel.getBigRadius());
+            circle.setRadius(this.mapModel.getRadius());
             circle.setTranslateX(circle.getTranslateX() * 2);
             circle.setTranslateY(circle.getTranslateY() * 2);
         }
@@ -93,12 +125,12 @@ public class MapController {
             rectangle.setTranslateX(rectangle.getTranslateX() / 2);
             rectangle.setTranslateY(rectangle.getTranslateY() / 2);
             if ( ! rectangle.getFill().equals(Color.TRANSPARENT)) {
-                rectangle.setFill(this.mapModel.getSmallImagePattern());
+                rectangle.setFill(this.mapModel.getImagePattern());
             }
         }
 
         for (Circle circle : this.mapModel.getCityOverlays()) {
-            circle.setRadius(this.mapModel.getSmallRadius());
+            circle.setRadius(this.mapModel.getRadius());
             circle.setTranslateX(circle.getTranslateX() / 2);
             circle.setTranslateY(circle.getTranslateY() / 2);
         }
