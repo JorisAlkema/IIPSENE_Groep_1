@@ -1,18 +1,15 @@
 package Controller;
 
-import App.Main;
 import App.MainState;
 import Model.City;
 import Model.Player;
 import Model.Route;
-import Service.FirebaseService;
 import Service.GameSetupService;
 import Service.Observable;
 import Service.Observer;
 import View.GameView;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 
 import java.util.*;
 
@@ -23,9 +20,6 @@ public class GameController implements Observable {
     private ArrayList<Player> players;
 
     private int turnCount = 0;
-    private GameSetupService gameSetupService;
-    private ArrayList<City> cities;
-    private ArrayList<Route> routes;
 
     private int seconds;
     private Timer timer;
@@ -36,14 +30,10 @@ public class GameController implements Observable {
 
         players = MainState.firebaseService.getAllPlayers(MainState.roomCode);
 
-        gameSetupService = new GameSetupService();
-        cities = gameSetupService.getCities();
-        routes = gameSetupService.getRoutes();
-
         startTurn(getCurrentPlayer());
     }
 
-    private Player getCurrentPlayer() {
+    public Player getCurrentPlayer() {
         if (turnCount == 0) {
             return players.get(0);
         } else {
@@ -130,9 +120,5 @@ public class GameController implements Observable {
         for (Observer observer : observers) {
             observer.update(this, o);
         }
-    }
-
-    public GameSetupService getGameSetupService() {
-        return gameSetupService;
     }
 }

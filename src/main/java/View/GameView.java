@@ -25,6 +25,7 @@ public class GameView extends BorderPane implements Observer {
     public GameView() {
         gameController = new GameController();
         MapView mapView = new MapView();
+        mapView.getMapController().setGameController(gameController);
 
         // Top pane
         label = new Label("0:00");
@@ -65,7 +66,12 @@ public class GameView extends BorderPane implements Observer {
         vBox.getChildren().addAll(imageView,mainmenu);
 
         setLeft(vBox);
+
+        // Right pane
         setRight(new CardView());
+
+        // Bottom pane
+        setBottom(new HandView());
 
         gameController.registerObserver(this);
         gameController.countdownTimer();
