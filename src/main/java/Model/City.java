@@ -4,15 +4,33 @@ package Model;
 // Should we choose to implement trainstation, this class would be a logical place to keep track of them
 public class City {
     private final String name;
-    private double xOffset;
-    private double yOffset;
-    private double radius;
+    private double offsetX;
+    private double offsetY;
     // boolean trainstation?
 
-    public City(String name, double xOffset, double yOffset, double radius) {
+    public City(String name, double offsetX, double offsetY) {
         this.name = name;
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
-        this.radius = radius;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getOffsetX() {
+        return offsetX;
+    }
+
+    public double getOffsetY() {
+        return offsetY;
+    }
+
+    public void setOffsetX(double offsetX) {
+        this.offsetX = offsetX;
+    }
+
+    public void setOffsetY(double offsetY) {
+        this.offsetY = offsetY;
     }
 }

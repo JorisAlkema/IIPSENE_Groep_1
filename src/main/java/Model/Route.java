@@ -5,24 +5,48 @@ import java.util.ArrayList;
 // Route represents a single route on the map, connecting two Cities with a
 // given amount of RouteCells of a given color. It can be claimed by a Player.
 public class Route {
-    private final ArrayList<City> cities;
+    private final City firstCity;
+    private final City secondCity;
     private final ArrayList<RouteCell> routeCells;
     private final String color;
-    private final String type;
+    private final String type; // STANDARD, TUNNEL or FERRY
+    private final int requiredLocomotives; // 0 if not of type FERRY
     private Player owner;
 
-    public Route(ArrayList<City> cities, ArrayList<RouteCell> routeCells, String color, String type, Player owner) {
-        this.cities = cities;
+    public Route(City firstCity, City secondCity, ArrayList<RouteCell> routeCells, String color, String type, int requiredLocomotives) {
+        this.firstCity = firstCity;
+        this.secondCity = secondCity;
         this.routeCells = routeCells;
         this.color = color;
         this.type = type;
+        this.requiredLocomotives = requiredLocomotives;
+    }
+
+    public ArrayList<RouteCell> getRouteCells() {
+        return routeCells;
+    }
+
+    public void setOwner(Player owner) {
         this.owner = owner;
     }
 
-    public Route(ArrayList<City> cities, ArrayList<RouteCell> routeCells, String color, String type) {
-        this.cities = cities;
-        this.routeCells = routeCells;
-        this.color = color;
-        this.type = type;
+    public Player getOwner() {
+        return owner;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public int getRequiredLocomotives() {
+        return requiredLocomotives;
+    }
+
+    public int getLength() {
+        return routeCells.size();
     }
 }

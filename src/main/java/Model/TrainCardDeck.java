@@ -1,5 +1,9 @@
 package Model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+
 // TrainCardDeck represents the closed deck of TrainCards next to the board. This class should allow a Player to draw
 // face-down TrainCards, it should replace face-up TrainCards when they are taken and it should draw three TrainCards
 // when a Player tries to build a tunnel Route.
@@ -8,6 +12,18 @@ package Model;
 // Possible methods: drawTrainCard(), shuffle(), ...
 // TODO: Think about implementation type of the deck. List<TrainCard>, Map<TrainCard, Integer> or something else?
 public class TrainCardDeck {
-    // trainCards
-    
+    ArrayList<TrainCard> trainCards;
+//    String[] colors  = {"PURPLE", "WHITE", "BLUE", "YELLOW", "ORANGE", "BLACK", "RED", "GREEN"};
+
+    public TrainCardDeck() {
+        trainCards = new ArrayList<>();
+    }
+
+    public ArrayList<TrainCard> getTrainCards() {
+        return trainCards;
+    }
+
+    public void setTrainCards(ArrayList<TrainCard> trainCards) {
+        this.trainCards = trainCards;
+    }
 }
