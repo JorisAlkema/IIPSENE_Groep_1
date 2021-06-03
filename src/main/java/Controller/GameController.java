@@ -28,7 +28,11 @@ public class GameController implements Observable {
 
     public GameController(GameView gameView) {
         this.gameView = gameView;
-        MainState.primaryStage.setOnCloseRequest(event -> timer.cancel());
+        MainState.primaryStage.setOnCloseRequest(event -> {
+            try {
+                timer.cancel();
+            } catch (Exception ignored) {}
+        });
         initGame();
     }
 
