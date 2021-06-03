@@ -1,5 +1,7 @@
 package Model;
 
+import App.MainState;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -14,9 +16,11 @@ import java.util.Random;
 public class TrainCardDeck {
     ArrayList<TrainCard> trainCards;
     String[] colors  = {"PURPLE", "WHITE", "BLUE", "YELLOW", "ORANGE", "BLACK", "RED", "GREEN"};
-
+    GameState gameState = MainState.firebaseService.getGameState(MainState.roomCode);
     public TrainCardDeck() {
         trainCards = generateDeck();
+        gameState.setClosedDeck(trainCards);
+        MainState.firebaseService.updateGameState(MainState.roomCode,gameState);
     }
 
     private ArrayList<TrainCard> generateDeck() {
@@ -32,10 +36,17 @@ public class TrainCardDeck {
         return trainCards;
     }
 
-     public TrainCard getRandomCard(){
+    private ArrayList<TrainCard> reshuffleDeck(){
+        ArrayList<TrainCard> trainCards = new ArrayList<>();
+        //TODO: use the old cards and shuffle them into a new deck.
+        return trainCards;
+    }
+
+    public TrainCard getRandomCard(){
         Random rand = new Random();
-        TrainCard randomCard = trainCards.get(rand.nextInt(trainCards.size()));
-        trainCards.remove(randomCard);
+        TrainCard randomCard = gameState.getClosedDeck().get(rand.nextInt(trainCards.size()));
+        gameState.getClosedDeck().remove(randomCard);
+        MainState.firebaseService.updateGameState(MainState.roomCode,gameState);
         return randomCard;
-     }
+    }
 }

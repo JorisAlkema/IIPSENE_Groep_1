@@ -5,6 +5,7 @@ import Model.GameState;
 import Model.Lobby;
 import Model.Player;
 import Service.Observer;
+import View.GameView;
 import View.LobbyView;
 import View.LoginView;
 import View.MainMenuView;
@@ -73,12 +74,12 @@ public class LobbyController {
 
     public void startRoom() {
         ArrayList<Player> allPlayers = MainState.firebaseService.getAllPlayers(MainState.roomCode);
-
-        if (MainState.player.getHost() && allPlayers.size() >= 3) {
-            MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "Game will start..\n");
-            MainState.firebaseService.updateOngoing(MainState.roomCode, true);
-        } else {
-            MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "3 - 5 players are needed to start the game");
-        }
+        MainState.primaryStage.setScene(new Scene(new GameView(), MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT));
+//        if (MainState.player.getHost() && allPlayers.size() >= 3) {
+//            MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "Game will start..\n");
+//            MainState.firebaseService.updateOngoing(MainState.roomCode, true);
+//        } else {
+//            MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "3 - 5 players are needed to start the game");
+//        }
     }
 }
