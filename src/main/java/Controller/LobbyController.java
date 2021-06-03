@@ -58,6 +58,10 @@ public class LobbyController {
             System.out.println("Update");
             if (document != null && document.getData() != null) {
                 lobby.notifyAllObservers(document);
+
+                if ((Boolean) document.getData().get("ongoing")) {
+                    gameController.initGame();
+                }
             }
         }));
     }
@@ -78,7 +82,6 @@ public class LobbyController {
         if (MainState.player.getHost() && allPlayers.size() >= 3) {
             MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "Game will start..\n");
             MainState.firebaseService.updateOngoing(MainState.roomCode, true);
-            gameController.initGame();
         } else {
             MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "3 - 5 players are needed to start the game");
         }
