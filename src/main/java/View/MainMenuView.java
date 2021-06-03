@@ -65,7 +65,7 @@ public class MainMenuView extends StackPane {
 
 
         // music toggle
-        VBox musicButtonContainer = new MusicPlayerView();
+        VBox musicButtonContainer = new VBox(10);
         musicButtonContainer.setAlignment(Pos.BOTTOM_RIGHT);
         musicButtonContainer.setPadding(new Insets(20));
         musicButtonContainer.getChildren().add(musicPlayerView.getMusicImageView());
