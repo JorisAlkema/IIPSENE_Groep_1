@@ -32,7 +32,9 @@ public class CardController {
 
     // Pick closed card()
     public void pickClosedCard() {
-        TrainCard closedCard = getRandomCard();
+        GameState gameState = getGameState();
+        TrainCard closedCard = getRandomCard(gameState);
+        MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
         System.out.println(String.format("Closed card picked, color: %s", closedCard.getColor()));
         // Do smt with the card?
     }
@@ -50,7 +52,7 @@ public class CardController {
         // Get a new open card from the closed cards
         // and update the firebase
         openCards.remove(index);
-        TrainCard newOpenCard = getRandomCard();
+        TrainCard newOpenCard = getRandomCard(gameState);
         openCards.add(newOpenCard);
         MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
     }
@@ -89,13 +91,11 @@ public class CardController {
         return gameState;
     }
 
-    private TrainCard getRandomCard() {
-        GameState gameState = MainState.firebaseService.getGameState(MainState.roomCode);
+    private TrainCard getRandomCard(GameState gameState) {
         ArrayList<TrainCard> closedDeck = gameState.getClosedDeck();
         TrainCard randomCard = closedDeck.get(new Random().nextInt(closedDeck.size()));
         closedDeck.remove(randomCard);
         gameState.setClosedDeck(closedDeck);
-        MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
         return randomCard;
     }
 
