@@ -20,7 +20,6 @@ public class TrainCardDeck {
     }
 
     public ArrayList<TrainCard> generateDeck() {
-
         for (String color : colors) {
             for (int i = 0; i < 12; i++) {
                 trainCards.add(new TrainCard(color));
@@ -38,15 +37,4 @@ public class TrainCardDeck {
         trainCards.remove(randomCard);
         return randomCard;
      }
-
-    public static void main(String[] args){
-        //to test functionality
-        TrainCardDeck app = new TrainCardDeck();
-        for (TrainCard card : app.trainCards){
-            System.out.println(card.getColor());
-        }
-        System.out.println(app.trainCards.size());
-        System.out.println("random card:" + app.getRandomCard().getColor());
-        System.out.println(app.trainCards.size());
-    }
 }
