@@ -66,7 +66,12 @@ public class GameView extends BorderPane implements Observer {
         vBox.getChildren().addAll(imageView,mainmenu);
 
         setLeft(vBox);
+
+        // Right pane
         setRight(new CardView());
+
+        // Bottom pane
+        setBottom(new HandView());
 
         gameController.registerObserver(this);
         gameController.countdownTimer();
