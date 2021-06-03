@@ -18,16 +18,18 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class MainMenuView extends StackPane implements Observer {
+public class MainMenuView extends StackPane {
     private MainMenuController mainMenuController = new MainMenuController();
     public MainMenuView() {
-        super();
+
         // App.Main layout
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(40));
+
         ImageView title = new ImageView("images/main_menu_logo.png");
         title.setFitWidth(title.getImage().getWidth() * 0.9);
         title.setFitHeight(title.getImage().getHeight() * 0.9);
+
         grid.add(title, 0,0,2,1);
 
         // Background
@@ -65,34 +67,7 @@ public class MainMenuView extends StackPane implements Observer {
         test.setOnMouseClicked(e -> mainMenuController.game());
         hostGame.setOnMouseClicked(e -> mainMenuController.host());
         joinGame.setOnMouseClicked(e -> mainMenuController.join());
-
-        File rulesPDF = new File("src/main/resources/rules/ticket_to_ride_europe_rules.pdf");
-
-        rules.setOnMouseClicked(e -> {
-            try {
-                openFile(rulesPDF);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
-
+        rules.setOnMouseClicked(e -> mainMenuController.openRules());
         quit.setOnMouseClicked(e -> System.exit(0));
-    }
-
-    public static void openFile(File file) throws Exception {
-        if (Desktop.isDesktopSupported()) {
-            new Thread(() -> {
-                try {
-                    Desktop.getDesktop().open(file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-        }
-    }
-
-    @Override
-    public void update(Observable observable, Object o) {
-
     }
 }

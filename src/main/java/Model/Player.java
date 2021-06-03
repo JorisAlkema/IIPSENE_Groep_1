@@ -6,30 +6,125 @@ import java.util.ArrayList;
 public class Player {
     private String name;
     private String UUID;
+    private Boolean host;
     private String playerColor;
     private ArrayList<TrainCard> trainCards;
     private ArrayList<DestinationTicket> destinationTickets;
+    private ArrayList<Route> claimedRoutes;
     private int points;
     private int trains;
     private boolean isTurn;
     private int actionsTaken;
-    private ArrayList<Route> claimedRoutes;
 
-    public Player(String name, String UUID, String playerColor, ArrayList<TrainCard> trainCards, ArrayList<DestinationTicket> destinationTickets, int points, int trains, boolean isTurn, int actionsTaken, ArrayList<Route> claimedRoutes) {
+    public Player(String name, String UUID, String playerColor, boolean isTurn) {
         this.name = name;
         this.UUID = UUID;
         this.playerColor = playerColor;
-        this.trainCards = trainCards;
-        this.destinationTickets = destinationTickets;
-        this.points = points;
-        this.trains = trains;
         this.isTurn = isTurn;
-        this.actionsTaken = actionsTaken;
-        this.claimedRoutes = claimedRoutes;
+        this.trainCards = new ArrayList<>();
+        this.destinationTickets = new ArrayList<>();
+        this.claimedRoutes = new ArrayList<>();
+        this.points = 0;
+        this.trains = 45; // Default value according to rules
+        this.actionsTaken = 0;
+    }
+
+    public boolean claimRoute(Route route, String color) {
+        // Route already claimed
+        if (route.getOwner() != null) {
+            return false;
+        }
+        String routeColor = route.getColor();
+        // If the Route is grey, check for cards of the given color
+        if (routeColor.equals("GREY")) {
+            routeColor = color;
+        }
+        String type = route.getType();
+        int requiredLocos = route.getRequiredLocomotives();
+        int routeLength = route.getLength();
+        ArrayList<TrainCard> correctColorCards = new ArrayList<>();
+        ArrayList<TrainCard> locosInHand = new ArrayList<>();
+        for (TrainCard trainCard : this.trainCards) {
+            if (trainCard.getColor().equals(routeColor)) {
+                correctColorCards.add(trainCard);
+            } else if (trainCard.getColor().equals("LOCO")) {
+                locosInHand.add(trainCard);
+            }
+            if (correctColorCards.size() >= routeLength && locosInHand.size() >= requiredLocos) {
+                break;
+            }
+        }
+        // Not enough cards of the right color
+        if (correctColorCards.size() + locosInHand.size() < routeLength) {
+            return false;
+        }
+        if (type.equals("TUNNEL")) {
+            // TODO
+        }
+        if (type.equals("FERRY") && locosInHand.size() < requiredLocos) {
+            return false;
+        }
+        // Remove cards from hand
+        int cardsToRemove = routeLength;
+        for (TrainCard trainCard : correctColorCards) {
+            if (cardsToRemove > 0) {
+                this.trainCards.remove(trainCard);
+                cardsToRemove--;
+            }
+        }
+        for (TrainCard trainCard : locosInHand) {
+            if (cardsToRemove > 0) {
+                this.trainCards.remove(trainCard);
+                cardsToRemove--;
+            }
+        }
+
+        claimedRoutes.add(route);
+        route.setOwner(this);
+
+        return true;
+    }
+
+    public Player(String name, String UUID, Boolean host) {
+        this.name = name;
+        this.UUID = UUID;
+        this.host = host;
+    }
+
+    public Player() {
+
     }
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUUID() {
+        return UUID;
+    }
+
+    public void setUUID(String UUID) {
+        this.UUID = UUID;
+    }
+
+    public Boolean getHost() {
+        return host;
+    }
+
+    public void setHost(Boolean host) {
+        this.host = host;
+    }
+
+    public String getPlayerColor() {
+        return playerColor;
+    }
+
+    public void setPlayerColor(String playerColor) {
+        this.playerColor = playerColor;
     }
 
     public ArrayList<TrainCard> getTrainCards() {
@@ -40,7 +135,31 @@ public class Player {
         this.trainCards = trainCards;
     }
 
-    public boolean getTurn() {
+    public ArrayList<DestinationTicket> getDestinationTickets() {
+        return destinationTickets;
+    }
+
+    public void setDestinationTickets(ArrayList<DestinationTicket> destinationTickets) {
+        this.destinationTickets = destinationTickets;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public int getTrains() {
+        return trains;
+    }
+
+    public void setTrains(int trains) {
+        this.trains = trains;
+    }
+
+    public boolean isTurn() {
         return isTurn;
     }
 
@@ -54,5 +173,13 @@ public class Player {
 
     public void setActionsTaken(int actionsTaken) {
         this.actionsTaken = actionsTaken;
+    }
+
+    public ArrayList<Route> getClaimedRoutes() {
+        return claimedRoutes;
+    }
+
+    public void setClaimedRoutes(ArrayList<Route> claimedRoutes) {
+        this.claimedRoutes = claimedRoutes;
     }
 }

@@ -1,5 +1,6 @@
 package View;
 
+import App.MainState;
 import Controller.MapController;
 import Model.GameInfo;
 import Model.MapModel;
@@ -23,8 +24,8 @@ public class GameView extends BorderPane implements Observer {
     GameInfo gameInfo;
     MapModel mapModel;
 
-    public GameView(Stage primaryStage) {
-        gameInfo = new GameInfo(primaryStage);
+    public GameView() {
+        gameInfo = new GameInfo();
         mapModel = new MapModel(gameInfo.getGameSetupService().getRoutes(),
                     gameInfo.getGameSetupService().getCities());
         MapController mapController = new MapController(mapModel);
@@ -59,10 +60,10 @@ public class GameView extends BorderPane implements Observer {
 
         Button mainmenu = new Button("Return to menu");
         mainmenu.setOnAction(e -> {
-            Scene newScene = new Scene(new MainMenuView(), primaryStage.getScene().getWidth(), primaryStage.getScene().getHeight());
+            Scene newScene = new Scene(new MainMenuView());
             String css = "css/styling.css";
             newScene.getStylesheets().add(css);
-            primaryStage.setScene(newScene);
+            MainState.primaryStage.setScene(newScene);
         });
 
         vBox.getChildren().addAll(imageView,mainmenu);

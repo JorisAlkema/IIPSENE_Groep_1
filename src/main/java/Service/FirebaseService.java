@@ -1,5 +1,7 @@
 package Service;
 
+import Model.GameState;
+import Model.Player;
 import com.google.api.core.ApiFuture;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.*;
@@ -43,29 +45,26 @@ public class FirebaseService {
     // Add a player to a room
     // If the room has 5 players -> reject
     // If game is ongoing -> reject
-    public void addPlayer(Map<String, Object> player_data, String code) throws Exception {
-        DocumentReference documentReference = getRoomReference(code);
-        Map<String, Object> snapShot = getRoomData(code);
+    public void addPlayer(String code, Player player) throws Exception {
+        DocumentReference roomReference = getRoomReference(code);
+        Map<String, Object> roomData = getRoomData(code);
 
-        if (snapShot == null) {
+        if (roomData == null) {
             throw new Exception("Room not found");
         }
 
-        if ((Boolean) snapShot.get("ongoing")) {
+        if ((Boolean) roomData.get("ongoing")) {
             throw new Exception("Room is ongoing");
         }
 
-        Map<String, Object> players = (Map<String, Object>) snapShot.get("players");
+        ArrayList<Player> players = (ArrayList<Player>) roomData.get("players");
 
         if (players.size() == 5) {
             throw new Exception("Room is full");
         }
 
-        String uuid = player_data.keySet().iterator().next();
-        Object data = player_data.get(uuid);
-        players.put(uuid, data);
-        snapShot.put("players", players);
-        documentReference.update(snapShot);
+        players.add(player);
+        roomReference.update("players", FieldValue.arrayUnion(player));
     }
 
     // Get data of room
@@ -82,55 +81,46 @@ public class FirebaseService {
     }
 
     // get all players of room
-    public Map<String, Object> getAllPlayers(String roomCode) {
-        Map<String, Object> roomData = getRoomData(roomCode);
-        Map<String, Object> players = (Map<String, Object>) roomData.get("players");
+    public ArrayList<Player> getAllPlayers(String roomCode) {
+        ArrayList<Player> players = null;
+        try {
+            players = getRoomReference(roomCode).get().get().toObject(GameState.class).getPlayers();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
         return players;
     }
 
     // Remove a player using it's UUID and the roomcode.
     // It is possible to remove other players, but that is outside the scope.
     // If you are the last player in the room and this function is called, the room will get deleted
-    public void removePlayer(String playerUUID, String code) {
-        DocumentReference documentReference = db.collection("rooms").document(code);
-        Map<String, Object> snapShot = getRoomData(code);
-        Map<String, Object> players = (Map<String, Object>) snapShot.get("players");
-        if (players != null) {
-            // if you were the last player remove the room
-            if (players.size() == 1) {
-                db.collection("rooms").document(code).delete();
-            } else if (players != null) {
-                players.remove(playerUUID);
-                snapShot.put("players", players);
-                documentReference.update(snapShot);
-            }
+    public void removePlayer(String roomCode, Player player) {
+        DocumentReference roomReference = getRoomReference(roomCode);
+        roomReference.update("players", FieldValue.arrayRemove(player));
+
+        ArrayList<Player> players = getAllPlayers(roomCode);
+
+        if (players != null && players.size() == 0) {
+            roomReference.delete();
         }
     }
 
     // if lobby is created succesfully it return true
     // Try to generate a lobby using the provided code,
     // To add a host to the lobby the function needs a host_data which is generated with a function in Login
-    public boolean addLobby(String code, Map<String, Object> host_data) {
+    public boolean addLobby(String code, Player player) {
         try {
             // Get all documents from collection
             CollectionReference rooms = db.collection("rooms");
             List<QueryDocumentSnapshot> all_rooms = rooms.get().get().getDocuments();
             if (!all_rooms.contains(code)) {
-                Map<String, Object> data = new HashMap<String, Object>();
-                Map<String, Object> players = new HashMap<String, Object>();
-
-                String uuid = host_data.keySet().iterator().next();
-                Object host = host_data.get(uuid);
-                players.put(uuid, host);
-
-                data.put("ongoing", false);
-                data.put("message", "Waiting for the host to start the game");
-                data.put("players", players);
-                data.put("trainCardDeck", new ArrayList<>());
-                data.put("openCards", new ArrayList<>());
-                data.put("closedCards", new ArrayList<>());
-
-                rooms.document(code).set(data);
+                ArrayList<Player> players = new ArrayList<>();
+                players.add(player);
+                GameState gameState = new GameState("Waiting for the host to start the game", false, players);
+                rooms.document(code).set(gameState);
                 return true;
             }
         } catch (InterruptedException e) {
@@ -150,18 +140,41 @@ public class FirebaseService {
     }
 
     // Update Roomdata in the lobby
-    public void updateRoomData(Map<String, Object> roomData, String code) {
+    public void updateOngoing(String code, Boolean isOngoing) {
         DocumentReference documentReference = getRoomReference(code);
-        documentReference.update(roomData);
+        documentReference.update("ongoing", isOngoing);
     }
 
-    public void updatePlayerData(String player_uuid, Map<String, Object> player_data, String code) {
+    public GameState getGameState(String code) {
+        try {
+            return getRoomReference(code).get().get().toObject(GameState.class);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void updateGameState(String code, GameState gameState) {
         DocumentReference documentReference = getRoomReference(code);
-        Map<String, Object> roomData = getRoomData(code);
-        Map<String, Object> players = (Map<String, Object>) roomData.get("players");
-        players.put(player_uuid, player_data);
-        roomData.put("players", players);
-        documentReference.update(roomData);
+        documentReference.set(gameState);
+    }
+
+    public void updatePlayerData(String code, Player player) {
+        DocumentReference roomReference = getRoomReference(code);
+        ArrayList<Player> players = getAllPlayers(code);
+
+        int index = 0;
+        for (Player playerFirebase : players) {
+            if (playerFirebase.getUUID() == player.getUUID()) {
+                players.set(index, player);
+                break;
+            }
+            index++;
+        }
+
+        roomReference.update("players", players);
     }
 
     // Get document reference for the eventlistener
