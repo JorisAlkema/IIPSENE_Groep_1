@@ -98,9 +98,9 @@ public class MapModel implements Observable {
     }
 
     @Override
-    public void notifyAllObservers(Object o) {
+    public void notifyAllObservers(Object o, String type) {
         for(Observer observer : this.observers) {
-            observer.update(this, o);
+            observer.update(this, o, type);
         }
     }
 }

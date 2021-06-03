@@ -19,7 +19,8 @@ import javafx.scene.layout.VBox;
 
 public class GameView extends BorderPane implements Observer {
 
-    Label label;
+    Label timerLabel;
+    Label playerLabel;
     GameController gameController;
 
     public GameView() {
@@ -28,12 +29,12 @@ public class GameView extends BorderPane implements Observer {
         mapView.getMapController().setGameController(gameController);
 
         // Top pane
-        label = new Label("0:00");
-        setAlignment(label, Pos.CENTER);
-        label.setStyle( "-fx-font-family: Merriweather;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-font-size: 30;");
-        setTop(label);
+        timerLabel = new Label("0:00");
+        setAlignment(timerLabel, Pos.CENTER);
+        timerLabel.setStyle(    "-fx-font-family: Merriweather;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-font-size: 30;");
+        setTop(timerLabel);
 
         // Center pane
         setCenter(mapView);
@@ -63,7 +64,9 @@ public class GameView extends BorderPane implements Observer {
             MainState.primaryStage.setScene(newScene);
         });
 
-        vBox.getChildren().addAll(imageView,mainmenu);
+        playerLabel = new Label("Current player: ");
+
+        vBox.getChildren().addAll(imageView, mainmenu, playerLabel);
 
         setLeft(vBox);
         
@@ -71,12 +74,18 @@ public class GameView extends BorderPane implements Observer {
         setBottom(new HandView());
 
         gameController.registerObserver(this);
-        gameController.countdownTimer();
         gameController.setTimerText(gameController.getTimer());
     }
 
     @Override
-    public void update(Observable observable, Object timerText) {
-        label.setText((String) timerText);
+    public void update(Observable observable, Object object, String type) {
+        if (type.equals("timer")) {
+            System.out.println("Timer updated!" + java.time.LocalTime.now());
+            timerLabel.setText((String) object);
+        } else if (type.equals("playername")) {
+            System.out.println("Player text updated!");
+            playerLabel.setText("Current player: " + object.toString());
+        }
+
     }
 }

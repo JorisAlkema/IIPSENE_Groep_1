@@ -1,5 +1,6 @@
 package Controller;
 
+import App.Main;
 import App.MainState;
 import Model.GameState;
 import Model.Lobby;
@@ -56,9 +57,10 @@ public class LobbyController {
     private void attachListener() {
         lobby.setPlayerEventListener(MainState.firebaseService.getRoomReference(MainState.roomCode).addSnapshotListener((document, e) -> {
             if (document != null && document.getData() != null) {
-                lobby.notifyAllObservers(document);
+                lobby.notifyAllObservers(document, "updateDocument");
 
                 if ((Boolean) document.getData().get("ongoing")) {
+
                     Platform.runLater(() -> {
                         detachListener();
                         MainState.primaryStage.setScene(new Scene(new GameView()));
@@ -80,6 +82,7 @@ public class LobbyController {
 
     public void startRoom() {
         ArrayList<Player> allPlayers = MainState.firebaseService.getAllPlayers(MainState.roomCode);
+
 
 //        if (MainState.player.getHost() && allPlayers.size() >= 3) {
 //            MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "Game will start..\n");
