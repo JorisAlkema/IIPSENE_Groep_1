@@ -38,22 +38,4 @@ public class CardView extends VBox {
             getChildren().add(openCard);
         }
     }
-
-//    public void clickedButtons(){
-//        for (Button clickedButton: buttons){
-//            clickedButton.setOnAction(e ->{
-//                System.out.println(this.cardController.getOpenDeck().openCards.get(buttons.indexOf(clickedButton)));
-//                System.out.println(this.cardController.getOpenDeck().openCards.get(buttons.indexOf(clickedButton)).getColor());
-//                TrainCard newOpenCard = this.cardController.pickOpenCard(buttons.indexOf(clickedButton));
-//                getChildren().remove(clickedButton);
-//                buttons.remove(clickedButton);
-//
-//                Button newButton = new Button(newOpenCard.getColor());
-//                buttons.add(newButton);
-//                getChildren().add(newButton);
-//
-//                clickedButtons();
-//            });
-//        }
-//    }
 }
