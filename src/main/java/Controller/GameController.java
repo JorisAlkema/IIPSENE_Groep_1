@@ -1,7 +1,6 @@
 package Controller;
 
 import App.MainState;
-import Model.City;
 import Model.Player;
 import Model.Route;
 import Model.TrainCardDeck;
@@ -12,7 +11,6 @@ import Service.Observer;
 import View.CardView;
 import View.GameView;
 import javafx.application.Platform;
-import javafx.scene.Scene;
 
 import java.util.*;
 
@@ -31,15 +29,18 @@ public class GameController implements Observable {
 
     public GameController(GameView gameView) {
         this.gameView = gameView;
+        MainState.primaryStage.setOnCloseRequest(event -> timer.cancel());
         initGame();
     }
 
     public void initGame() {
-        MainState.primaryStage.setOnCloseRequest(event -> timer.cancel());
-
         gameView.setRight(new CardView());
 
         players = MainState.firebaseService.getAllPlayers(MainState.roomCode);
+
+        for (Player player : players) {
+            player.setTurn(false);
+        }
 
         startTurn(getCurrentPlayer());
     }
@@ -54,6 +55,7 @@ public class GameController implements Observable {
 
     private void startTurn(Player player) {
         player.setTurn(true);
+        setPlayerName(getCurrentPlayer().getName());
         countdownTimer();
     }
 
@@ -80,7 +82,6 @@ public class GameController implements Observable {
                     // Code that gets executed after the countdown has hit 0
                     setTimerText(timerFormat(setSeconds()));
                     endTurn(getCurrentPlayer());
-                    timer.cancel();
                     startTurn(getCurrentPlayer());
                 }
             }
@@ -89,7 +90,6 @@ public class GameController implements Observable {
 
     private int setSeconds() {
         if (seconds == 0) {
-            timer.cancel();
             return seconds;
         }
         return --seconds;
@@ -106,7 +106,7 @@ public class GameController implements Observable {
     public void setTimerText(String timerText) {
         this.timerText = timerText;
         Platform.runLater(() -> {
-            notifyAllObservers(this.timerText);
+            notifyAllObservers(this.timerText, "timer");
         });
     }
 
@@ -114,6 +114,12 @@ public class GameController implements Observable {
         int minutes = (int) Math.floor(seconds / 60.0);
         int displaySeconds = (seconds % 60);
         return String.format("%d:%02d", minutes, displaySeconds);
+    }
+
+    public void setPlayerName(String playerName) {
+        Platform.runLater(() -> {
+            notifyAllObservers(playerName, "playername");
+        });
     }
 
     @Override
@@ -127,9 +133,9 @@ public class GameController implements Observable {
     }
 
     @Override
-    public void notifyAllObservers(Object o) {
+    public void notifyAllObservers(Object o, String type) {
         for (Observer observer : observers) {
-            observer.update(this, o);
+            observer.update(this, o, type);
         }
     }
 }
