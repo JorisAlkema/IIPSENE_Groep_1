@@ -19,6 +19,7 @@ import java.util.Map;
 public class LobbyController {
 
     private Lobby lobby = new Lobby();
+    private GameController gameController = new GameController();
 
     public LobbyController(LobbyView lobbyView) {
         lobby.registerObserver(lobbyView);
@@ -77,6 +78,7 @@ public class LobbyController {
         if (MainState.player.getHost() && allPlayers.size() >= 3) {
             MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "Game will start..\n");
             MainState.firebaseService.updateOngoing(MainState.roomCode, true);
+            gameController.initGame();
         } else {
             MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "3 - 5 players are needed to start the game");
         }
