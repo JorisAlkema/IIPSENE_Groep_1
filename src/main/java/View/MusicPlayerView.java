@@ -13,7 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-public class MusicPlayerView extends BorderPane implements Observer {
+public class MusicPlayerView implements Observer {
     private MusicController musicController;
     public ImageView musicButton = new ImageView(new Image("images/music-on.png"));
 
@@ -35,7 +35,7 @@ public class MusicPlayerView extends BorderPane implements Observer {
 
 
     @Override
-    public void update(Observable observable, Object o) {
+    public void update(Observable observable, Object o, String type) {
         this.changeMusicButton((boolean) o);
     }
 }
