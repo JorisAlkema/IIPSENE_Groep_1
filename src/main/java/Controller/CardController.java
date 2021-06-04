@@ -7,14 +7,18 @@ import View.CardView;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class CardController {
     private CardView cardView;
     private ListenerRegistration listenerRegistration;
-    public CardController(CardView cardView) {
+    GameController gameController;
+
+    public CardController(CardView cardView,GameController gameController) {
         this.cardView = cardView;
+        this.gameController = gameController;
 
         // If host generate decks and put on firebase and show
         if (MainState.player.getHost()) {
@@ -42,11 +46,37 @@ public class CardController {
         GameState gameState = getGameState();
         ArrayList<TrainCard> openCards = gameState.getOpenDeck();
 
+<<<<<<< HEAD
+        TrainCard pickedCard = openCards.get(index);
+
+
+        if(MainState.player.getActionsTaken() == 1 && pickedCard.getColor().equals("LOCO")){
+            System.out.println("you cannot draw a LOCO");
+            return;
+        }
+
+        MainState.player.setActionsTaken(MainState.player.getActionsTaken() +1);
+
+        if(pickedCard.getColor().equals("LOCO") || MainState.player.getActionsTaken() >= 2) {
+            gameController.endTurn(MainState.player);
+            MainState.player.addTrainCard(pickedCard);
+            System.out.println(MainState.player.getTrainCards());
+            System.out.println("turn ended!");
+            MainState.player.setActionsTaken(0);
+        }
+
+        if(MainState.player.getActionsTaken() >= 1) {
+            MainState.player.addTrainCard(pickedCard);
+        }
+
+        System.out.println(String.format("Open card picked, color: %s", pickedCard.getColor()));
+=======
         TrainCard openCard = openCards.get(index);
         System.out.println(String.format("Open card picked, color: %s", openCard.getColor()));
         if (openCard.getColor() == "LOCO"){
 
         }
+>>>>>>> 952fe7216330f748017739dd88d629e55b64415f
 
         // Remove picked opencard
         // Get a new open card from the closed cards
