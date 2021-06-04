@@ -1,6 +1,7 @@
 package View;
 
 import Controller.CardController;
+import Controller.GameController;
 import Model.TrainCard;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -9,10 +10,14 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 
 public class CardView extends VBox {
-    private CardController cardController = new CardController(this);
+//    public ArrayList<Button> buttons = new ArrayList<Button>();
+    private CardController cardController;
+    private TrainCard randomCard = null;
 
-    public CardView() {
+
+    public CardView(GameController gameController) {
         setPadding(new Insets(30));
+        cardController = new CardController(this, gameController);
     }
 
     public void createButtons(ArrayList<TrainCard> openCards){
@@ -28,8 +33,9 @@ public class CardView extends VBox {
             Button openCard = new Button(openCards.get(i).getColor());
             int index = i;
             openCard.setOnMouseClicked(e -> {
-                this.cardController.pickOpenCard(index);
-                getChildren().remove(openCard);
+                if (this.cardController.pickOpenCard(index)) {
+                    getChildren().remove(openCard);
+                }
             });
             getChildren().add(openCard);
         }

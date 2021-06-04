@@ -75,7 +75,7 @@ public class LoginController {
                     }
 
                     // At this point player can join the lobby.
-                    MainState.player = player;
+                    MainState.player_uuid = player_uuid;
                     MainState.roomCode = code;
                     Platform.runLater(() -> showLobby());
                 }
@@ -117,7 +117,7 @@ public class LoginController {
                     String roomCode = code;
                     creatingLobbyAnimation.cancel();
                     // Go to lobby view
-                    MainState.player = host;
+                    MainState.player_uuid = player_uuid;
                     MainState.roomCode = code;
                     Platform.runLater(() -> showLobby());
                 }

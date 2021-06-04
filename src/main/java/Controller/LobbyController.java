@@ -40,16 +40,16 @@ public class LobbyController {
 
     private void disconnect() {
         // remove listener && yourself from the room
-        if (MainState.roomCode != null && MainState.player != null) {
+        if (MainState.roomCode != null && MainState.player_uuid != null) {
             detachListener();
-            MainState.firebaseService.removePlayer(MainState.roomCode, MainState.player);
+            MainState.firebaseService.removePlayer(MainState.roomCode, MainState.player_uuid);
 
             // If nobody is in the room, delete it.
             if (MainState.firebaseService.getAllPlayers(MainState.roomCode).size() == 0) {
                 MainState.firebaseService.getRoomReference(MainState.roomCode).delete();
             }
 
-            MainState.player = null;
+            MainState.player_uuid = null;
             MainState.roomCode = null;
         }
     }
