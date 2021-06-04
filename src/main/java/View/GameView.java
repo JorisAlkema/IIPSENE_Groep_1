@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class GameView extends BorderPane implements Observer {
@@ -67,6 +68,10 @@ public class GameView extends BorderPane implements Observer {
         playerLabel = new Label("Current player: ");
 
         vBox.getChildren().addAll(imageView, mainmenu, playerLabel);
+
+        for (StackPane stackPane : gameController.getPlayerCards()) {
+            vBox.getChildren().add(stackPane);
+        }
 
         setLeft(vBox);
         

@@ -2,23 +2,30 @@ package Controller;
 
 import App.MainState;
 import Model.*;
-import Service.FirebaseService;
 import Service.GameSetupService;
 import Service.Observable;
 import Service.Observer;
 import View.CardView;
 import View.GameView;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.Text;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GameController implements Observable {
     private String timerText;
     private ArrayList<Observer> observers = new ArrayList<>();
 
     private ArrayList<Player> players;
-
+    private int playercount = 0;
     private int turnCount = 0;
 
     private int seconds;
@@ -127,6 +134,51 @@ public class GameController implements Observable {
         Platform.runLater(() -> {
             notifyAllObservers(playerName, "playername");
         });
+    }
+
+    public ArrayList<StackPane> getPlayerCards() {
+        ArrayList<StackPane> stackPanes = new ArrayList<>();
+        ArrayList<ImageView> banners = new ArrayList<>();
+        banners.add(new ImageView("images/player_banner_green.png"));
+        banners.add(new ImageView("images/player_banner_blue.png"));
+        banners.add(new ImageView("images/player_banner_purple.png"));
+        banners.add(new ImageView("images/player_banner_red.png"));
+        banners.add(new ImageView("images/player_banner_yellow.png"));
+
+        for (int i = 0; i < players.size(); i++) {
+            Text playerName = new Text("Player: " + players.get(i).getName());
+            //String playerTrainCards = "Traincards: " + player.getTrainCards().size() + "\n";
+            //String playerDestTickets = "Tickets: " + player.getDestinationTickets().size() + "\n";
+            Text playerTrainCards = new Text("Traincards: 15");
+            Text playerDestTickets = new Text("Tickets: 3");
+            Text playerPoints = new Text("Points: " + players.get(i).getPoints());
+            Text playerTrains = new Text("Trains: " + players.get(i).getTrains());
+            playerName.getStyleClass().add("playerinfo");
+            playerTrainCards.getStyleClass().add("playerinfo");
+            playerDestTickets.getStyleClass().add("playerinfo");
+            playerPoints.getStyleClass().add("playerinfo");
+            playerTrains.getStyleClass().add("playerinfo");
+
+            GridPane gridPane = new GridPane();
+            gridPane.add(playerName, 0, 0, 2, 1);
+            gridPane.add(playerTrainCards, 0, 1);
+            gridPane.add(playerDestTickets, 1, 1);
+            gridPane.add(playerPoints, 0, 2);
+            gridPane.add(playerTrains, 1, 2);
+            gridPane.setHgap(10);
+            gridPane.setTranslateX(40);
+            gridPane.setTranslateY(17);
+
+            ImageView playerBanner = banners.get(i);
+            playerBanner.setPreserveRatio(true);
+            playerBanner.setFitHeight(100);
+
+            StackPane stackPane = new StackPane();
+            stackPane.getChildren().addAll(playerBanner, gridPane);
+
+            stackPanes.add(stackPane);
+        }
+        return stackPanes;
     }
 
     // Main method used for testing. Can remove later
