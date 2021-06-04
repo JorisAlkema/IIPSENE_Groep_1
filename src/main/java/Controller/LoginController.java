@@ -37,24 +37,37 @@ public class LoginController {
 
     // Check characters of username
     public boolean checkUsername(String username, int limit) {
-        if(username.length() < limit) {
-            return true;
-        } else {
-            return false;
+        return username.length() >= limit;
+    }
+
+    public boolean checkRoomCode(String code) {
+        int characters = code.length();
+        for (int i = 0; i < characters; i ++) {
+            if(Character.isLetter(code.charAt(i))) {
+                return false;
+            }
         }
+
+        return characters == 6;
     }
 
     // Join game
     public void join(TextField inputUsername, TextField inputCode) {
         String username = inputUsername.getText();
         String code = inputCode.getText();
+
         if (username.isBlank() || code.isBlank()) {
             login.notifyAllObservers("Fill in all the required fields", "update");
             return;
         }
 
-        if(!this.checkUsername(username, limit)) {
+        if(this.checkUsername(username, limit)) {
             login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long", "update");
+            return;
+        }
+
+        if(!this.checkRoomCode(code)) {
+            login.notifyAllObservers("Enter a valid roomcode", "update");
             return;
         }
 
@@ -107,7 +120,7 @@ public class LoginController {
             return;
         }
 
-        if(!this.checkUsername(username, limit)) {
+        if(this.checkUsername(username, limit)) {
             login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long", "update");
             return;
         }
