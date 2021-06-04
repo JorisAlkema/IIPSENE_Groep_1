@@ -46,7 +46,6 @@ public class CardController {
         GameState gameState = getGameState();
         ArrayList<TrainCard> openCards = gameState.getOpenDeck();
 
-<<<<<<< HEAD
         TrainCard pickedCard = openCards.get(index);
 
 
@@ -70,14 +69,6 @@ public class CardController {
         }
 
         System.out.println(String.format("Open card picked, color: %s", pickedCard.getColor()));
-=======
-        TrainCard openCard = openCards.get(index);
-        System.out.println(String.format("Open card picked, color: %s", openCard.getColor()));
-        if (openCard.getColor() == "LOCO"){
-
-        }
->>>>>>> 952fe7216330f748017739dd88d629e55b64415f
-
         // Remove picked opencard
         // Get a new open card from the closed cards
         // and update the firebase
