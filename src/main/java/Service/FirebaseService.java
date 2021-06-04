@@ -95,7 +95,7 @@ public class FirebaseService {
     public Player getPlayer(String roomCode, String player_uuid) {
         ArrayList<Player> players = getAllPlayers(roomCode);
         for (Player player: players) {
-            if (player.getUUID() == player_uuid) {
+            if (player.getUUID().equals(player_uuid)) {
                 return player;
             }
         }

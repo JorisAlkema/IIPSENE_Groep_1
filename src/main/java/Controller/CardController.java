@@ -2,6 +2,7 @@ package Controller;
 
 import App.MainState;
 import Model.GameState;
+import Model.Player;
 import Model.TrainCard;
 import View.CardView;
 import com.google.cloud.firestore.ListenerRegistration;
@@ -42,30 +43,30 @@ public class CardController {
     }
 
     // Pick open card and return new open card
-    public void pickOpenCard(int index) {
+    public Boolean pickOpenCard(int index) {
         GameState gameState = getGameState();
         ArrayList<TrainCard> openCards = gameState.getOpenDeck();
 
         TrainCard pickedCard = openCards.get(index);
+        Player client = gameState.getPlayer(MainState.player_uuid);
 
-
-        if(gameState.getPlayer(MainState.player_uuid).getActionsTaken() == 1 && pickedCard.getColor().equals("LOCO")){
+        if(client.getActionsTaken() == 1 && pickedCard.getColor().equals("LOCO")){
             System.out.println("you cannot draw a LOCO");
-            return;
+            return false;
         }
 
-        MainState.player.setActionsTaken(MainState.player.getActionsTaken() +1);
+        client.setActionsTaken(client.getActionsTaken() + 1);
 
-        if(pickedCard.getColor().equals("LOCO") || MainState.player.getActionsTaken() >= 2) {
-            gameController.endTurn(MainState.player);
-            MainState.player.addTrainCard(pickedCard);
-            System.out.println(MainState.player.getTrainCards());
+        if(pickedCard.getColor().equals("LOCO") || client.getActionsTaken() >= 2) {
+            gameController.endTurn(client);
+            client.addTrainCard(pickedCard);
+            System.out.println(client.getTrainCards());
             System.out.println("turn ended!");
-            MainState.player.setActionsTaken(0);
+            client.setActionsTaken(0);
         }
 
-        if(MainState.player.getActionsTaken() >= 1) {
-            MainState.player.addTrainCard(pickedCard);
+        if(client.getActionsTaken() >= 1) {
+            client.addTrainCard(pickedCard);
         }
 
         System.out.println(String.format("Open card picked, color: %s", pickedCard.getColor()));
@@ -76,6 +77,7 @@ public class CardController {
         TrainCard newOpenCard = getRandomCard(gameState);
         openCards.add(newOpenCard);
         MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
+        return true;
     }
 
     private ArrayList<TrainCard> generateClosedDeck() {
