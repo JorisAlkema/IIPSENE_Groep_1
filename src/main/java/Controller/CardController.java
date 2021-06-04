@@ -21,7 +21,7 @@ public class CardController {
         this.gameController = gameController;
 
         // If host generate decks and put on firebase and show
-        if (MainState.player.getHost()) {
+        if (MainState.firebaseService.getPlayer(MainState.roomCode, MainState.player_uuid).getHost()) {
             GameState gameState = MainState.firebaseService.getGameState(MainState.roomCode);
             ArrayList<TrainCard> closedCards = generateClosedDeck();
             gameState.setOpenDeck(generateOpenDeck(closedCards));
@@ -49,7 +49,7 @@ public class CardController {
         TrainCard pickedCard = openCards.get(index);
 
 
-        if(MainState.player.getActionsTaken() == 1 && pickedCard.getColor().equals("LOCO")){
+        if(gameState.getPlayer(MainState.player_uuid).getActionsTaken() == 1 && pickedCard.getColor().equals("LOCO")){
             System.out.println("you cannot draw a LOCO");
             return;
         }
@@ -75,6 +75,7 @@ public class CardController {
         openCards.remove(index);
         TrainCard newOpenCard = getRandomCard(gameState);
         openCards.add(newOpenCard);
+        MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
     }
 
     private ArrayList<TrainCard> generateClosedDeck() {

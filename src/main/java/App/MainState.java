@@ -9,7 +9,8 @@ public class MainState {
     public static Stage primaryStage;
 
     public static String roomCode;
-    public static Player player;
+//    public static Player player;
+    public static String player_uuid;
 
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 720;
