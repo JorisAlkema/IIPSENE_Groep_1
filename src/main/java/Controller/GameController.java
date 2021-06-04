@@ -36,8 +36,10 @@ public class GameController implements Observable {
         initGame();
     }
 
+
+
     public void initGame() {
-        gameView.setRight(new CardView());
+        gameView.setRight(new CardView(this));
 
         players = MainState.firebaseService.getAllPlayers(MainState.roomCode);
 
@@ -47,6 +49,8 @@ public class GameController implements Observable {
 
         startTurn(getCurrentPlayer());
     }
+
+
 
     public Player getCurrentPlayer() {
         if (turnCount == 0) {
