@@ -28,6 +28,21 @@ public class GameSetupService {
         this.cities = readCitiesFromFile(citiesFile);
         this.routes = readRoutesFromFile(routeFile);
         this.destinationTickets = readDestinationTicketsFromFile(destinationTicketsFile);
+        addNeighborCities();
+    }
+
+    public void addNeighborCities() {
+        for (City city : cities) {
+            ArrayList<City> neighborCities = new ArrayList<>();
+            for (Route route : routes) {
+                if (route.getFirstCity().equals(city)) {
+                    neighborCities.add(route.getSecondCity());
+                } else if (route.getSecondCity().equals(city)) {
+                    neighborCities.add(route.getFirstCity());
+                }
+            }
+            city.setNeighborCities(neighborCities);
+        }
     }
 
     // Read DestinationTickets from file

@@ -2,9 +2,7 @@ package Controller;
 
 import App.MainState;
 import Model.GameState;
-import Model.OpenCards;
 import Model.TrainCard;
-import Model.TrainCardDeck;
 import View.CardView;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
@@ -32,7 +30,9 @@ public class CardController {
 
     // Pick closed card()
     public void pickClosedCard() {
-        TrainCard closedCard = getRandomCard();
+        GameState gameState = getGameState();
+        TrainCard closedCard = getRandomCard(gameState);
+        MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
         System.out.println(String.format("Closed card picked, color: %s", closedCard.getColor()));
         // Do smt with the card?
     }
@@ -44,15 +44,16 @@ public class CardController {
 
         TrainCard openCard = openCards.get(index);
         System.out.println(String.format("Open card picked, color: %s", openCard.getColor()));
-        // Do smt with the card?
+        if (openCard.getColor() == "LOCO"){
+
+        }
 
         // Remove picked opencard
         // Get a new open card from the closed cards
         // and update the firebase
         openCards.remove(index);
-        TrainCard newOpenCard = getRandomCard();
+        TrainCard newOpenCard = getRandomCard(gameState);
         openCards.add(newOpenCard);
-        MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
     }
 
     private ArrayList<TrainCard> generateClosedDeck() {
@@ -89,13 +90,11 @@ public class CardController {
         return gameState;
     }
 
-    private TrainCard getRandomCard() {
-        GameState gameState = MainState.firebaseService.getGameState(MainState.roomCode);
+    private TrainCard getRandomCard(GameState gameState) {
         ArrayList<TrainCard> closedDeck = gameState.getClosedDeck();
         TrainCard randomCard = closedDeck.get(new Random().nextInt(closedDeck.size()));
         closedDeck.remove(randomCard);
         gameState.setClosedDeck(closedDeck);
-        MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
         return randomCard;
     }
 

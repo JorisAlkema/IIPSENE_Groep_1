@@ -33,4 +33,20 @@ public class DestinationTicket {
     public String getFileName() {
         return "eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase();
     }
+
+    @Override
+    public String toString() {
+        return "DestinationTicket{" +
+                "firstCity=" + firstCity +
+                ", secondCity=" + secondCity +
+                '}';
+    }
+
+    public City getFirstCity() {
+        return firstCity;
+    }
+
+    public City getSecondCity() {
+        return secondCity;
+    }
 }
