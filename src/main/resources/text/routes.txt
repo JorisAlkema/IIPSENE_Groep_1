@@ -35,7 +35,7 @@ Paris Frankfurt ORANGE STANDARD
 Bruxelles Frankfurt BLUE STANDARD
 -392 -178 -14
 -316 -157 44
-Amsterdam Essen WHITE STANDARD
+Amsterdam Frankfurt WHITE STANDARD
 -351 -231 44
 -297 -177 44
 Bruxelles Amsterdam BLACK STANDARD
