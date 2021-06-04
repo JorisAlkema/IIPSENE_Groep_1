@@ -11,6 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -110,9 +111,21 @@ public class LoginView extends StackPane implements Observer {
             inputCode.setPromptText("Room code...");
         });
 
-        //join
+        //join either by pressing button or typing enter
         join.setOnMouseClicked(e ->  {
                 loginController.join(inputUsername, inputCode);
+        });
+
+        inputUsername.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER) {
+                loginController.join(inputUsername, inputCode);
+            }
+        });
+
+        inputCode.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER) {
+                loginController.join(inputUsername, inputCode);
+            }
         });
 
         return textFields;
@@ -122,8 +135,8 @@ public class LoginView extends StackPane implements Observer {
         // Box with the explanation, input username, input roomcode and join button
         VBox textFields = new VBox(20);
         textFields.setId("textFields");
-        Text explaination = new Text("Enter a username to host a game with your friends");
-        explaination.setId("text");
+        Text explanation = new Text("Enter a username to host a game with your friends");
+        explanation.setId("text");
 
         message = new Text("Waiting for user input");
         message.setId("message");
@@ -138,7 +151,7 @@ public class LoginView extends StackPane implements Observer {
         HBox.setHgrow(host, Priority.ALWAYS);
 
         // Add margins
-        VBox.setMargin(explaination, new Insets(20, 10, 0, 10));
+        VBox.setMargin(explanation, new Insets(20, 10, 0, 10));
         VBox.setMargin(message, new Insets(20, 0, 0, 10));
         VBox.setMargin(inputWithHost, new Insets(0, 0, 20, 0));
         VBox.setMargin(textFields, new Insets(40, 0, 40, 0));
@@ -147,15 +160,19 @@ public class LoginView extends StackPane implements Observer {
         inputWithHost.getChildren().add(inputUsername);
         inputWithHost.getChildren().add(host);
 
-        textFields.getChildren().add(explaination);
+        textFields.getChildren().add(explanation);
         textFields.getChildren().add(message);
         textFields.getChildren().add(inputWithHost);
 
         // Event Handlers
 
-        //join
+        //host
         host.setOnMouseClicked(e -> loginController.host(inputUsername));
-
+        inputUsername.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER) {
+                loginController.host(inputUsername);
+            }
+        });
         return textFields;
     }
 
