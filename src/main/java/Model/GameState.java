@@ -61,7 +61,7 @@ public class GameState {
 
     public Player getPlayer(String player_uuid) {
         for(Player x: this.players) {
-            if (x.getUUID() == player_uuid) {
+            if (x.getUUID().equals(player_uuid)) {
                 return x;
             }
         }
