@@ -2,9 +2,7 @@ package Controller;
 
 import App.MainState;
 import Model.GameState;
-import Model.OpenCards;
 import Model.TrainCard;
-import Model.TrainCardDeck;
 import View.CardView;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
@@ -44,7 +42,9 @@ public class CardController {
 
         TrainCard openCard = openCards.get(index);
         System.out.println(String.format("Open card picked, color: %s", openCard.getColor()));
-        // Do smt with the card?
+        if (openCard.getColor() == "LOCO"){
+
+        }
 
         // Remove picked opencard
         // Get a new open card from the closed cards
@@ -52,7 +52,6 @@ public class CardController {
         openCards.remove(index);
         TrainCard newOpenCard = getRandomCard();
         openCards.add(newOpenCard);
-        MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
     }
 
     private ArrayList<TrainCard> generateClosedDeck() {

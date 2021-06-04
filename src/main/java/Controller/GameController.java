@@ -2,10 +2,6 @@ package Controller;
 
 import App.MainState;
 import Model.Player;
-import Model.Route;
-import Model.TrainCardDeck;
-import Service.FirebaseService;
-import Service.GameSetupService;
 import Service.Observable;
 import Service.Observer;
 import View.CardView;
@@ -59,7 +55,7 @@ public class GameController implements Observable {
         countdownTimer();
     }
 
-    private void endTurn(Player player) {
+    public void endTurn(Player player) {
         player.setTurn(false);
         timer.cancel();
         turnCount++;
@@ -137,5 +133,8 @@ public class GameController implements Observable {
         for (Observer observer : observers) {
             observer.update(this, o, type);
         }
+    }
+    public GameController getGameController(){
+        return GameController.this;
     }
 }
