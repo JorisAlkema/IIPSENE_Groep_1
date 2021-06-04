@@ -167,21 +167,21 @@ public class FirebaseService {
         documentReference.set(gameState);
     }
 
-    public void updatePlayerData(String code, Player player) {
-        DocumentReference roomReference = getRoomReference(code);
-        ArrayList<Player> players = getAllPlayers(code);
-
-        int index = 0;
-        for (Player playerFirebase : players) {
-            if (playerFirebase.getUUID() == player.getUUID()) {
-                players.set(index, player);
-                break;
-            }
-            index++;
-        }
-
-        roomReference.update("players", players);
-    }
+//    public void updatePlayerData(String code, Player player) {
+//        DocumentReference roomReference = getRoomReference(code);
+//        ArrayList<Player> players = getAllPlayers(code);
+//
+//        int index = 0;
+//        for (Player playerFirebase : players) {
+//            if (playerFirebase.getUUID() == player.getUUID()) {
+//                players.set(index, player);
+//                break;
+//            }
+//            index++;
+//        }
+//
+//        roomReference.update("players", players);
+//    }
 
     // Get document reference for the eventlistener
     public DocumentReference getRoomReference(String room_code) {
