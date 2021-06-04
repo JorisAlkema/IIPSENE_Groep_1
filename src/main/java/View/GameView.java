@@ -80,7 +80,6 @@ public class GameView extends BorderPane implements Observer {
     @Override
     public void update(Observable observable, Object object, String type) {
         if (type.equals("timer")) {
-            System.out.println("Timer updated!" + java.time.LocalTime.now());
             timerLabel.setText((String) object);
         } else if (type.equals("playername")) {
             System.out.println("Player text updated!");
