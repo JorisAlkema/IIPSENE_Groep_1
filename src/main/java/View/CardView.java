@@ -1,6 +1,7 @@
 package View;
 
 import Controller.CardController;
+import Controller.GameController;
 import Model.OpenCards;
 import Model.TrainCard;
 import Model.TrainCardDeck;
@@ -12,11 +13,13 @@ import java.util.ArrayList;
 
 public class CardView extends VBox {
 //    public ArrayList<Button> buttons = new ArrayList<Button>();
-    private CardController cardController = new CardController(this);
+    private CardController cardController;
     private TrainCard randomCard = null;
 
-    public CardView() {
+
+    public CardView(GameController gameController) {
         setPadding(new Insets(30));
+        cardController = new CardController(this,gameController);
     }
 
     public void createButtons(ArrayList<TrainCard> openCards){
