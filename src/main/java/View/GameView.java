@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class GameView extends BorderPane implements Observer {
@@ -68,6 +69,10 @@ public class GameView extends BorderPane implements Observer {
 
         vBox.getChildren().addAll(imageView, mainmenu, playerLabel);
 
+        for (StackPane stackPane : gameController.getPlayerCards()) {
+            vBox.getChildren().add(stackPane);
+        }
+
         setLeft(vBox);
         
         // Bottom pane
@@ -80,7 +85,6 @@ public class GameView extends BorderPane implements Observer {
     @Override
     public void update(Observable observable, Object object, String type) {
         if (type.equals("timer")) {
-            System.out.println("Timer updated!" + java.time.LocalTime.now());
             timerLabel.setText((String) object);
         } else if (type.equals("playername")) {
             System.out.println("Player text updated!");

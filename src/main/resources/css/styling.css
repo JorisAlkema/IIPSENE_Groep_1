@@ -68,3 +68,9 @@
     -fx-background-color: #000000b9;
     -fx-padding: 30 15;
 }
+
+.playerinfo {
+	-fx-font-family: Merriweather;
+	-fx-fill: white;
+	-fx-font-size: 12;
+}
