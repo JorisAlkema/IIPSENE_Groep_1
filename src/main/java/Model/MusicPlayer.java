@@ -6,51 +6,39 @@ import View.MusicPlayerView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-import javax.sound.sampled.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MusicPlayer implements Observable {
     private boolean isPlaying = true;
-    private Clip clip;
-    private ArrayList<Observer> observers = new ArrayList<Observer>();
+    private ArrayList<Observer> observers = new ArrayList<>();
+    private Media media;
+    private MediaPlayer mediaPlayer;
 
     public MusicPlayer() {
-        playAudio();
+        media = new Media(new File("src/main/resources/music/europe.mp3").toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.play();
     }
 
     public void toggleMusic() {
         isPlaying = !isPlaying;
-        playAudio();
+        playAudio(isPlaying);
         this.notifyAllObservers(isPlaying, "");
     }
 
-    public void playAudio() {
-        if(isPlaying && (clip == null)) {
-            try {
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResourceAsStream("../music/MenuMusic.wav"));
-                clip = AudioSystem.getClip();
-                clip.setFramePosition(0);
-                clip.open(audioInputStream);
-
-                clip.start();
-                clip.addLineListener(new LineListener() {
-                    public void update(LineEvent myLineEvent) {
-                        if (myLineEvent.getType() == LineEvent.Type.STOP) {
-                            clip.close();
-                            clip = null;
-                            isPlaying = false;
-                            playAudio();
-                        }
-                    }
-                });
-            } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-                e.printStackTrace();
-            }
+    public void playAudio(boolean isPlaying) {
+        if(isPlaying) {
+            mediaPlayer.play();
+            mediaPlayer.setAutoPlay(true);
         } else {
-            clip.stop();
+            // Mute, pause or stop? What is most logical
+            mediaPlayer.pause();
         }
+    }
+
+    public boolean isPlaying() {
+        return isPlaying;
     }
 
     @Override
@@ -60,13 +48,13 @@ public class MusicPlayer implements Observable {
 
     @Override
     public void unregisterObserver(Observer observer) {
-        observers.remove(observer);
+
     }
 
     @Override
     public void notifyAllObservers(Object o, String type) {
         for(Observer observer : observers) {
-            observer.update( this, o, "");
+            observer.update( this, o, "update");
         }
     }
 }
