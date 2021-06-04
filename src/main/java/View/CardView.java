@@ -1,9 +1,7 @@
 package View;
 
 import Controller.CardController;
-import Model.OpenCards;
 import Model.TrainCard;
-import Model.TrainCardDeck;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -11,9 +9,7 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 
 public class CardView extends VBox {
-//    public ArrayList<Button> buttons = new ArrayList<Button>();
     private CardController cardController = new CardController(this);
-    private TrainCard randomCard = null;
 
     public CardView() {
         setPadding(new Insets(30));
