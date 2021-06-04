@@ -48,7 +48,7 @@ public class MusicPlayer implements Observable {
 
     @Override
     public void unregisterObserver(Observer observer) {
-
+        observers.remove(observer);
     }
 
     @Override

@@ -18,7 +18,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
 public class GameView extends BorderPane implements Observer {
-
     Label timerLabel;
     Label playerLabel;
     GameController gameController;

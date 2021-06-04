@@ -21,6 +21,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         MainState.primaryStage = primaryStage;
         MainMenuView mainMenuView = new MainMenuView();
+
         Scene scene = new Scene(mainMenuView, MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
         scene.getStylesheets().add(MainState.MenuCSS);
         primaryStage.setScene(scene);
