@@ -111,7 +111,9 @@ public class LoginView extends StackPane implements Observer {
         });
 
         //join
-        join.setOnMouseClicked(e -> loginController.join(inputUsername, inputCode));
+        join.setOnMouseClicked(e ->  {
+                loginController.join(inputUsername, inputCode);
+        });
 
         return textFields;
     }
