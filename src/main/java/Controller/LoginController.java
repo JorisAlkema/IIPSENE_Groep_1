@@ -17,7 +17,9 @@ import java.util.UUID;
 
 public class LoginController {
     private Login login = new Login();;
-    private int limit = 15;
+    private final int CHARACTER_MAX = 15;
+    private final int CHARACTER_MIN = 5;
+    private final int ROOMCODE_CHARACTERS = 6;
     public LoginController(LoginView loginView) {
         login.registerObserver(loginView);
     }
@@ -31,8 +33,8 @@ public class LoginController {
     }
 
     // Check characters of username
-    public boolean checkUsername(String username, int limit) {
-        return username.length() >= limit;
+    public boolean checkUsername(String username) {
+        return username.length() >= CHARACTER_MAX || username.length() < CHARACTER_MIN;
     }
 
     public boolean checkRoomCode(String code) {
@@ -43,7 +45,7 @@ public class LoginController {
             }
         }
 
-        return characters == 6;
+        return characters == ROOMCODE_CHARACTERS;
     }
 
     // Join game
@@ -56,8 +58,9 @@ public class LoginController {
             return;
         }
 
-        if(this.checkUsername(username, limit)) {
-            login.notifyAllObservers("Your username is more than " + limit + " characters long");
+
+        if(this.checkUsername(username)) {
+            login.notifyAllObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
             return;
         }
 
@@ -116,8 +119,8 @@ public class LoginController {
             return;
         }
 
-        if(this.checkUsername(username, limit)) {
-            login.notifyAllObservers("Your username is more than " + limit + " characters long");
+        if(this.checkUsername(username)) {
+            login.notifyAllObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
             return;
         }
 

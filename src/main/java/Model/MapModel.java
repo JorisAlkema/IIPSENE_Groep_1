@@ -19,8 +19,8 @@ public class MapModel implements Observable {
     private boolean zoomedIn;
     private final ImageView bigBackgroundImage = new ImageView("maps/map_big.jpg");
     private final ImageView smallBackgroundImage = new ImageView("maps/map_small.jpg");
-    private final ImagePattern smallImagePattern = new ImagePattern(new Image("icons/train_small.png"));
-    private final ImagePattern bigImagePattern = new ImagePattern(new Image("icons/train.png"));
+    private final ImagePattern smallImagePattern = new ImagePattern(new Image("icons/purple.png"));
+    private final ImagePattern bigImagePattern = new ImagePattern(new Image("icons/purple.png"));
     private static final double smallCellWidth = 35;
     private static final double smallCellHeight = 12;
     private static final double bigCellWidth = 70;

@@ -18,5 +18,6 @@ public class MainState {
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 720;
 
-    public static final String MenuCSS = "css/styling.css";
+    public static final String MenuCSS = "css/mainMenuStyle.css";
+    public static final String mainCSS = "css/mainStyle.css";
 }

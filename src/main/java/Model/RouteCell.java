@@ -14,7 +14,6 @@ public class RouteCell extends Rectangle {
         setTranslateX(translateX);
         setTranslateY(translateY);
         setRotate(rotation);
-
     }
 
     public void setParentRoute(Route parentRoute) {
