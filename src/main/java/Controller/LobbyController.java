@@ -57,7 +57,7 @@ public class LobbyController {
                     Platform.runLater(() -> {
                         detachListener();
                         Scene scene = new Scene(new GameView());
-                        scene.getStylesheets().add(MainState.MenuCSS);
+                        scene.getStylesheets().add(MainState.mainCSS);
                         MainState.primaryStage.setScene(scene);
                     });
                 }

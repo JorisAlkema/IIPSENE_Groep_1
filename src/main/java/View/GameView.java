@@ -1,9 +1,7 @@
 package View;
 
 import App.MainState;
-import Controller.MapController;
 import Controller.GameController;
-import Model.MapModel;
 import Service.Observable;
 import Service.Observer;
 import javafx.geometry.Insets;
@@ -30,9 +28,7 @@ public class GameView extends BorderPane implements Observer {
         // Top pane
         timerLabel = new Label("0:00");
         setAlignment(timerLabel, Pos.CENTER);
-        timerLabel.setStyle(    "-fx-font-family: Merriweather;" +
-                                "-fx-font-weight: bold;" +
-                                "-fx-font-size: 30;");
+        timerLabel.setId("timerLabel");
         setTop(timerLabel);
 
         // Left pane
@@ -45,12 +41,13 @@ public class GameView extends BorderPane implements Observer {
         Button mainmenuButton = new Button("Return to menu");
         mainmenuButton.setOnAction(e -> {
             Scene newScene = new Scene(new MainMenuView());
-            String css = "css/styling.css";
+            String css = "css/mainMenuStyle.css";
             newScene.getStylesheets().add(css);
             MainState.primaryStage.setScene(newScene);
         });
 
         currentPlayerLabel = new Label("Current player: ");
+
 
         vBox.getChildren().addAll(mapZoomButton, mainmenuButton, currentPlayerLabel);
 
