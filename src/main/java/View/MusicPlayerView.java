@@ -26,7 +26,6 @@ public class MusicPlayerView implements Observer {
     }
 
     public void changeMusicButton() {
-//        System.out.println(musicIsPlaying);
         musicImageView.setImage(musicController.getMusicPlayer().isPlaying() ? musicOnImage : musicOffImage);
     }
 

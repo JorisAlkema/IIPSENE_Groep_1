@@ -5,6 +5,8 @@ import Controller.GameController;
 import Model.TrainCard;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -21,13 +23,16 @@ public class CardView extends VBox {
     }
 
     public void createButtons(ArrayList<TrainCard> openCards){
+        Image image = new Image("traincards/traincard_back_small.png");
+        ImageView closedTrainCard = new ImageView(image);
+        closedTrainCard.setRotate(-90);
         //forloop die knoppen maakt van de opencardsarray
-        Button getTrainCard = new Button("Get closed train card");
-        getTrainCard.setOnAction(e -> {
+
+        closedTrainCard.setOnMouseClicked(e -> {
             this.cardController.pickClosedCard();
         });
         getChildren().removeAll(getChildren());
-        getChildren().add(getTrainCard);
+        getChildren().add(closedTrainCard);
 
         for (int i = 0; i < openCards.size(); i++) {
             Button openCard = new Button(openCards.get(i).getColor());
