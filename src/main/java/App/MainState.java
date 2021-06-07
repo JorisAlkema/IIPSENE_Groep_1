@@ -1,5 +1,6 @@
 package App;
 
+import Model.MusicPlayer;
 import Model.Player;
 import Service.FirebaseService;
 import javafx.stage.Stage;
@@ -11,6 +12,8 @@ public class MainState {
     public static String roomCode;
 //    public static Player player;
     public static String player_uuid;
+
+    public static MusicPlayer musicPlayer;
 
     public static final int SCREEN_WIDTH = 1280;
     public static final int SCREEN_HEIGHT = 720;

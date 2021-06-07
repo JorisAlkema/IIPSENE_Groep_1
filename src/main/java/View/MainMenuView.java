@@ -3,10 +3,13 @@ package View;
 import App.Main;
 import App.MainState;
 import Controller.MainMenuController;
+import Controller.MusicController;
+import Model.MusicPlayer;
 import Service.Observable;
 import Service.Observer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
@@ -20,6 +23,8 @@ import java.io.IOException;
 
 public class MainMenuView extends StackPane {
     private MainMenuController mainMenuController = new MainMenuController();
+    private MusicPlayerView musicPlayerView;
+
     public MainMenuView() {
 
         // App.Main layout
@@ -59,9 +64,17 @@ public class MainMenuView extends StackPane {
         buttons.getChildren().add(rules);
         buttons.getChildren().add(quit);
 
+        // Music button
+        musicPlayerView = new MusicPlayerView();
+        ImageView musicImageView = musicPlayerView.getMusicImageView();
+        // There's probably a better way to align this, but at least the menu buttons are clickable now
+        musicImageView.setTranslateX(background.getFitWidth() / 2 - musicImageView.getFitWidth() - 45);
+        musicImageView.setTranslateY(background.getFitHeight() / 2 - musicImageView.getFitHeight() - 40);
+
         getChildren().add(background);
         getChildren().add(grid);
         getChildren().add(buttons);
+        getChildren().add(musicImageView);
 
         //Events
         test.setOnMouseClicked(e -> mainMenuController.game());

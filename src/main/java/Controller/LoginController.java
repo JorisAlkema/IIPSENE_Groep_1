@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 
 public class LoginController {
     private Login login = new Login();;
-
+    private int limit = 15;
     public LoginController(LoginView loginView) {
         login.registerObserver(loginView);
     }
@@ -35,12 +35,39 @@ public class LoginController {
         MainState.primaryStage.setScene(scene);
     }
 
+    // Check characters of username
+    public boolean checkUsername(String username, int limit) {
+        return username.length() >= limit;
+    }
+
+    public boolean checkRoomCode(String code) {
+        int characters = code.length();
+        for (int i = 0; i < characters; i ++) {
+            if(Character.isLetter(code.charAt(i))) {
+                return false;
+            }
+        }
+
+        return characters == 6;
+    }
+
     // Join game
     public void join(TextField inputUsername, TextField inputCode) {
         String username = inputUsername.getText();
         String code = inputCode.getText();
+
         if (username.isBlank() || code.isBlank()) {
             login.notifyAllObservers("Fill in all the required fields", "update");
+            return;
+        }
+
+        if(this.checkUsername(username, limit)) {
+            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long", "update");
+            return;
+        }
+
+        if(!this.checkRoomCode(code)) {
+            login.notifyAllObservers("Enter a valid roomcode", "update");
             return;
         }
 
@@ -90,6 +117,11 @@ public class LoginController {
         String username = inputUsername.getText();
         if (username.isBlank()) {
             login.notifyAllObservers("Fill in all the required fields", "update");
+            return;
+        }
+
+        if(this.checkUsername(username, limit)) {
+            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long", "update");
             return;
         }
 
