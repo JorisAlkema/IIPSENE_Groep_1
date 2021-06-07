@@ -2,20 +2,13 @@ package Controller;
 
 import App.MainState;
 import Model.*;
-import Service.GameSetupService;
 import Service.Observable;
 import Service.Observer;
-import View.CardView;
 import View.GameView;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.Text;
 
 import java.util.*;
@@ -45,7 +38,7 @@ public class GameController implements Observable {
 
 
     public void initGame() {
-        players = MainState.firebaseService.getAllPlayers(MainState.roomCode);
+        players = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
         for (Player player : players) {
             player.setTurn(false);
         }
