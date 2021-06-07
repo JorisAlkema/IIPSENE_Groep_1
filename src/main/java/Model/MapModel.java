@@ -17,10 +17,13 @@ public class MapModel implements Observable {
     private ArrayList<RouteCell> routeCellOverlays;
     private ArrayList<Circle> cityOverlays;
     private boolean zoomedIn;
-    private final ImageView bigBackgroundImage = new ImageView("maps/map_big.jpg");
-    private final ImageView smallBackgroundImage = new ImageView("maps/map_small.jpg");
-    private final ImagePattern smallImagePattern = new ImagePattern(new Image("icons/purple.png"));
-    private final ImagePattern bigImagePattern = new ImagePattern(new Image("icons/purple.png"));
+    private static final ImageView bigBackgroundImage = new ImageView("maps/map_big.jpg");
+    private static final ImageView smallBackgroundImage = new ImageView("maps/map_small.jpg");
+    private static final ImagePattern blueImagePattern = new ImagePattern(new Image("icons/train_blue.png"));
+    private static final ImagePattern greenImagePattern = new ImagePattern(new Image("icons/train_green.png"));
+    private static final ImagePattern purpleImagePattern = new ImagePattern(new Image("icons/train_purple.png"));
+    private static final ImagePattern redImagePattern = new ImagePattern(new Image("icons/train_red.png"));
+    private static final ImagePattern yellowImagePattern = new ImagePattern(new Image("icons/train_yellow.png"));
     private static final double smallCellWidth = 35;
     private static final double smallCellHeight = 12;
     private static final double bigCellWidth = 70;
@@ -47,8 +50,16 @@ public class MapModel implements Observable {
         return (zoomedIn ? bigRadius : smallRadius);
     }
 
-    public ImagePattern getImagePattern() {
-        return (zoomedIn ? bigImagePattern : smallImagePattern);
+    public ImagePattern getImagePattern(String color) {
+        color = color.toUpperCase();
+        switch (color) {
+            case "BLUE": return blueImagePattern;
+            case "GREEN": return greenImagePattern;
+            case "PURPLE": return purpleImagePattern;
+            case "RED": return redImagePattern;
+            case "YELLOW": return yellowImagePattern;
+        }
+        return null;
     }
 
     public ImageView getBackgroundImage() {
