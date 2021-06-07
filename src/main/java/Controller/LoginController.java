@@ -32,7 +32,7 @@ public class LoginController {
         MainState.primaryStage.setScene(scene);
     }
 
-    // Check characters of username
+
     public boolean checkUsername(String username) {
         return username.length() >= CHARACTER_MAX || username.length() < CHARACTER_MIN;
     }
