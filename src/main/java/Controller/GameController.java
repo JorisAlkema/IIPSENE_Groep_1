@@ -2,8 +2,6 @@ package Controller;
 
 import App.MainState;
 import Model.*;
-import Service.Firebase;
-import Service.FirebaseService;
 import Service.Observable;
 import Service.Observer;
 import View.GameView;
