@@ -99,7 +99,6 @@ public class MapController {
     // When this method is called, we assume that the player has already selected the color
     // with which they want to build the route, in case it is grey.
     public boolean claimRoute(Route route, String color) {
-        // Route already claimed
         if (route.getOwner() != null) {
             return false;
         }
