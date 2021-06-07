@@ -34,11 +34,6 @@ public class MainMenuController {
         switchScene(false);
     }
 
-    public void game() {
-        Scene scene = new Scene(new GameView(), MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
-        MainState.primaryStage.setScene(scene);
-    }
-
     private void switchScene(Boolean isHost) {
         Scene scene = new Scene(new LoginView(isHost), MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
         scene.getStylesheets().add(MainState.MenuCSS);
