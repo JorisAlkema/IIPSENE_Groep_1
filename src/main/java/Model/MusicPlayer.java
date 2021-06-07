@@ -24,7 +24,7 @@ public class MusicPlayer implements Observable {
     public void toggleMusic() {
         isPlaying = !isPlaying;
         playAudio(isPlaying);
-        this.notifyAllObservers(isPlaying, "");
+        this.notifyAllObservers(isPlaying);
     }
 
     public void playAudio(boolean isPlaying) {
@@ -52,9 +52,9 @@ public class MusicPlayer implements Observable {
     }
 
     @Override
-    public void notifyAllObservers(Object o, String type) {
+    public void notifyAllObservers(Object o) {
         for(Observer observer : observers) {
-            observer.update( this, o, "update");
+            observer.update( this, o);
         }
     }
 }

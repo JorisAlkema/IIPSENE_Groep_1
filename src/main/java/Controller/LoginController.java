@@ -62,12 +62,12 @@ public class LoginController {
         }
 
         if(this.checkUsername(username, limit)) {
-            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long", "update");
+            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long");
             return;
         }
 
         if(!this.checkRoomCode(code)) {
-            login.notifyAllObservers("Enter a valid roomcode", "update");
+            login.notifyAllObservers("Enter a valid roomcode");
             return;
         }
 
@@ -121,7 +121,7 @@ public class LoginController {
         }
 
         if(this.checkUsername(username, limit)) {
-            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long", "update");
+            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long");
             return;
         }
 

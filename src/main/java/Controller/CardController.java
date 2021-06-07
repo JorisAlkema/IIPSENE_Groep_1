@@ -8,7 +8,6 @@ import View.CardView;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -22,12 +21,12 @@ public class CardController {
         this.gameController = gameController;
 
         // If host generate decks and put on firebase and show
-        if (MainState.firebaseService.getPlayer(MainState.roomCode, MainState.player_uuid).getHost()) {
-            GameState gameState = MainState.firebaseService.getGameState(MainState.roomCode);
+        if (MainState.firebaseService.getPlayerFromLobby(MainState.roomCode, MainState.player_uuid).getHost()) {
+            GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
             ArrayList<TrainCard> closedCards = generateClosedDeck();
             gameState.setOpenDeck(generateOpenDeck(closedCards));
             gameState.setClosedDeck(closedCards);
-            MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
+            MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
         }
 
         attachListener();
@@ -37,7 +36,7 @@ public class CardController {
     public void pickClosedCard() {
         GameState gameState = getGameState();
         TrainCard closedCard = getRandomCard(gameState);
-        MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
+        MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
         System.out.println(String.format("Closed card picked, color: %s", closedCard.getColor()));
         // Do smt with the card?
     }
@@ -76,7 +75,7 @@ public class CardController {
         openCards.remove(index);
         TrainCard newOpenCard = getRandomCard(gameState);
         openCards.add(newOpenCard);
-        MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
+        MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
         return true;
     }
 
@@ -107,9 +106,9 @@ public class CardController {
     }
 
     private GameState getGameState() {
-        GameState gameState = MainState.firebaseService.getGameState(MainState.roomCode);
+        GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
         while (gameState.getClosedDeck() == null || gameState.getOpenDeck() == null) {
-            gameState = MainState.firebaseService.getGameState(MainState.roomCode);
+            gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
         }
         return gameState;
     }
@@ -123,7 +122,7 @@ public class CardController {
     }
 
     public void attachListener() {
-        listenerRegistration = MainState.firebaseService.getRoomReference(MainState.roomCode).addSnapshotListener((document, e) -> {
+        listenerRegistration = MainState.firebaseService.getLobbyReference(MainState.roomCode).addSnapshotListener((document, e) -> {
             Platform.runLater(() -> {
                 GameState gameState = document.toObject(GameState.class);
                 if (gameState.getOpenDeck() != null) {
