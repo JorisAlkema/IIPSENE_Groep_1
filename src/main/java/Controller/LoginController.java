@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 public class LoginController {
     private Login login = new Login();;
     private final int CHARACTER_MAX = 15;
-    private final int CHARACTER_MIN = 5;
+    private final int CHARACTER_MIN = 2;
     private final int ROOMCODE_CHARACTERS = 6;
     public LoginController(LoginView loginView) {
         login.registerObserver(loginView);
