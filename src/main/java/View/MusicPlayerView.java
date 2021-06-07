@@ -40,7 +40,7 @@ public class MusicPlayerView implements Observer {
     }
 
     @Override
-    public void update(Observable observable, Object o, String type) {
+    public void update(Observable observable, Object o) {
         this.changeMusicButton();
     }
 }
