@@ -2,6 +2,8 @@ package Controller;
 
 import App.MainState;
 import Model.*;
+import Service.Firebase;
+import Service.FirebaseService;
 import Service.Observable;
 import Service.Observer;
 import View.GameView;
@@ -20,6 +22,7 @@ public class GameController implements Observable {
     private ArrayList<Player> players;
     private int playercount = 0;
     private int turnCount = 0;
+    private String[] colors = {"GREEN","BLUE","PURPLE","RED","YELLOW"};
 
     private int seconds;
     private Timer timer;
@@ -38,6 +41,7 @@ public class GameController implements Observable {
 
 
     public void initGame() {
+        playerColors();
         players = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
         for (Player player : players) {
             player.setTurn(false);
@@ -64,6 +68,17 @@ public class GameController implements Observable {
         player.setTurn(false);
         stopTimer();
         turnCount++;
+    }
+
+    public void playerColors(){
+        //the hosts gives the other players their color
+        if (MainState.firebaseService.getPlayerFromLobby(MainState.roomCode, MainState.player_uuid).getHost()) {
+            GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
+            for(int i =0; MainState.firebaseService.getGameStateOfLobby(MainState.roomCode).getPlayers().size() > i; i++){
+                gameState.getPlayers().get(i).setPlayerColor(colors[i]);
+            }
+            MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
+        }
     }
 
     public void countdownTimer() {
