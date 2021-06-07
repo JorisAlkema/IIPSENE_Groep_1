@@ -2,8 +2,7 @@ package View;
 
 import App.MainState;
 import Controller.GameController;
-import Service.Observable;
-import Service.Observer;
+import Observers.TimerObserver;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,7 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class GameView extends BorderPane implements Observer {
+public class GameView extends BorderPane implements TimerObserver {
     Label timerLabel;
     Label currentPlayerLabel;
     GameController gameController;
@@ -84,7 +83,7 @@ public class GameView extends BorderPane implements Observer {
     }
 
     @Override
-    public void update(Observable observable, Object object) {
-            timerLabel.setText((String) object);
+    public void update(String timerText) {
+            timerLabel.setText(timerText);
     }
 }

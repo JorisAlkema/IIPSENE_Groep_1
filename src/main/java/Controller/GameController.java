@@ -2,20 +2,20 @@ package Controller;
 
 import App.MainState;
 import Model.*;
-import Service.Observable;
-import Service.Observer;
 import View.GameView;
 import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import Observers.TimerObservable;
+import Observers.TimerObserver;
 
 import java.util.*;
 
-public class GameController implements Observable {
+public class GameController implements TimerObservable {
     private String timerText;
-    private ArrayList<Observer> observers = new ArrayList<>();
+    private ArrayList<TimerObserver> observers = new ArrayList<>();
 
     private ArrayList<Player> players;
     private int playercount = 0;
@@ -58,7 +58,7 @@ public class GameController implements Observable {
 
     private void startTurn(Player player) {
         player.setTurn(true);
-        setPlayerName(getCurrentPlayer().getName());
+        //setPlayerName(getCurrentPlayer().getName());
         countdownTimer();
     }
 
@@ -119,21 +119,13 @@ public class GameController implements Observable {
 
     public void setTimerText(String timerText) {
         this.timerText = timerText;
-        Platform.runLater(() -> {
-            notifyAllObservers(this.timerText);
-        });
+        Platform.runLater(this::notifyObservers);
     }
 
     private String formatTimer(int seconds) {
         int minutes = (int) Math.floor(seconds / 60.0);
         int displaySeconds = (seconds % 60);
         return String.format("%d:%02d", minutes, displaySeconds);
-    }
-
-    public void setPlayerName(String playerName) {
-        Platform.runLater(() -> {
-            notifyAllObservers(playerName);
-        });
     }
 
     public ArrayList<StackPane> createOpponentViews() {
@@ -232,19 +224,19 @@ public class GameController implements Observable {
     }
 
     @Override
-    public void registerObserver(Observer observer) {
-        observers.add(observer);
+    public void registerObserver(TimerObserver observer) {
+        this.observers.add(observer);
     }
 
     @Override
-    public void unregisterObserver(Observer observer) {
-        observers.remove(observer);
+    public void unregisterObserver(TimerObserver observer) {
+        this.observers.remove(observer);
     }
 
     @Override
-    public void notifyAllObservers(Object o) {
-        for (Observer observer : observers) {
-            observer.update(this, o);
+    public void notifyObservers() {
+        for (TimerObserver observer : observers) {
+            observer.update(this.timerText);
         }
     }
 }

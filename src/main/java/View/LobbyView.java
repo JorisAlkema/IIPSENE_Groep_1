@@ -2,28 +2,22 @@ package View;
 
 import App.MainState;
 import Controller.LobbyController;
-import Controller.LoginController;
 import Model.GameState;
 import Model.Player;
-import Service.Observable;
-import Service.Observer;
+import Observers.LobbyObserver;
 import com.google.cloud.firestore.DocumentSnapshot;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
 
-public class LobbyView extends StackPane implements Observer {
+public class LobbyView extends StackPane implements LobbyObserver {
 
     private LobbyController controller = new LobbyController(this);;
     private Text message;
@@ -130,9 +124,8 @@ public class LobbyView extends StackPane implements Observer {
     }
 
     @Override
-    public void update(Observable observable, Object o) {
+    public void update(DocumentSnapshot documentSnapshot) {
         Platform.runLater(() -> {
-            DocumentSnapshot documentSnapshot = (DocumentSnapshot) o;
             GameState roomData = documentSnapshot.toObject(GameState.class);
             ArrayList<Player> allPlayers = roomData.getPlayers();
 

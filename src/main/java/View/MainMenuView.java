@@ -1,25 +1,14 @@
 package View;
 
-import App.Main;
-import App.MainState;
 import Controller.MainMenuController;
-import Controller.MusicController;
-import Model.MusicPlayer;
-import Service.Observable;
-import Service.Observer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 
 public class MainMenuView extends StackPane {
     private MainMenuController mainMenuController = new MainMenuController();
