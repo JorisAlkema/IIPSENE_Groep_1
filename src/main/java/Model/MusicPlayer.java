@@ -24,7 +24,7 @@ public class MusicPlayer implements Observable {
     public void toggleMusic() {
         isPlaying = !isPlaying;
         playAudio(isPlaying);
-        this.notifyAllObservers(isPlaying, "");
+        this.notifyAllObservers(isPlaying);
     }
 
     public void playAudio(boolean isPlaying) {
