@@ -156,6 +156,7 @@ public class MapController {
 
         currentPlayer.getClaimedRoutes().add(route);
         route.setOwner(currentPlayer);
+        currentPlayer.givePointForRouteSize(routeLength);
 
         return true;
     }
