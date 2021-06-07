@@ -85,10 +85,10 @@ public class GameController implements Observable {
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 if (seconds > 0 ) {
-                    setTimerText(timerFormat(setSeconds()));
+                    setTimerText(formatTimer(setSeconds()));
                 } else if (seconds == 0) {
                     // Code that gets executed after the countdown has hit 0
-                    setTimerText(timerFormat(setSeconds()));
+                    setTimerText(formatTimer(setSeconds()));
                     endTurn(getCurrentPlayer());
                     startTurn(getCurrentPlayer());
                 }
@@ -104,7 +104,7 @@ public class GameController implements Observable {
     }
 
     public String getTimer() {
-        return timerFormat(setSeconds());
+        return formatTimer(setSeconds());
     }
 
     public void stopTimer() {
@@ -114,11 +114,11 @@ public class GameController implements Observable {
     public void setTimerText(String timerText) {
         this.timerText = timerText;
         Platform.runLater(() -> {
-            notifyAllObservers(this.timerText, "timer");
+            notifyAllObservers(this.timerText);
         });
     }
 
-    private String timerFormat(int seconds) {
+    private String formatTimer(int seconds) {
         int minutes = (int) Math.floor(seconds / 60.0);
         int displaySeconds = (seconds % 60);
         return String.format("%d:%02d", minutes, displaySeconds);
@@ -126,7 +126,7 @@ public class GameController implements Observable {
 
     public void setPlayerName(String playerName) {
         Platform.runLater(() -> {
-            notifyAllObservers(playerName, "playername");
+            notifyAllObservers(playerName);
         });
     }
 
@@ -236,9 +236,9 @@ public class GameController implements Observable {
     }
 
     @Override
-    public void notifyAllObservers(Object o, String type) {
+    public void notifyAllObservers(Object o) {
         for (Observer observer : observers) {
-            observer.update(this, o, type);
+            observer.update(this, o);
         }
     }
 }

@@ -57,7 +57,7 @@ public class LobbyController {
     private void attachListener() {
         lobby.setPlayerEventListener(MainState.firebaseService.getRoomReference(MainState.roomCode).addSnapshotListener((document, e) -> {
             if (document != null && document.getData() != null) {
-                lobby.notifyAllObservers(document, "updateDocument");
+                lobby.notifyAllObservers(document);
 
                 if ((Boolean) document.getData().get("ongoing")) {
 
