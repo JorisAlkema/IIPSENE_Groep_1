@@ -56,9 +56,6 @@ public class MainMenuView extends StackPane {
         Button rules = new Button("Rules");
         Button quit = new Button("Quit");
 
-        Button test = new Button("Testing");
-
-        buttons.getChildren().add(test);
         buttons.getChildren().add(hostGame);
         buttons.getChildren().add(joinGame);
         buttons.getChildren().add(rules);
@@ -77,7 +74,6 @@ public class MainMenuView extends StackPane {
         getChildren().add(musicImageView);
 
         //Events
-        test.setOnMouseClicked(e -> mainMenuController.game());
         hostGame.setOnMouseClicked(e -> mainMenuController.host());
         joinGame.setOnMouseClicked(e -> mainMenuController.join());
         rules.setOnMouseClicked(e -> mainMenuController.openRules());
