@@ -28,10 +28,6 @@ public class GameView extends BorderPane implements Observer {
         // Top pane
         timerLabel = new Label("0:00");
         setAlignment(timerLabel, Pos.CENTER);
-//        timerLabel.setStyle(    "-fx-font-family: Merriweather;" +
-//                                "-fx-font-weight: bold;" +
-//                                "-fx-font-size: 100;" +
-//                "fx-padding: 20 0;");
         timerLabel.setId("timerLabel");
         setTop(timerLabel);
 
