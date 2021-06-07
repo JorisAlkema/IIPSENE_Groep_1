@@ -57,7 +57,7 @@ public class LoginController {
         }
 
         if(this.checkUsername(username, limit)) {
-            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long");
+            login.notifyAllObservers("Your username is more than " + limit + " characters long");
             return;
         }
 
@@ -72,18 +72,19 @@ public class LoginController {
 
             // Joining lobby... loading animation
             Timer joiningLobbyAnimation = getLoadingAnimation("Joining lobby");
-
             TimerTask task = new TimerTask() {
+
                 @Override
                 public void run() {
-                    String exception = null;
                     String player_uuid = generateUUID();
                     Player player = new Player(username, player_uuid, false);
+                    Exception exception = null;
+
                     // Tries to add player to the lobby
                     try {
                         MainState.firebaseService.addPlayerToLobby(code, player);
                     } catch (Exception e) {
-                        exception = e.getMessage();
+                        exception = e;
                     }
 
                     joiningLobbyAnimation.cancel();
@@ -92,7 +93,7 @@ public class LoginController {
                     login.setBusy(false);
 
                     if (exception != null) {
-                        login.notifyAllObservers(exception);
+                        login.notifyAllObservers(exception.getMessage());
                         return;
                     }
 
@@ -116,7 +117,7 @@ public class LoginController {
         }
 
         if(this.checkUsername(username, limit)) {
-            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long");
+            login.notifyAllObservers("Your username is more than " + limit + " characters long");
             return;
         }
 
@@ -126,28 +127,34 @@ public class LoginController {
 
             // Creating lobby... loading animation
             Timer creatingLobbyAnimation = getLoadingAnimation("Creating lobby");
-
             TimerTask task = new TimerTask() {
+
                 @Override
                 public void run() {
-                    try {
-                        String player_uuid = generateUUID();
-                        Player host = new Player(username, player_uuid, true);
-                        String code = MainState.firebaseService.addLobby(host);
-                        login.setBusy(false);
-                        creatingLobbyAnimation.cancel();
+                    String player_uuid = generateUUID();
+                    Player host = new Player(username, player_uuid, true);
+                    String code = null;
+                    Exception exception = null;
 
-                        MainState.player_uuid = player_uuid;
-                        MainState.roomCode = code;
-                        Platform.runLater(() -> showLobby());
+                    try {
+                        code = MainState.firebaseService.addLobby(host);
                     } catch (Exception e) {
-                        creatingLobbyAnimation.cancel();
-                        login.notifyAllObservers(e.getMessage());
-                        e.printStackTrace();
+                        exception = e;
                     }
+
+                    login.setBusy(false);
+                    creatingLobbyAnimation.cancel();
+
+                    if (exception != null) {
+                        login.notifyAllObservers(exception.getMessage());
+                        return;
+                    }
+
+                    MainState.player_uuid = player_uuid;
+                    MainState.roomCode = code;
+                    Platform.runLater(() -> showLobby());
                 }
             };
-
             // Run function after 1sec, give space for the fetching animation to run.
             new Timer().schedule(task, 1000);
         }
