@@ -10,7 +10,8 @@ public class MainState {
     public static Stage primaryStage;
 
     public static String roomCode;
-    public static Player player;
+//    public static Player player;
+    public static String player_uuid;
 
     public static MusicPlayer musicPlayer;
 

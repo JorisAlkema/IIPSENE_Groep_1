@@ -58,4 +58,13 @@ public class GameState {
     public void setClosedDeck(ArrayList<TrainCard> closedDeck) {
         this.closedDeck = closedDeck;
     }
+
+    public Player getPlayer(String player_uuid) {
+        for(Player x: this.players) {
+            if (x.getUUID().equals(player_uuid)) {
+                return x;
+            }
+        }
+        return null;
+    }
 }

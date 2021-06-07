@@ -13,17 +13,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class GameView extends BorderPane implements Observer {
     Label timerLabel;
-    Label playerLabel;
+    Label currentPlayerLabel;
     GameController gameController;
 
     public GameView() {
+        // Init
         gameController = new GameController(this);
-        MapView mapView = new MapView();
-        mapView.getMapController().setGameController(gameController);
 
         // Top pane
         timerLabel = new Label("0:00");
@@ -35,56 +35,60 @@ public class GameView extends BorderPane implements Observer {
         timerLabel.setId("timerLabel");
         setTop(timerLabel);
 
-        // Center pane
-        setCenter(mapView);
-
         // Left pane
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(30));
         Image zoomInImage = new Image("icons/button_zoom_in.png");
         Image zoomOutImage = new Image("icons/button_zoom_out.png");
-        ImageView imageView = new ImageView(zoomInImage);
+        ImageView mapZoomButton = new ImageView(zoomInImage);
 
-        imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            if (mapView.getMapController().getMapModel().isZoomedIn()) {
-                mapView.getMapController().zoomOut();
-                imageView.setImage(zoomInImage);
-            } else {
-                mapView.getMapController().zoomIn();
-                imageView.setImage(zoomOutImage);
-            }
-        });
-
-        Button mainMenu = new Button("Return to menu");
-        mainMenu.setOnAction(e -> {
+        Button mainmenuButton = new Button("Return to menu");
+        mainmenuButton.setOnAction(e -> {
             Scene newScene = new Scene(new MainMenuView());
             String css = "css/mainMenuStyle.css";
             newScene.getStylesheets().add(css);
             MainState.primaryStage.setScene(newScene);
         });
 
-        playerLabel = new Label("Current player: ");
+        currentPlayerLabel = new Label("Current player: ");
 
-        vBox.getChildren().addAll(imageView, mainMenu, playerLabel);
+
+        vBox.getChildren().addAll(mapZoomButton, mainmenuButton, currentPlayerLabel);
+
+        for (StackPane stackPane : gameController.createOpponentViews()) {
+            vBox.getChildren().add(stackPane);
+        }
 
         setLeft(vBox);
+
+        // Center pane
+        MapView mapView = new MapView();
+        mapView.getMapController().setGameController(gameController);
+        setCenter(mapView);
+
+        mapZoomButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapView.getMapController().zoomOut();
+                mapZoomButton.setImage(zoomInImage);
+            } else {
+                mapView.getMapController().zoomIn();
+                mapZoomButton.setImage(zoomOutImage);
+            }
+        });
+
+        // Right Pane
+        setRight(new CardView(gameController));
 
         // Bottom pane
         setBottom(new HandView());
 
+        //
         gameController.registerObserver(this);
         gameController.setTimerText(gameController.getTimer());
     }
 
     @Override
-    public void update(Observable observable, Object object, String type) {
-        if (type.equals("timer")) {
-            System.out.println("Timer updated!" + java.time.LocalTime.now());
+    public void update(Observable observable, Object object) {
             timerLabel.setText((String) object);
-        } else if (type.equals("playername")) {
-            System.out.println("Player text updated!");
-            playerLabel.setText("Current player: " + object.toString());
-        }
-
     }
 }

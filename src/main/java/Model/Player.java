@@ -33,11 +33,22 @@ public class Player {
         this.name = name;
         this.UUID = UUID;
         this.host = host;
+        this.trainCards = new ArrayList<>();
+        this.destinationTickets = new ArrayList<>();
+        this.claimedRoutes = new ArrayList<>();
+        this.points = 0;
+        this.trains = 45; // Default value according to rules
+        this.actionsTaken = 0;
     }
 
     public Player() {
 
     }
+
+    public void addTrainCard(TrainCard trainCard){
+        this.trainCards.add(trainCard);
+    }
+
 
     public String getName() {
         return name;

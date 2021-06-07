@@ -2,24 +2,27 @@ package Controller;
 
 import App.MainState;
 import Model.GameState;
-import Model.OpenCards;
+import Model.Player;
 import Model.TrainCard;
-import Model.TrainCardDeck;
 import View.CardView;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class CardController {
     private CardView cardView;
     private ListenerRegistration listenerRegistration;
-    public CardController(CardView cardView) {
+    GameController gameController;
+
+    public CardController(CardView cardView,GameController gameController) {
         this.cardView = cardView;
+        this.gameController = gameController;
 
         // If host generate decks and put on firebase and show
-        if (MainState.player.getHost()) {
+        if (MainState.firebaseService.getPlayer(MainState.roomCode, MainState.player_uuid).getHost()) {
             GameState gameState = MainState.firebaseService.getGameState(MainState.roomCode);
             ArrayList<TrainCard> closedCards = generateClosedDeck();
             gameState.setOpenDeck(generateOpenDeck(closedCards));
@@ -40,14 +43,33 @@ public class CardController {
     }
 
     // Pick open card and return new open card
-    public void pickOpenCard(int index) {
+    public Boolean pickOpenCard(int index) {
         GameState gameState = getGameState();
         ArrayList<TrainCard> openCards = gameState.getOpenDeck();
 
-        TrainCard openCard = openCards.get(index);
-        System.out.println(String.format("Open card picked, color: %s", openCard.getColor()));
-        // Do smt with the card?
+        TrainCard pickedCard = openCards.get(index);
+        Player client = gameState.getPlayer(MainState.player_uuid);
 
+        if(client.getActionsTaken() == 1 && pickedCard.getColor().equals("LOCO")){
+            System.out.println("you cannot draw a LOCO");
+            return false;
+        }
+
+        client.setActionsTaken(client.getActionsTaken() + 1);
+
+        if(pickedCard.getColor().equals("LOCO") || client.getActionsTaken() >= 2) {
+            gameController.endTurn(client);
+            client.addTrainCard(pickedCard);
+            System.out.println(client.getTrainCards());
+            System.out.println("turn ended!");
+            client.setActionsTaken(0);
+        }
+
+        if(client.getActionsTaken() >= 1) {
+            client.addTrainCard(pickedCard);
+        }
+
+        System.out.println(String.format("Open card picked, color: %s", pickedCard.getColor()));
         // Remove picked opencard
         // Get a new open card from the closed cards
         // and update the firebase
@@ -55,6 +77,7 @@ public class CardController {
         TrainCard newOpenCard = getRandomCard(gameState);
         openCards.add(newOpenCard);
         MainState.firebaseService.updateGameState(MainState.roomCode, gameState);
+        return true;
     }
 
     private ArrayList<TrainCard> generateClosedDeck() {

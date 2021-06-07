@@ -2,23 +2,30 @@ package Controller;
 
 import App.MainState;
 import Model.*;
-import Service.FirebaseService;
 import Service.GameSetupService;
 import Service.Observable;
 import Service.Observer;
 import View.CardView;
 import View.GameView;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.Text;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GameController implements Observable {
     private String timerText;
     private ArrayList<Observer> observers = new ArrayList<>();
 
     private ArrayList<Player> players;
-
+    private int playercount = 0;
     private int turnCount = 0;
 
     private int seconds;
@@ -28,21 +35,23 @@ public class GameController implements Observable {
 
     public GameController(GameView gameView) {
         this.gameView = gameView;
-        MainState.primaryStage.setOnCloseRequest(event -> timer.cancel());
+        MainState.primaryStage.setOnCloseRequest(event -> {
+            try {
+                timer.cancel();
+            } catch (Exception ignored) {}
+        });
         initGame();
     }
 
+
     public void initGame() {
-        gameView.setRight(new CardView());
-
         players = MainState.firebaseService.getAllPlayers(MainState.roomCode);
-
         for (Player player : players) {
             player.setTurn(false);
         }
-
         startTurn(getCurrentPlayer());
     }
+
 
     public Player getCurrentPlayer() {
         if (turnCount == 0) {
@@ -58,7 +67,7 @@ public class GameController implements Observable {
         countdownTimer();
     }
 
-    private void endTurn(Player player) {
+    public void endTurn(Player player) {
         player.setTurn(false);
         timer.cancel();
         turnCount++;
@@ -76,10 +85,10 @@ public class GameController implements Observable {
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 if (seconds > 0 ) {
-                    setTimerText(timerFormat(setSeconds()));
+                    setTimerText(formatTimer(setSeconds()));
                 } else if (seconds == 0) {
                     // Code that gets executed after the countdown has hit 0
-                    setTimerText(timerFormat(setSeconds()));
+                    setTimerText(formatTimer(setSeconds()));
                     endTurn(getCurrentPlayer());
                     startTurn(getCurrentPlayer());
                 }
@@ -95,7 +104,7 @@ public class GameController implements Observable {
     }
 
     public String getTimer() {
-        return timerFormat(setSeconds());
+        return formatTimer(setSeconds());
     }
 
     public void stopTimer() {
@@ -105,11 +114,11 @@ public class GameController implements Observable {
     public void setTimerText(String timerText) {
         this.timerText = timerText;
         Platform.runLater(() -> {
-            notifyAllObservers(this.timerText, "timer");
+            notifyAllObservers(this.timerText);
         });
     }
 
-    private String timerFormat(int seconds) {
+    private String formatTimer(int seconds) {
         int minutes = (int) Math.floor(seconds / 60.0);
         int displaySeconds = (seconds % 60);
         return String.format("%d:%02d", minutes, displaySeconds);
@@ -117,57 +126,79 @@ public class GameController implements Observable {
 
     public void setPlayerName(String playerName) {
         Platform.runLater(() -> {
-            notifyAllObservers(playerName, "playername");
+            notifyAllObservers(playerName);
         });
     }
 
-    // Main method used for testing. Can remove later
-    public static void main(String[] args) {
-        Player player = new Player();
-        GameSetupService gameSetupService = new GameSetupService();
-        ArrayList<Route> allRoutes = gameSetupService.getRoutes();
-        ArrayList<Route> playerRoutes = new ArrayList<>();
-        playerRoutes.add(allRoutes.get(0)); // Munchen Wien
-        playerRoutes.add(allRoutes.get(1)); // Berlin Wien
-//        playerRoutes.add(allRoutes.get(2)); // Frankfurt Berlin
-        playerRoutes.add(allRoutes.get(3)); // Frankfurt Berlin 2
-//        playerRoutes.add(allRoutes.get(4)); // Frankfurt Munchen
-        playerRoutes.add(allRoutes.get(5)); // Frankfurt Essen
-//        playerRoutes.add(allRoutes.get(6)); // Paris Frankfurt
-//        playerRoutes.add(allRoutes.get(9)); // Amsterdam Frankfurt
-//        playerRoutes.add(allRoutes.get(10)); // Bruxelles Amsterdam
-//        playerRoutes.add(allRoutes.get(11)); // Paris Bruxelles
-        playerRoutes.add(allRoutes.get(14)); // London Amsterdam
-        playerRoutes.add(allRoutes.get(46)); // Amsterdam Essen
+    public ArrayList<StackPane> createOpponentViews() {
+        ArrayList<StackPane> stackPanes = new ArrayList<>();
+        ArrayList<ImageView> banners = new ArrayList<>();
+        banners.add(new ImageView("images/player_banner_green.png"));
+        banners.add(new ImageView("images/player_banner_blue.png"));
+        banners.add(new ImageView("images/player_banner_purple.png"));
+        banners.add(new ImageView("images/player_banner_red.png"));
+        banners.add(new ImageView("images/player_banner_yellow.png"));
 
-        player.setClaimedRoutes(playerRoutes);
-        for (Route route : player.getClaimedRoutes()) {
-            System.out.println("Player has route: " + route.getFirstCity() + "-" + route.getSecondCity());
+        for (int i = 0; i < players.size(); i++) {
+            Text playerName = new Text("Player: " + players.get(i).getName());
+            //String playerTrainCards = "Traincards: " + player.getTrainCards().size() + "\n";
+            //String playerDestTickets = "Tickets: " + player.getDestinationTickets().size() + "\n";
+            Text playerTrainCards = new Text("Traincards: 15");
+            Text playerDestTickets = new Text("Tickets: 3");
+            Text playerPoints = new Text("Points: " + players.get(i).getPoints());
+            Text playerTrains = new Text("Trains: " + players.get(i).getTrains());
+            playerName.getStyleClass().add("playerinfo");
+            playerTrainCards.getStyleClass().add("playerinfo");
+            playerDestTickets.getStyleClass().add("playerinfo");
+            playerPoints.getStyleClass().add("playerinfo");
+            playerTrains.getStyleClass().add("playerinfo");
+
+            GridPane gridPane = new GridPane();
+            gridPane.add(playerName, 0, 0, 2, 1);
+            gridPane.add(playerTrainCards, 0, 1);
+            gridPane.add(playerDestTickets, 1, 1);
+            gridPane.add(playerPoints, 0, 2);
+            gridPane.add(playerTrains, 1, 2);
+            gridPane.setHgap(10);
+            gridPane.setTranslateX(40);
+            gridPane.setTranslateY(17);
+
+            ImageView playerBanner = banners.get(i);
+            playerBanner.setPreserveRatio(true);
+            playerBanner.setFitHeight(100);
+
+            StackPane stackPane = new StackPane();
+            stackPane.getChildren().addAll(playerBanner, gridPane);
+
+            stackPanes.add(stackPane);
         }
-        ArrayList<DestinationTicket> tickets = gameSetupService.getDestinationTickets();
-        System.out.println(tickets.get(25));
-        GameController gameController = new GameController();
-
-        System.out.println(gameController.isConnected(tickets.get(25), player));
+        return stackPanes;
     }
 
-    // Empty constructor needed for testing. Can remove later
-    public GameController() {}
-
-    // This method checks if the Cities on the given DestinationTicket have been connected by the given Player
-    // It calls singleStep(), which uses recursive backtracking to find the path
+    /**
+     * This method checks if the Cities on the given DestinationTicket have been connected by the given Player
+     * It calls singleStep(), which uses recursive backtracking to find the path
+     * @param ticket The DestinationTicket that we're checking if it is connected or not
+     * @param player The Player that owns the DestinationTicket
+     * @return true if the Player has successfully connected the two Cities on the ticket, false otherwise
+     */
     public boolean isConnected(DestinationTicket ticket, Player player) {
         System.out.println(ticket.getFirstCity());
         System.out.println(ticket.getSecondCity());
         return singleStep(ticket.getFirstCity(), ticket.getSecondCity(), player);
     }
 
-    // This method runs a single step in the backtracking pathfinding algorithm.
-    // It checks all neighbors of the currentCity, and if the Player has built a Route from
-    // currentCity to the neighbor, this method calls itself again, but now with the
-    // neighbor City as the new currentCity. This way all possibilities to connect any two given cities are tried
-    // Returns true if there is a connection from the initial currentCity to the destinationCity
-    // and false otherwise
+    /**
+     * This method runs a single step in the pathfinding algorithm using backtracking.
+     * It checks all neighbors of the currentCity, and if the player has built a Route from
+     * currentCity to the neighbor, this method calls itself again, but now with the
+     * neighbor City as the new currentCity. This way all possibilities to connect any two given
+     * Cities are tried
+     * @param currentCity City that we are at to check for a connection to destinationCity
+     * @param destinationCity City that we are looking for a connection to
+     * @param player Player that we are checking for if they have a connection between the two Cities
+     * @return true if there is a connection from the initial currentCity to the destinationCity, false otherwise
+     */
     private boolean singleStep(City currentCity, City destinationCity, Player player) {
         // Accept case - we found the destination city
         if (currentCity.equals(destinationCity)) {
@@ -212,9 +243,9 @@ public class GameController implements Observable {
     }
 
     @Override
-    public void notifyAllObservers(Object o, String type) {
+    public void notifyAllObservers(Object o) {
         for (Observer observer : observers) {
-            observer.update(this, o, type);
+            observer.update(this, o);
         }
     }
 }

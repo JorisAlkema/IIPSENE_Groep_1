@@ -40,16 +40,16 @@ public class LobbyController {
 
     private void disconnect() {
         // remove listener && yourself from the room
-        if (MainState.roomCode != null && MainState.player != null) {
+        if (MainState.roomCode != null && MainState.player_uuid != null) {
             detachListener();
-            MainState.firebaseService.removePlayer(MainState.roomCode, MainState.player);
+            MainState.firebaseService.removePlayer(MainState.roomCode, MainState.player_uuid);
 
             // If nobody is in the room, delete it.
             if (MainState.firebaseService.getAllPlayers(MainState.roomCode).size() == 0) {
                 MainState.firebaseService.getRoomReference(MainState.roomCode).delete();
             }
 
-            MainState.player = null;
+            MainState.player_uuid = null;
             MainState.roomCode = null;
         }
     }
@@ -57,13 +57,15 @@ public class LobbyController {
     private void attachListener() {
         lobby.setPlayerEventListener(MainState.firebaseService.getRoomReference(MainState.roomCode).addSnapshotListener((document, e) -> {
             if (document != null && document.getData() != null) {
-                lobby.notifyAllObservers(document, "updateDocument");
+                lobby.notifyAllObservers(document);
 
                 if ((Boolean) document.getData().get("ongoing")) {
 
                     Platform.runLater(() -> {
                         detachListener();
-                        MainState.primaryStage.setScene(new Scene(new GameView()));
+                        Scene scene = new Scene(new GameView());
+                        scene.getStylesheets().add(MainState.MenuCSS);
+                        MainState.primaryStage.setScene(scene);
                     });
                 }
             }

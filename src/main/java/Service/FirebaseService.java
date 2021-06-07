@@ -92,16 +92,26 @@ public class FirebaseService {
         return players;
     }
 
+    public Player getPlayer(String roomCode, String player_uuid) {
+        ArrayList<Player> players = getAllPlayers(roomCode);
+        for (Player player: players) {
+            if (player.getUUID().equals(player_uuid)) {
+                return player;
+            }
+        }
+        return null;
+    }
+
     // Remove a player using it's UUID and the roomcode.
     // It is possible to remove other players, but that is outside the scope.
     // If you are the last player in the room and this function is called, the room will get deleted
-    public void removePlayer(String roomCode, Player player) {
+    public void removePlayer(String roomCode, String player_uuid) {
         DocumentReference roomReference = getRoomReference(roomCode);
+        ArrayList<Player> players = getAllPlayers(roomCode);
+        Player player = getPlayer(roomCode, player_uuid);
         roomReference.update("players", FieldValue.arrayRemove(player));
 
-        ArrayList<Player> players = getAllPlayers(roomCode);
-
-        if (players != null && players.size() == 0) {
+        if (players.size() == 1) {
             roomReference.delete();
         }
     }
@@ -157,21 +167,21 @@ public class FirebaseService {
         documentReference.set(gameState);
     }
 
-    public void updatePlayerData(String code, Player player) {
-        DocumentReference roomReference = getRoomReference(code);
-        ArrayList<Player> players = getAllPlayers(code);
-
-        int index = 0;
-        for (Player playerFirebase : players) {
-            if (playerFirebase.getUUID() == player.getUUID()) {
-                players.set(index, player);
-                break;
-            }
-            index++;
-        }
-
-        roomReference.update("players", players);
-    }
+//    public void updatePlayerData(String code, Player player) {
+//        DocumentReference roomReference = getRoomReference(code);
+//        ArrayList<Player> players = getAllPlayers(code);
+//
+//        int index = 0;
+//        for (Player playerFirebase : players) {
+//            if (playerFirebase.getUUID() == player.getUUID()) {
+//                players.set(index, player);
+//                break;
+//            }
+//            index++;
+//        }
+//
+//        roomReference.update("players", players);
+//    }
 
     // Get document reference for the eventlistener
     public DocumentReference getRoomReference(String room_code) {

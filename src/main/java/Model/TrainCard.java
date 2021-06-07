@@ -8,7 +8,6 @@ public class TrainCard {
     private String color;
 
     public TrainCard() {
-
     }
 
     public TrainCard(String color) {
