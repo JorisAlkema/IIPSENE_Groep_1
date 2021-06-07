@@ -1,24 +1,19 @@
 package Controller;
 
+import App.Main;
 import App.MainState;
 import Model.Login;
 import Model.Player;
-import Service.FirebaseService;
-import Service.Observer;
 import View.LobbyView;
 import View.LoginView;
 import View.MainMenuView;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public class LoginController {
     private Login login = new Login();;
@@ -88,7 +83,7 @@ public class LoginController {
                     Player player = new Player(username, player_uuid, false);
                     // Tries to add player to the lobby
                     try {
-                        MainState.firebaseService.addPlayer(code, player);
+                        MainState.firebaseService.addPlayerToLobby(code, player);
                     } catch (Exception e) {
                         exception = e.getMessage();
                     }
@@ -137,23 +132,21 @@ public class LoginController {
             TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
-                    String player_uuid = generateUUID();
-                    String code = generateCode();
-                    Player host = new Player(username, player_uuid, true);
-                    Boolean created = MainState.firebaseService.addLobby(code, host);
-                    while(!created) {
-                        code = generateCode();
-                        created = MainState.firebaseService.addLobby(code, host);
-                    }
+                    try {
+                        String player_uuid = generateUUID();
+                        Player host = new Player(username, player_uuid, true);
+                        String code = MainState.firebaseService.addLobby(host);
+                        login.setBusy(false);
+                        creatingLobbyAnimation.cancel();
 
-                    // Process finished
-                    login.setBusy(false);
-                    String roomCode = code;
-                    creatingLobbyAnimation.cancel();
-                    // Go to lobby view
-                    MainState.player_uuid = player_uuid;
-                    MainState.roomCode = code;
-                    Platform.runLater(() -> showLobby());
+                        MainState.player_uuid = player_uuid;
+                        MainState.roomCode = code;
+                        Platform.runLater(() -> showLobby());
+                    } catch (Exception e) {
+                        creatingLobbyAnimation.cancel();
+                        login.notifyAllObservers(e.getMessage());
+                        e.printStackTrace();
+                    }
                 }
             };
 
