@@ -57,17 +57,17 @@ public class LoginController {
         String code = inputCode.getText();
 
         if (username.isBlank() || code.isBlank()) {
-            login.notifyAllObservers("Fill in all the required fields", "update");
+            login.notifyAllObservers("Fill in all the required fields");
             return;
         }
 
         if(this.checkUsername(username, limit)) {
-            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long", "update");
+            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long");
             return;
         }
 
         if(!this.checkRoomCode(code)) {
-            login.notifyAllObservers("Enter a valid roomcode", "update");
+            login.notifyAllObservers("Enter a valid roomcode");
             return;
         }
 
@@ -97,7 +97,7 @@ public class LoginController {
                     login.setBusy(false);
 
                     if (exception != null) {
-                        login.notifyAllObservers(exception, "update");
+                        login.notifyAllObservers(exception);
                         return;
                     }
 
@@ -116,12 +116,12 @@ public class LoginController {
     public void host(TextField inputUsername) {
         String username = inputUsername.getText();
         if (username.isBlank()) {
-            login.notifyAllObservers("Fill in all the required fields", "update");
+            login.notifyAllObservers("Fill in all the required fields");
             return;
         }
 
         if(this.checkUsername(username, limit)) {
-            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long", "update");
+            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long");
             return;
         }
 
@@ -175,7 +175,7 @@ public class LoginController {
             public void run() {
                 n = (n + 1) % 4;
                 String dots = new String(new char[n]).replace("\0", ".");
-                login.notifyAllObservers(message + dots, "update");
+                login.notifyAllObservers(message + dots);
             }
         };
         Timer timer = new Timer();

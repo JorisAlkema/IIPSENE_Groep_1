@@ -43,9 +43,9 @@ public class Lobby implements Observable {
     }
 
     @Override
-    public void notifyAllObservers(Object o, String type) {
+    public void notifyAllObservers(Object o) {
         for (Observer observer : observers) {
-            observer.update(this, o, type);
+            observer.update(this, o);
         }
     }
 }
