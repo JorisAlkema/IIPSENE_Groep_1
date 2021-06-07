@@ -20,6 +20,7 @@ public class GameController implements Observable {
     private ArrayList<Player> players;
     private int playercount = 0;
     private int turnCount = 0;
+    private String[] colors = {"GREEN","BLUE","PURPLE","RED","YELLOW"};
 
     private int seconds;
     private Timer timer;
@@ -30,7 +31,7 @@ public class GameController implements Observable {
         this.gameView = gameView;
         MainState.primaryStage.setOnCloseRequest(event -> {
             try {
-                timer.cancel();
+                stopTimer();
             } catch (Exception ignored) {}
         });
         initGame();
@@ -38,6 +39,7 @@ public class GameController implements Observable {
 
 
     public void initGame() {
+        playerColors();
         players = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
         for (Player player : players) {
             player.setTurn(false);
@@ -62,8 +64,19 @@ public class GameController implements Observable {
 
     public void endTurn(Player player) {
         player.setTurn(false);
-        timer.cancel();
+        stopTimer();
         turnCount++;
+    }
+
+    public void playerColors(){
+        //the hosts gives the other players their color
+        if (MainState.firebaseService.getPlayerFromLobby(MainState.roomCode, MainState.player_uuid).getHost()) {
+            GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
+            for(int i =0; MainState.firebaseService.getGameStateOfLobby(MainState.roomCode).getPlayers().size() > i; i++){
+                gameState.getPlayers().get(i).setPlayerColor(colors[i]);
+            }
+            MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
+        }
     }
 
     public void countdownTimer() {
@@ -171,13 +184,8 @@ public class GameController implements Observable {
     /**
      * This method checks if the Cities on the given DestinationTicket have been connected by the given Player
      * It calls singleStep(), which uses recursive backtracking to find the path
-     * @param ticket The DestinationTicket that we're checking if it is connected or not
-     * @param player The Player that owns the DestinationTicket
-     * @return true if the Player has successfully connected the two Cities on the ticket, false otherwise
      */
     public boolean isConnected(DestinationTicket ticket, Player player) {
-        System.out.println(ticket.getFirstCity());
-        System.out.println(ticket.getSecondCity());
         return singleStep(ticket.getFirstCity(), ticket.getSecondCity(), player);
     }
 
@@ -195,7 +203,6 @@ public class GameController implements Observable {
     private boolean singleStep(City currentCity, City destinationCity, Player player) {
         // Accept case - we found the destination city
         if (currentCity.equals(destinationCity)) {
-            System.out.println("Found route to " + destinationCity + ":");
             return true;
         }
         // Reject case - we already visited this city
@@ -213,7 +220,6 @@ public class GameController implements Observable {
                 boolean connectedBToA = route.getFirstCity().equals(neighbor) && route.getSecondCity().equals(currentCity);
                 if (connectedAToB || connectedBToA) {
                     if (singleStep(neighbor, destinationCity, player)) {
-                        System.out.println(currentCity + " " + neighbor);
                         return true;
                     }
                 }

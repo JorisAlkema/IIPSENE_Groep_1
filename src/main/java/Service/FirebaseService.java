@@ -12,12 +12,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class FirebaseService {
-    private Firestore db;
     private final String PRIVATE_KEY = "firebase_privatekey.json";
+    private Firestore database;
 
     public FirebaseService() {
         try {
@@ -30,65 +29,31 @@ public class FirebaseService {
                         .build();
                 FirebaseApp.initializeApp(options);
             }
-            this.db = FirestoreClient.getFirestore();
-        } catch (IOException e) {
+            this.database = FirestoreClient.getFirestore();
+        } catch(IOException e) {
             e.printStackTrace();
         }
     }
-    
-    public void addPlayer(String code, Player player) throws Exception {
-        DocumentReference lobbyReference = getLobbyReference(code);
-        Map<String, Object> roomData = getLobbyData(code);
 
-        if (roomData == null) {
+    public void addPlayerToLobby(String code, Player player) throws Exception {
+        DocumentReference lobbyReference = getLobbyReference(code);
+        GameState gameState = getGameStateOfLobby(code);
+
+        if (gameState == null) {
             throw new Exception("Room not found");
         }
 
-        if ((Boolean) roomData.get("ongoing")) {
+        if (gameState.getOngoing()) {
             throw new Exception("Room is ongoing");
         }
 
-        ArrayList<Player> players = (ArrayList<Player>) roomData.get("players");
-
-        if (players.size() == 5) {
+        if (gameState.getPlayers().size() == 5) {
             throw new Exception("Room is full");
         }
 
-        players.add(player);
         lobbyReference.update("players", FieldValue.arrayUnion(player));
     }
 
-
-    private Map<String, Object> getLobbyData(String code) {
-        try {
-            return db.collection("rooms").document(code).get().get().getData();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public ArrayList<Player> getPlayersFromLobby(String code) {
-        ArrayList<Player> players = null;
-        try {
-            players = getLobbyReference(code).get().get().toObject(GameState.class).getPlayers();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        return players;
-    }
-
-    public Player getPlayerFromLobby(String code, String player_uuid) {
-        ArrayList<Player> players = getPlayersFromLobby(code);
-        for (Player player: players) {
-            if (player.getUUID().equals(player_uuid)) {
-                return player;
-            }
-        }
-        return null;
-    }
-    
     public void removePlayer(String roomCode, String player_uuid) {
         DocumentReference lobbyReference = getLobbyReference(roomCode);
         ArrayList<Player> players = getPlayersFromLobby(roomCode);
@@ -100,35 +65,56 @@ public class FirebaseService {
         }
     }
 
-    /*
-    * Return true if the lobby is generated
-    * */
-    public boolean addLobby(String code, Player player) {
-        try {
-            // Get all documents from collection
-            CollectionReference rooms = db.collection("rooms");
-            List<QueryDocumentSnapshot> all_rooms = rooms.get().get().getDocuments();
-            if (!all_rooms.contains(code)) {
-                ArrayList<Player> players = new ArrayList<>();
-                players.add(player);
-                GameState gameState = new GameState("Waiting for the host to start the game", false, players);
-                rooms.document(code).set(gameState);
-                return true;
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public ArrayList<Player> getPlayersFromLobby(String code) {
+        return getGameStateOfLobby(code).getPlayers();
     }
-    
+
+    public Player getPlayerFromLobby(String code, String player_uuid) {
+        for (Player player : getPlayersFromLobby(code)) {
+            if (player.getUUID().equals(player_uuid)) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    public String addLobby(Player player) throws Exception {
+        try {
+            CollectionReference rooms = database.collection("rooms");
+            List<QueryDocumentSnapshot> allRooms = rooms.get().get().getDocuments();
+
+            String code = generateCode();
+            while (allRooms.contains(code)) {
+                code = generateCode();
+            }
+
+            ArrayList<Player> players = new ArrayList<>();
+            players.add(player);
+
+            GameState gameState = new GameState("Waiting for the host to start the game", false, players);
+            rooms.document(code).set(gameState);
+
+            return code;
+
+
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            throw new Exception("Error adding Lobby");
+        }
+    }
+
     public void updateMessageOfLobby(String code, String message) {
         DocumentReference lobbyReference = getLobbyReference(code);
         lobbyReference.update("message", message);
     }
-    
+
     public void updateOngoingOfLobby(String code, Boolean isOngoing) {
         DocumentReference lobbyReference = getLobbyReference(code);
         lobbyReference.update("ongoing", isOngoing);
+    }
+
+    private String generateCode() {
+        return Integer.toString((int) Math.floor(Math.random() * (999999 - 100000 + 1) + 100000));
     }
 
     public GameState getGameStateOfLobby(String code) {
@@ -146,6 +132,6 @@ public class FirebaseService {
     }
 
     public DocumentReference getLobbyReference(String code) {
-        return db.collection("rooms").document(code);
+        return database.collection("rooms").document(code);
     }
 }

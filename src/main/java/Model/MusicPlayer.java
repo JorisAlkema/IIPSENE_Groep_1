@@ -32,7 +32,6 @@ public class MusicPlayer implements Observable {
             mediaPlayer.play();
             mediaPlayer.setAutoPlay(true);
         } else {
-            // Mute, pause or stop? What is most logical
             mediaPlayer.pause();
         }
     }

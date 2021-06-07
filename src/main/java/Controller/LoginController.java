@@ -1,28 +1,25 @@
 package Controller;
 
+import App.Main;
 import App.MainState;
 import Model.Login;
 import Model.Player;
-import Service.FirebaseService;
-import Service.Observer;
 import View.LobbyView;
 import View.LoginView;
 import View.MainMenuView;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public class LoginController {
     private Login login = new Login();;
-    private int limit = 15;
+    private final int CHARACTER_MAX = 15;
+    private final int CHARACTER_MIN = 2;
+    private final int ROOMCODE_CHARACTERS = 6;
     public LoginController(LoginView loginView) {
         login.registerObserver(loginView);
     }
@@ -35,9 +32,9 @@ public class LoginController {
         MainState.primaryStage.setScene(scene);
     }
 
-    // Check characters of username
-    public boolean checkUsername(String username, int limit) {
-        return username.length() >= limit;
+
+    public boolean checkUsername(String username) {
+        return username.length() >= CHARACTER_MAX || username.length() < CHARACTER_MIN;
     }
 
     public boolean checkRoomCode(String code) {
@@ -48,7 +45,7 @@ public class LoginController {
             }
         }
 
-        return characters == 6;
+        return characters == ROOMCODE_CHARACTERS;
     }
 
     // Join game
@@ -61,8 +58,9 @@ public class LoginController {
             return;
         }
 
-        if(this.checkUsername(username, limit)) {
-            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long");
+
+        if(this.checkUsername(username)) {
+            login.notifyAllObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
             return;
         }
 
@@ -77,18 +75,19 @@ public class LoginController {
 
             // Joining lobby... loading animation
             Timer joiningLobbyAnimation = getLoadingAnimation("Joining lobby");
-
             TimerTask task = new TimerTask() {
+
                 @Override
                 public void run() {
-                    String exception = null;
                     String player_uuid = generateUUID();
                     Player player = new Player(username, player_uuid, false);
+                    Exception exception = null;
+
                     // Tries to add player to the lobby
                     try {
-                        MainState.firebaseService.addPlayer(code, player);
+                        MainState.firebaseService.addPlayerToLobby(code, player);
                     } catch (Exception e) {
-                        exception = e.getMessage();
+                        exception = e;
                     }
 
                     joiningLobbyAnimation.cancel();
@@ -97,7 +96,7 @@ public class LoginController {
                     login.setBusy(false);
 
                     if (exception != null) {
-                        login.notifyAllObservers(exception);
+                        login.notifyAllObservers(exception.getMessage());
                         return;
                     }
 
@@ -120,8 +119,8 @@ public class LoginController {
             return;
         }
 
-        if(this.checkUsername(username, limit)) {
-            login.notifyAllObservers("Your username is more than " + Integer.toString(limit) + " characters long");
+        if(this.checkUsername(username)) {
+            login.notifyAllObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
             return;
         }
 
@@ -131,30 +130,34 @@ public class LoginController {
 
             // Creating lobby... loading animation
             Timer creatingLobbyAnimation = getLoadingAnimation("Creating lobby");
-
             TimerTask task = new TimerTask() {
+
                 @Override
                 public void run() {
                     String player_uuid = generateUUID();
-                    String code = generateCode();
                     Player host = new Player(username, player_uuid, true);
-                    Boolean created = MainState.firebaseService.addLobby(code, host);
-                    while(!created) {
-                        code = generateCode();
-                        created = MainState.firebaseService.addLobby(code, host);
+                    String code = null;
+                    Exception exception = null;
+
+                    try {
+                        code = MainState.firebaseService.addLobby(host);
+                    } catch (Exception e) {
+                        exception = e;
                     }
 
-                    // Process finished
                     login.setBusy(false);
-                    String roomCode = code;
                     creatingLobbyAnimation.cancel();
-                    // Go to lobby view
+
+                    if (exception != null) {
+                        login.notifyAllObservers(exception.getMessage());
+                        return;
+                    }
+
                     MainState.player_uuid = player_uuid;
                     MainState.roomCode = code;
                     Platform.runLater(() -> showLobby());
                 }
             };
-
             // Run function after 1sec, give space for the fetching animation to run.
             new Timer().schedule(task, 1000);
         }
