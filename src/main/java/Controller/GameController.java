@@ -44,19 +44,13 @@ public class GameController implements Observable {
     }
 
 
-
     public void initGame() {
-        gameView.setRight(new CardView(this));
-
         players = MainState.firebaseService.getAllPlayers(MainState.roomCode);
-
         for (Player player : players) {
             player.setTurn(false);
         }
-
         startTurn(getCurrentPlayer());
     }
-
 
 
     public Player getCurrentPlayer() {
@@ -136,7 +130,7 @@ public class GameController implements Observable {
         });
     }
 
-    public ArrayList<StackPane> getPlayerCards() {
+    public ArrayList<StackPane> createOpponentViews() {
         ArrayList<StackPane> stackPanes = new ArrayList<>();
         ArrayList<ImageView> banners = new ArrayList<>();
         banners.add(new ImageView("images/player_banner_green.png"));
@@ -181,53 +175,30 @@ public class GameController implements Observable {
         return stackPanes;
     }
 
-    // Main method used for testing. Can remove later
-    public static void main(String[] args) {
-        Player player = new Player();
-        GameSetupService gameSetupService = new GameSetupService();
-        ArrayList<Route> allRoutes = gameSetupService.getRoutes();
-        ArrayList<Route> playerRoutes = new ArrayList<>();
-        playerRoutes.add(allRoutes.get(0)); // Munchen Wien
-        playerRoutes.add(allRoutes.get(1)); // Berlin Wien
-//        playerRoutes.add(allRoutes.get(2)); // Frankfurt Berlin
-        playerRoutes.add(allRoutes.get(3)); // Frankfurt Berlin 2
-//        playerRoutes.add(allRoutes.get(4)); // Frankfurt Munchen
-        playerRoutes.add(allRoutes.get(5)); // Frankfurt Essen
-//        playerRoutes.add(allRoutes.get(6)); // Paris Frankfurt
-//        playerRoutes.add(allRoutes.get(9)); // Amsterdam Frankfurt
-//        playerRoutes.add(allRoutes.get(10)); // Bruxelles Amsterdam
-//        playerRoutes.add(allRoutes.get(11)); // Paris Bruxelles
-        playerRoutes.add(allRoutes.get(14)); // London Amsterdam
-        playerRoutes.add(allRoutes.get(46)); // Amsterdam Essen
-
-        player.setClaimedRoutes(playerRoutes);
-        for (Route route : player.getClaimedRoutes()) {
-            System.out.println("Player has route: " + route.getFirstCity() + "-" + route.getSecondCity());
-        }
-        ArrayList<DestinationTicket> tickets = gameSetupService.getDestinationTickets();
-        System.out.println(tickets.get(25));
-        GameController gameController = new GameController();
-
-        System.out.println(gameController.isConnected(tickets.get(25), player));
-    }
-
-    // Empty constructor needed for testing. Can remove later
-    public GameController() {}
-
-    // This method checks if the Cities on the given DestinationTicket have been connected by the given Player
-    // It calls singleStep(), which uses recursive backtracking to find the path
+    /**
+     * This method checks if the Cities on the given DestinationTicket have been connected by the given Player
+     * It calls singleStep(), which uses recursive backtracking to find the path
+     * @param ticket The DestinationTicket that we're checking if it is connected or not
+     * @param player The Player that owns the DestinationTicket
+     * @return true if the Player has successfully connected the two Cities on the ticket, false otherwise
+     */
     public boolean isConnected(DestinationTicket ticket, Player player) {
         System.out.println(ticket.getFirstCity());
         System.out.println(ticket.getSecondCity());
         return singleStep(ticket.getFirstCity(), ticket.getSecondCity(), player);
     }
 
-    // This method runs a single step in the backtracking pathfinding algorithm.
-    // It checks all neighbors of the currentCity, and if the Player has built a Route from
-    // currentCity to the neighbor, this method calls itself again, but now with the
-    // neighbor City as the new currentCity. This way all possibilities to connect any two given cities are tried
-    // Returns true if there is a connection from the initial currentCity to the destinationCity
-    // and false otherwise
+    /**
+     * This method runs a single step in the pathfinding algorithm using backtracking.
+     * It checks all neighbors of the currentCity, and if the player has built a Route from
+     * currentCity to the neighbor, this method calls itself again, but now with the
+     * neighbor City as the new currentCity. This way all possibilities to connect any two given
+     * Cities are tried
+     * @param currentCity City that we are at to check for a connection to destinationCity
+     * @param destinationCity City that we are looking for a connection to
+     * @param player Player that we are checking for if they have a connection between the two Cities
+     * @return true if there is a connection from the initial currentCity to the destinationCity, false otherwise
+     */
     private boolean singleStep(City currentCity, City destinationCity, Player player) {
         // Accept case - we found the destination city
         if (currentCity.equals(destinationCity)) {
@@ -276,8 +247,5 @@ public class GameController implements Observable {
         for (Observer observer : observers) {
             observer.update(this, o);
         }
-    }
-    public GameController getGameController(){
-        return GameController.this;
     }
 }
