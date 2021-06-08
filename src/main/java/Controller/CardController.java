@@ -57,7 +57,7 @@ public class CardController {
         client.setActionsTaken(client.getActionsTaken() + 1);
 
         if(pickedCard.getColor().equals("LOCO") || client.getActionsTaken() >= 2) {
-            gameController.endTurn(client);
+            gameController.endTurn();
             client.addTrainCard(pickedCard);
             System.out.println(client.getTrainCards());
             System.out.println("turn ended!");
