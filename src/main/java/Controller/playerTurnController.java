@@ -27,31 +27,37 @@ public class playerTurnController {
         }
     }
 
+    /**
+     * When you start the game run this function only once
+     */
     public void giveTurnToFirstPlayer() {
         GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
         gameState.getPlayers().get(0).setTurn(true);
         MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
     }
 
-    /*
-    * EndTurn and set Next Player turn
-    * */
+    /**
+     * End the turn of yourself when some conditions are met, or the timer is finished.
+     * If you call this function and it's not your turn, nothing happens.
+     * Otherwise it sets your players object's turn to false and sets the next player's isTurn to true.
+    */
     public void endTurn() {
         GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
         ArrayList<Player> players = gameState.getPlayers();
         Player player = gameState.getPlayer(MainState.player_uuid);
 
-        // Add turn to next player
         int nextIndex = (players.indexOf(player) + 1) % players.size();
         player.setTurn(false);
         players.get(nextIndex).setTurn(true);
-
+        
         MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
     }
 
-    /*
-    *
-    * */
+    /**
+     * Check the turn on new room update event.
+     * When the currentTurnUUID is the same, it means the turn is still on the same player. So therefore ignore it
+     * If the player object turn is true and the object belongs to your id, that means it's your turn. isTurn = true.
+     */
     public void checkTurnListener() {
         listenerRegistration = MainState.firebaseService.getLobbyReference(MainState.roomCode).addSnapshotListener((document, e) -> {
             GameState gameState = document.toObject(GameState.class);
@@ -62,10 +68,8 @@ public class playerTurnController {
                         currentTurnUUID = player.getUUID();
                         if (player.getUUID().equals(MainState.player_uuid)) {
                             this.isTurn = true;
-                            System.out.println("YOUR TURN");
                         } else {
                             this.isTurn = false;
-                            System.out.println("TURN FOR " + player.getName());
                         }
                         Platform.runLater(() -> {
                             gameController.stopTimer();
@@ -76,5 +80,10 @@ public class playerTurnController {
                 }
             }
         });
+    }
+
+
+    public Boolean isTurn() {
+        return isTurn;
     }
 }
