@@ -19,9 +19,8 @@ public class CardView extends VBox {
     }
 
     public void createButtons(ArrayList<TrainCard> openCards){
-        Image image = new Image("traincards/traincard_back_small.png");
+        Image image = new Image("traincards/traincard_back_small_rotated.png");
         ImageView closedTrainCard = new ImageView(image);
-        closedTrainCard.setRotate(-90);
         //forloop die knoppen maakt van de opencardsarray
 
         closedTrainCard.setOnMouseClicked(e -> {
@@ -32,9 +31,9 @@ public class CardView extends VBox {
 
         for (int i = 0; i < openCards.size(); i++) {
             String color = openCards.get(i).getColor();
-            String path = "traincards/traincard_" + color + "_small.png";
+            String path = "traincards/traincard_" + color + "_small_rotated.png";
             ImageView openCard = new ImageView(new Image(path));
-            openCard.setRotate(-90);
+//            openCard.setRotate(-90);
             int index = i;
             openCard.setOnMouseClicked(e -> {
                 if (this.cardController.pickOpenCard(index)) {
