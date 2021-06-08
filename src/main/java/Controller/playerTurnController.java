@@ -16,6 +16,7 @@ public class playerTurnController {
 
     private Boolean isTurn = false;
     private String currentTurnUUID;
+    private String nextTurnUUID;
 
     public playerTurnController(GameController gameController) {
         this.gameController = gameController;
@@ -27,45 +28,59 @@ public class playerTurnController {
         }
     }
 
+    /**
+     * When you start the game run this function only once
+     */
     public void giveTurnToFirstPlayer() {
         GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
         gameState.getPlayers().get(0).setTurn(true);
         MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
     }
 
-    /*
-    * EndTurn and set Next Player turn
-    * */
+    /**
+     * End the turn of yourself when some conditions are met, or the timer is finished.
+     * If you call this function and it's not your turn, nothing happens.
+     * Otherwise it sets your players object's turn to false and sets the next player's isTurn to true.
+     * If the player that has the turn leaves, nextTurnUUID will be used to set the next turn
+    */
     public void endTurn() {
         GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
         ArrayList<Player> players = gameState.getPlayers();
         Player player = gameState.getPlayer(MainState.player_uuid);
+        if (player.isTurn()) {
+            int nextIndex = (players.indexOf(player) + 1) % players.size();
+            player.setTurn(false);
+            players.get(nextIndex).setTurn(true);
+            MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
+            return;
+        }
 
-        // Add turn to next player
-        int nextIndex = (players.indexOf(player) + 1) % players.size();
-        player.setTurn(false);
-        players.get(nextIndex).setTurn(true);
-
-        MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
+        if (gameController.getCurrentPlayer() == null) {
+            player = gameState.getPlayer(nextTurnUUID);
+            player.setTurn(true);
+            MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
+            return;
+        }
     }
 
-    /*
-    *
-    * */
+    /**
+     * Check the turn on new room update event.
+     * When the currentTurnUUID is the same, it means the turn is still on the same player. So therefore ignore it
+     * If the player object turn is true and the object belongs to your id, that means it's your turn. isTurn = true.
+     */
     public void checkTurnListener() {
         listenerRegistration = MainState.firebaseService.getLobbyReference(MainState.roomCode).addSnapshotListener((document, e) -> {
             GameState gameState = document.toObject(GameState.class);
             ArrayList<Player> players = gameState.getPlayers();
-            for (Player player : players) {
-                if (player.isTurn()) {
-                    if (!player.getUUID().equals(currentTurnUUID)) {
-                        currentTurnUUID = player.getUUID();
-                        if (player.getUUID().equals(MainState.player_uuid)) {
+            for (int index = 0; index < players.size(); index++) {
+                if (players.get(index).isTurn()) {
+                    if (!players.get(index).getUUID().equals(currentTurnUUID)) {
+                        currentTurnUUID = players.get(index).getUUID();
+                        nextTurnUUID = players.get((index + 1) % players.size()).getUUID();
+                        if (players.get(index).getUUID().equals(MainState.player_uuid)) {
                             this.isTurn = true;
-                            System.out.println("YOUR TURN");
                         } else {
                             this.isTurn = false;
-                            System.out.println("TURN FOR " + player.getName());
                         }
                         Platform.runLater(() -> {
                             gameController.stopTimer();
@@ -76,5 +91,10 @@ public class playerTurnController {
                 }
             }
         });
+    }
+
+
+    public Boolean getTurn() {
+        return isTurn;
     }
 }
