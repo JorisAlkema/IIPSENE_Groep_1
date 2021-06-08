@@ -16,7 +16,7 @@ import Observers.TimerObserver;
 import java.util.*;
 
 public class GameController implements TimerObservable {
-    private playerTurnController playerTurnController = new playerTurnController(this);;
+    private playerTurnController playerTurnController = new playerTurnController(this);
 
     private String timerText;
     private ArrayList<TimerObserver> observers = new ArrayList<>();
@@ -34,6 +34,11 @@ public class GameController implements TimerObservable {
         MainState.primaryStage.setOnCloseRequest(event -> {
             try {
                 stopTimer();
+                MainState.firebaseService.removePlayer(MainState.roomCode, MainState.player_uuid);
+                // If nobody is in the room, delete it.
+                if (MainState.firebaseService.getPlayersFromLobby(MainState.roomCode).size() == 0) {
+                    MainState.firebaseService.getLobbyReference(MainState.roomCode).delete();
+                }
             } catch (Exception ignored) {}
         });
         initGame();
