@@ -61,6 +61,10 @@ public class Player {
         this.trainCards.add(trainCard);
     }
 
+    public void addDestinationTicket(DestinationTicket destinationTicket){
+        this.destinationTickets.add(destinationTicket);
+    }
+
     public void incrementPoints(int points) {
         this.points += points;
     }

@@ -1,5 +1,6 @@
 package View;
 
+import App.MainState;
 import Model.City;
 import Model.DestinationTicket;
 import javafx.scene.Scene;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 
 public class DestinationPopup {
 
-    public static ArrayList<DestinationTicket> showPopUp(ArrayList<DestinationTicket> destinationTickets) {
+    public static void showPopUp(ArrayList<DestinationTicket> destinationTickets) {
         Stage stage = new Stage();
         stage.setWidth(350);
         stage.setHeight(750);
@@ -25,17 +26,17 @@ public class DestinationPopup {
         for (int i=0; i < destinationTickets.size();i++){
             String path = destinationTickets.get(i).getFileName();
             ImageView destinationTicket = new ImageView(new Image(path));
-            destinationTicket.setOpacity(0.8);
+            destinationTicket.setOpacity(0.7);
 
             int index = i;
             int selectedcards;
             destinationTicket.setOnMouseClicked(e -> {
-                if(destinationTicket.getOpacity() == 0.8){
+                if(destinationTicket.getOpacity() == 0.7){
                     selectedTickets.add(destinationTickets.get(index));
                     destinationTicket.setOpacity(1);
                 } else {
                     selectedTickets.remove(destinationTickets.get(index));
-                    destinationTicket.setOpacity(0.8);
+                    destinationTicket.setOpacity(0.7);
                 }
             });
             vBox.getChildren().add(destinationTicket);
@@ -46,8 +47,10 @@ public class DestinationPopup {
             if(selectedTickets.size() != 0){
                 stage.close();
             }
+            for (DestinationTicket destinationTicket: selectedTickets){
+                MainState.firebaseService.getPlayerFromLobby(MainState.roomCode,MainState.player_uuid).addDestinationTicket(destinationTicket);
+            }
         });
-
 
         vBox.getChildren().addAll(closeButton);
 
@@ -55,7 +58,5 @@ public class DestinationPopup {
         stage.setScene(scene);
         stage.show(); // or showAndWait
 //        stage.showAndWait();
-
-        return selectedTickets;
     }
 }
