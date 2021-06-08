@@ -16,6 +16,7 @@ public class playerTurnController {
 
     private Boolean isTurn = false;
     private String currentTurnUUID;
+    private String nextTurnUUID;
 
     public playerTurnController(GameController gameController) {
         this.gameController = gameController;
@@ -50,6 +51,14 @@ public class playerTurnController {
             player.setTurn(false);
             players.get(nextIndex).setTurn(true);
             MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
+            return;
+        }
+
+        if (gameController.getCurrentPlayer() == null) {
+            player = gameState.getPlayer(nextTurnUUID);
+            player.setTurn(true);
+            MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
+            return;
         }
     }
 
@@ -62,16 +71,17 @@ public class playerTurnController {
         listenerRegistration = MainState.firebaseService.getLobbyReference(MainState.roomCode).addSnapshotListener((document, e) -> {
             GameState gameState = document.toObject(GameState.class);
             ArrayList<Player> players = gameState.getPlayers();
-            for (Player player : players) {
-                if (player.isTurn()) {
-                    if (!player.getUUID().equals(currentTurnUUID)) {
-                        currentTurnUUID = player.getUUID();
-                        if (player.getUUID().equals(MainState.player_uuid)) {
+            for (int index = 0; index < players.size(); index++) {
+                if (players.get(index).isTurn()) {
+                    if (!players.get(index).getUUID().equals(currentTurnUUID)) {
+                        currentTurnUUID = players.get(index).getUUID();
+                        nextTurnUUID = players.get((index + 1) % players.size()).getUUID();
+                        if (players.get(index).getUUID().equals(MainState.player_uuid)) {
                             this.isTurn = true;
                             System.out.println("YOUR TURN");
                         } else {
                             this.isTurn = false;
-                            System.out.println("CURRENT TURN:" + player.getName());
+                            System.out.println("CURRENT TURN:" + players.get(index).getName());
                         }
                         Platform.runLater(() -> {
                             gameController.stopTimer();
