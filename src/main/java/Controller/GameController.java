@@ -1,9 +1,11 @@
 package Controller;
 
+import App.Main;
 import App.MainState;
 import Model.*;
 import View.GameView;
 import javafx.application.Platform;
+import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -14,12 +16,12 @@ import Observers.TimerObserver;
 import java.util.*;
 
 public class GameController implements TimerObservable {
+    private playerTurnController playerTurnController = new playerTurnController(this);
+
     private String timerText;
     private ArrayList<TimerObserver> observers = new ArrayList<>();
 
-    private ArrayList<Player> players;
-    private int playercount = 0;
-    private int turnCount = 0;
+    private String lastPlayerUUID;
     private String[] colors = {"GREEN","BLUE","PURPLE","RED","YELLOW"};
 
     private int seconds;
@@ -32,40 +34,41 @@ public class GameController implements TimerObservable {
         MainState.primaryStage.setOnCloseRequest(event -> {
             try {
                 stopTimer();
+                MainState.firebaseService.removePlayer(MainState.roomCode, MainState.player_uuid);
+                // If nobody is in the room, delete it.
+                if (MainState.firebaseService.getPlayersFromLobby(MainState.roomCode).size() == 0) {
+                    MainState.firebaseService.getLobbyReference(MainState.roomCode).delete();
+                }
             } catch (Exception ignored) {}
         });
         initGame();
     }
 
-
     public void initGame() {
         playerColors();
-        players = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
-        for (Player player : players) {
-            player.setTurn(false);
-        }
-        startTurn(getCurrentPlayer());
     }
 
+    public void checkTrains() {
+        if (getCurrentPlayer().getTrains() <= 2) {
+            lastPlayerUUID = getCurrentPlayer().getUUID();
+        }
+    }
 
     public Player getCurrentPlayer() {
-        if (turnCount == 0) {
-            return players.get(0);
-        } else {
-            return players.get(turnCount % players.size());
+        for (Player player : MainState.firebaseService.getPlayersFromLobby(MainState.roomCode)) {
+            if (player.isTurn()) {
+                return player;
+            }
         }
+        return null;
     }
 
-    private void startTurn(Player player) {
-        player.setTurn(true);
-        //setPlayerName(getCurrentPlayer().getName());
-        countdownTimer();
+    public Controller.playerTurnController getPlayerTurnController() {
+        return playerTurnController;
     }
 
-    public void endTurn(Player player) {
-        player.setTurn(false);
-        stopTimer();
-        turnCount++;
+    public void endTurn() {
+        playerTurnController.endTurn();
     }
 
     public void playerColors(){
@@ -85,7 +88,7 @@ public class GameController implements TimerObservable {
         int period = 1000;
 
         // Increase time by 1, since 0:00 is counted as the final second
-        seconds = 90 + 1;
+        seconds = 10 + 1;
 
         // Schedules the timer for repeated fixed-rate execution, beginning after the specified delay
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -95,8 +98,7 @@ public class GameController implements TimerObservable {
                 } else if (seconds == 0) {
                     // Code that gets executed after the countdown has hit 0
                     setTimerText(formatTimer(setSeconds()));
-                    endTurn(getCurrentPlayer());
-                    startTurn(getCurrentPlayer());
+                    endTurn();
                 }
             }
         }, delay, period);
@@ -114,7 +116,9 @@ public class GameController implements TimerObservable {
     }
 
     public void stopTimer() {
-        timer.cancel();
+        if (timer != null) {
+            timer.cancel();
+        }
     }
 
     public void setTimerText(String timerText) {
@@ -136,7 +140,7 @@ public class GameController implements TimerObservable {
         banners.add(new ImageView("images/player_banner_purple.png"));
         banners.add(new ImageView("images/player_banner_red.png"));
         banners.add(new ImageView("images/player_banner_yellow.png"));
-
+        ArrayList<Player> players = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
         for (int i = 0; i < players.size(); i++) {
             Text playerName = new Text("Player: " + players.get(i).getName());
             //String playerTrainCards = "Traincards: " + player.getTrainCards().size() + "\n";
