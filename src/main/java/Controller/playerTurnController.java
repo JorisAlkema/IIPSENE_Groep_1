@@ -41,6 +41,7 @@ public class playerTurnController {
      * End the turn of yourself when some conditions are met, or the timer is finished.
      * If you call this function and it's not your turn, nothing happens.
      * Otherwise it sets your players object's turn to false and sets the next player's isTurn to true.
+     * If the player that has the turn leaves, nextTurnUUID will be used to set the next turn
     */
     public void endTurn() {
         GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
@@ -95,7 +96,7 @@ public class playerTurnController {
     }
 
 
-    public Boolean isTurn() {
+    public Boolean getTurn() {
         return isTurn;
     }
 }
