@@ -79,10 +79,8 @@ public class playerTurnController {
                         nextTurnUUID = players.get((index + 1) % players.size()).getUUID();
                         if (players.get(index).getUUID().equals(MainState.player_uuid)) {
                             this.isTurn = true;
-                            System.out.println("YOUR TURN");
                         } else {
                             this.isTurn = false;
-                            System.out.println("CURRENT TURN:" + players.get(index).getName());
                         }
                         Platform.runLater(() -> {
                             gameController.stopTimer();
