@@ -11,7 +11,7 @@ public class HandController {
 
     public HandController() {
         localPlayer = MainState.firebaseService.getPlayerFromLobby(MainState.roomCode, MainState.player_uuid);
-        handModel = HandModel.getInstance(localPlayer.getTrainCards());
+        handModel = HandModel.getInstance();
     }
 
     public void registerObserver(HandObserver observer) {
