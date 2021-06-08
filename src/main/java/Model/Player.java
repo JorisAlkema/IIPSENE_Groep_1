@@ -59,7 +59,7 @@ public class Player {
 
     public void addTrainCard(TrainCard trainCard){
         this.trainCards.add(trainCard);
-        HandModel handModel = HandModel.getInstance(this.trainCards);
+        HandModel handModel = HandModel.getInstance();
         handModel.setTrainCards(this.trainCards);
     }
 

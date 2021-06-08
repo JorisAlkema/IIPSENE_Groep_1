@@ -1,23 +1,24 @@
 package Model;
 
+import App.MainState;
 import Observers.HandObservable;
 import Observers.HandObserver;
 
 import java.util.ArrayList;
 
 public class HandModel implements HandObservable {
-    static ArrayList<TrainCard> trainCardsInHand;
-    static ArrayList<HandObserver> observers;
+    private ArrayList<TrainCard> trainCardsInHand;
+    private ArrayList<HandObserver> observers;
     static HandModel handModel;
 
-    public HandModel(ArrayList<TrainCard> trainCards) {
-        trainCardsInHand = trainCards;
+    public HandModel() {
+        trainCardsInHand = MainState.firebaseService.getPlayerFromLobby(MainState.roomCode, MainState.player_uuid).getTrainCards();
         observers = new ArrayList<>();
     }
 
-    public static HandModel getInstance(ArrayList<TrainCard> trainCards) {
+    public static HandModel getInstance() {
         if (handModel == null) {
-            handModel = new HandModel(trainCards);
+            handModel = new HandModel();
         }
         return handModel;
     }
