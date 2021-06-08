@@ -47,34 +47,32 @@ public class CardController {
         ArrayList<TrainCard> openCards = gameState.getOpenDeck();
 
         TrainCard pickedCard = openCards.get(index);
-        Player client = gameState.getPlayer(MainState.player_uuid);
+        Player player = gameState.getPlayer(MainState.player_uuid);
 
-        if(client.getActionsTaken() == 1 && pickedCard.getColor().equals("LOCO")){
+        if(player.getActionsTaken() == 1 && pickedCard.getColor().equals("LOCO")){
             System.out.println("you cannot draw a LOCO");
             return false;
         }
 
-        client.setActionsTaken(client.getActionsTaken() + 1);
+        player.setActionsTaken(player.getActionsTaken() + 1);
+        player.addTrainCard(pickedCard);
+        System.out.printf("Open card picked, color: %s%n", pickedCard.getColor());
 
-        if(pickedCard.getColor().equals("LOCO") || client.getActionsTaken() >= 2) {
-            gameController.endTurn();
-            client.addTrainCard(pickedCard);
-            System.out.println(client.getTrainCards());
-            System.out.println("turn ended!");
-            client.setActionsTaken(0);
-        }
-
-        if(client.getActionsTaken() >= 1) {
-            client.addTrainCard(pickedCard);
-        }
-
-        System.out.println(String.format("Open card picked, color: %s", pickedCard.getColor()));
-        // Remove picked opencard
-        // Get a new open card from the closed cards
-        // and update the firebase
         openCards.remove(index);
-        TrainCard newOpenCard = getRandomCard(gameState);
-        openCards.add(newOpenCard);
+        openCards.add(getRandomCard(gameState));
+
+        // FIXME
+        // In this if statement, gameController.endTurn() updates the GameState
+        // After the if statement, gameState is updated as well
+        // And also there's a SnapShotListener listening for OpenDeck changes
+        // This results in weird behavior when adding open card to hand if that card
+        // is the second card drawn that turn
+        if(pickedCard.getColor().equals("LOCO") || player.getActionsTaken() >= 2) {
+            System.out.println("Turn ended!");
+            gameController.endTurn();
+            player.setActionsTaken(0);
+        }
+
         MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
         return true;
     }
