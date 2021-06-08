@@ -84,7 +84,7 @@ public class GameView extends BorderPane implements TimerObserver {
 
         // TODO: find more MVC-like way to pass initial list of tickets that should form the deck
         DestinationPopUp destinationPopUp = new DestinationPopUp(mapView.getMapController().getGameSetupService().getDestinationTickets());
-        destinationPopUp.show(true);
+        destinationPopUp.showAtStartOfGame();
 //        gameController.setTimerText(gameController.getTimer());
     }
 

@@ -27,8 +27,12 @@ public class DestinationPopUp {
         this.destinationTicketController = new DestinationTicketController(destinationTickets);
     }
 
-    public void show(boolean drawExtra) {
-        this.showPopUp(this.destinationTicketController.drawTickets(drawExtra));
+    public void showAtStartOfGame() {
+        this.showPopUp(this.destinationTicketController.drawTickets(true));
+    }
+
+    public void showDuringGame() {
+        this.showPopUp(this.destinationTicketController.drawTickets(false));
     }
 
     private void showPopUp(ArrayList<DestinationTicket> destinationTickets) {
