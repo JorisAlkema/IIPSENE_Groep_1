@@ -1,22 +1,19 @@
 package View;
 
 import Controller.LoginController;
-import Service.Observable;
-import Service.Observer;
+import Observers.LoginObserver;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
-public class LoginView extends StackPane implements Observer {
+
+public class LoginView extends StackPane implements LoginObserver {
     private LoginController loginController;
     private Text message;   
 
@@ -177,7 +174,7 @@ public class LoginView extends StackPane implements Observer {
     }
 
     @Override
-    public void update(Observable observable, Object message) {
-        this.message.setText((String) message);
+    public void update(String message) {
+        this.message.setText(message);
     }
 }

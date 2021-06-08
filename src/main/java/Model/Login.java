@@ -1,18 +1,11 @@
 package Model;
 
-import App.MainState;
-import Service.FirebaseService;
-import Service.Observable;
-import Service.Observer;
-import View.LobbyView;
-import View.MainMenuView;
-import javafx.application.Platform;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import java.util.*;
+import Observers.LoginObservable;
+import Observers.LoginObserver;
 
-public class Login implements Observable {
-    private ArrayList<Observer> observers = new ArrayList<>();
+public class Login implements LoginObservable {
+    private ArrayList<LoginObserver> observers = new ArrayList<>();
     private Boolean busy = false;
 
     public Boolean getBusy() {
@@ -28,19 +21,19 @@ public class Login implements Observable {
     */
 
     @Override
-    public void registerObserver(Observer observer) {
-        observers.add(observer);
+    public void registerObserver(LoginObserver observer) {
+        this.observers.add(observer);
     }
 
     @Override
-    public void unregisterObserver(Observer observer) {
-        observers.remove(observer);
+    public void unregisterObserver(LoginObserver observer) {
+        this.observers.remove(observer);
     }
 
     @Override
-    public void notifyAllObservers(Object o) {
-        for (Observer observer : observers) {
-            observer.update(this, o);
+    public void notifyObservers(String message) {
+        for (LoginObserver observer : observers) {
+            observer.update(message);
         }
     }
 }
