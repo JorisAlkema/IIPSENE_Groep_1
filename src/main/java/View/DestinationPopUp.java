@@ -77,5 +77,6 @@ public class DestinationPopUp {
         Scene scene = new Scene(vBox);
         stage.setScene(scene);
         stage.show();
+        stage.setAlwaysOnTop(true);
     }
 }
