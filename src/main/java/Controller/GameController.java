@@ -4,6 +4,7 @@ import App.MainState;
 import Model.*;
 import View.GameView;
 import javafx.application.Platform;
+import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -20,6 +21,7 @@ public class GameController implements TimerObservable {
     private ArrayList<Player> players;
     private int playercount = 0;
     private int turnCount = 0;
+    private String lastPlayerUUID;
     private String[] colors = {"GREEN","BLUE","PURPLE","RED","YELLOW"};
 
     private int seconds;
@@ -37,7 +39,6 @@ public class GameController implements TimerObservable {
         initGame();
     }
 
-
     public void initGame() {
         playerColors();
         players = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
@@ -47,6 +48,11 @@ public class GameController implements TimerObservable {
         startTurn(getCurrentPlayer());
     }
 
+    public void checkTrains() {
+        if (getCurrentPlayer().getTrains() <= 2) {
+            lastPlayerUUID = getCurrentPlayer().getUUID();
+        }
+    }
 
     public Player getCurrentPlayer() {
         if (turnCount == 0) {
@@ -65,7 +71,13 @@ public class GameController implements TimerObservable {
     public void endTurn(Player player) {
         player.setTurn(false);
         stopTimer();
-        turnCount++;
+        if (!lastPlayerUUID.equals(getCurrentPlayer().getUUID())) {
+            turnCount++;
+        } else {
+            Scene gameEndScene = new Scene(new GameEndScreen);
+            MainState.primaryStage.setScene(gameEndScene);
+        }
+
     }
 
     public void playerColors(){
