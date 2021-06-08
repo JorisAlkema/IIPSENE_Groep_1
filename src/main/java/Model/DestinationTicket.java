@@ -25,6 +25,10 @@ public class DestinationTicket {
         return "destination_tickets/eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase() + ".png";
     }
 
+    public String getFileNameSmall() {
+        return "destination_tickets/eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase() + "-small.png";
+    }
+
     public City getFirstCity() {
         return firstCity;
     }
