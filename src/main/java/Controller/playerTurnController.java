@@ -49,7 +49,7 @@ public class playerTurnController {
         int nextIndex = (players.indexOf(player) + 1) % players.size();
         player.setTurn(false);
         players.get(nextIndex).setTurn(true);
-        
+
         MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
     }
 
@@ -68,8 +68,10 @@ public class playerTurnController {
                         currentTurnUUID = player.getUUID();
                         if (player.getUUID().equals(MainState.player_uuid)) {
                             this.isTurn = true;
+                            System.out.println("YOUR TURN");
                         } else {
                             this.isTurn = false;
+                            System.out.println("CURRENT TURN:" + player.getName());
                         }
                         Platform.runLater(() -> {
                             gameController.stopTimer();
