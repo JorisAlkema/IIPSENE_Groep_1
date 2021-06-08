@@ -1,48 +1,44 @@
 package View;
 
 import Controller.CardController;
-<<<<<<< HEAD
 import Controller.GameController;
-import Model.OpenCards;
-=======
->>>>>>> 952fe7216330f748017739dd88d629e55b64415f
 import Model.TrainCard;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
 public class CardView extends VBox {
-<<<<<<< HEAD
-//    public ArrayList<Button> buttons = new ArrayList<Button>();
     private CardController cardController;
-    private TrainCard randomCard = null;
-=======
-    private CardController cardController = new CardController(this);
->>>>>>> 952fe7216330f748017739dd88d629e55b64415f
-
 
     public CardView(GameController gameController) {
-        setPadding(new Insets(30));
-        cardController = new CardController(this,gameController);
+        setPadding(new Insets(0, 35, 0, 35));
+        cardController = new CardController(this, gameController);
     }
 
     public void createButtons(ArrayList<TrainCard> openCards){
+        Image image = new Image("traincards/traincard_back_small_rotated.png");
+        ImageView closedTrainCard = new ImageView(image);
         //forloop die knoppen maakt van de opencardsarray
-        Button getTrainCard = new Button("Get closed train card");
-        getTrainCard.setOnAction(e -> {
+
+        closedTrainCard.setOnMouseClicked(e -> {
             this.cardController.pickClosedCard();
         });
         getChildren().removeAll(getChildren());
-        getChildren().add(getTrainCard);
+        getChildren().add(closedTrainCard);
 
         for (int i = 0; i < openCards.size(); i++) {
-            Button openCard = new Button(openCards.get(i).getColor());
+            String color = openCards.get(i).getColor();
+            String path = "traincards/traincard_" + color + "_small_rotated.png";
+            ImageView openCard = new ImageView(new Image(path));
+//            openCard.setRotate(-90);
             int index = i;
             openCard.setOnMouseClicked(e -> {
-                this.cardController.pickOpenCard(index);
-                getChildren().remove(openCard);
+                if (this.cardController.pickOpenCard(index)) {
+                    getChildren().remove(openCard);
+                }
             });
             getChildren().add(openCard);
         }

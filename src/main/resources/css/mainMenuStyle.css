@@ -1,0 +1,82 @@
+@font-face {
+    font-family: Merriweather;
+    src: url('../fonts/MerriweatherBold.ttf');
+}
+
+.button {
+	-fx-background-color: #c73e18;
+	-fx-font-family: Merriweather;
+	-fx-text-fill: white;
+	-fx-font-size: 20;
+	-fx-font-weight: 700;
+	-fx-padding: 15;
+	-fx-min-width: 250;
+	-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );
+	-fx-cursor: hand;
+
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+	-fx-border-width: 1 1 1 1;
+	-fx-border-color:black;
+}
+
+.button:hover {
+	-fx-background-color: #660008;
+}
+
+#text {
+    -fx-font-family: Merriweather;
+	-fx-fill: white;
+	-fx-font-size: 20;
+	-fx-font-weight: 700;
+}
+
+#message {
+    -fx-font-family: Merriweather;
+	-fx-fill: white;
+	-fx-font-size: 14;
+	-fx-font-weight: 700;
+}
+
+.text-field {
+	-fx-background-color: #000000b9;
+	-fx-font-family: Merriweather;
+	-fx-text-fill: #d9d9d9;
+	-fx-font-size: 20;
+	-fx-font-weight: 700;
+	-fx-padding: 15;
+	-fx-min-width: 250;
+	-fx-effect: dropshadow( one-pass-box , black , 10 , 0 , 0 , 0 );
+	-fx-cursor: text;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+	-fx-border-width: 1 1 1 1;
+	-fx-border-color:black;
+}
+
+#textFields {
+    -fx-margin: 10 0;
+    -fx-padding: 15;
+    -fx-background-color: #000000b9;
+}
+
+#black_bg {
+    -fx-background-color: #000000b9;
+}
+
+#playerbox {
+    -fx-background-color: #000000b9;
+    -fx-padding: 30 15;
+}
+
+
+.playerinfo {
+	-fx-font-family: Merriweather;
+	-fx-fill: white;
+	-fx-font-size: 12;
+}
+
+#musicbutton {
+	-fx-cursor: hand;
+
+}
