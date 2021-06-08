@@ -59,6 +59,8 @@ public class Player {
 
     public void addTrainCard(TrainCard trainCard){
         this.trainCards.add(trainCard);
+        HandModel handModel = HandModel.getInstance(this.trainCards);
+        handModel.setTrainCards(this.trainCards);
     }
 
     public void incrementPoints(int points) {
