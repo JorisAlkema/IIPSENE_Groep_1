@@ -81,9 +81,9 @@ public class GameView extends BorderPane implements TimerObserver {
 
         //
         gameController.registerObserver(this);
-        gameController.setTimerText(gameController.getTimer());
         DestinationTicketController destinationTicketController = new DestinationTicketController(mapView.getMapController().getGameSetupService().getDestinationTickets());
         DestinationPopup.showPopUp(destinationTicketController.getDestinationTickets(true));
+//        gameController.setTimerText(gameController.getTimer());
     }
 
     @Override

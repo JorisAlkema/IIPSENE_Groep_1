@@ -102,6 +102,7 @@ public class MapController {
         if (route.getOwner() != null) {
             return false;
         }
+
         String routeColor = route.getColor();
         // If the Route is grey, check for cards of the given color
         if (routeColor.equals("GREY")) {
@@ -161,6 +162,7 @@ public class MapController {
             routeCell.setFill(this.mapModel.getImagePattern(gameController.getCurrentPlayer().getPlayerColor()));
         }
 
+        gameController.checkTrains();
         return true;
     }
 
