@@ -224,4 +224,8 @@ public class MapController {
     public void setGameController(GameController gameController) {
         this.gameController = gameController;
     }
+
+    public GameSetupService getGameSetupService() {
+        return gameSetupService;
+    }
 }

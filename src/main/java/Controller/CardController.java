@@ -38,7 +38,7 @@ public class CardController {
         TrainCard closedCard = getRandomCard(gameState);
         MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
         System.out.println(String.format("Closed card picked, color: %s", closedCard.getColor()));
-        // Do smt with the card?
+        // TODO:Do smt with the card?
     }
 
     // Pick open card and return new open card

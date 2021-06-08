@@ -8,13 +8,11 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 
 public class DestinationTicketView extends ScrollPane {
-    private final DestinationTicketController destinationTicketController;
     private ArrayList<ImageView> imageViews;
     private VBox vBox;
 
     public DestinationTicketView() {
         super();
-        this.destinationTicketController = new DestinationTicketController(this);
         this.setHbarPolicy(ScrollBarPolicy.NEVER);
         this.setMaxHeight(174);
         vBox = new VBox();

@@ -12,4 +12,8 @@ public class DestinationTicketDeck {
     public DestinationTicketDeck(ArrayList<DestinationTicket> destinationTickets) {
         this.destinationTickets = destinationTickets;
     }
+
+    public ArrayList<DestinationTicket> getDestinationTickets() {
+        return destinationTickets;
+    }
 }
