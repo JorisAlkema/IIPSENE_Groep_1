@@ -34,47 +34,52 @@ public class CardController {
 
     // Pick closed card()
     public void pickClosedCard() {
-        GameState gameState = getGameState();
-        TrainCard closedCard = getRandomCard(gameState);
-        MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
-        System.out.println(String.format("Closed card picked, color: %s", closedCard.getColor()));
-        // Do smt with the card?
+        if (gameController.getPlayerTurnController().getTurn()) {
+            GameState gameState = getGameState();
+            TrainCard closedCard = getRandomCard(gameState);
+            MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
+            System.out.println(String.format("Closed card picked, color: %s", closedCard.getColor()));
+            // Do smt with the card?
+        }
     }
 
     // Pick open card and return new open card
     public Boolean pickOpenCard(int index) {
-        GameState gameState = getGameState();
-        ArrayList<TrainCard> openCards = gameState.getOpenDeck();
+        if (gameController.getPlayerTurnController().getTurn()) {
+            GameState gameState = getGameState();
+            ArrayList<TrainCard> openCards = gameState.getOpenDeck();
 
-        TrainCard pickedCard = openCards.get(index);
-        Player player = gameState.getPlayer(MainState.player_uuid);
+            TrainCard pickedCard = openCards.get(index);
+            Player player = gameState.getPlayer(MainState.player_uuid);
 
-        if(player.getActionsTaken() == 1 && pickedCard.getColor().equals("LOCO")){
-            System.out.println("you cannot draw a LOCO");
-            return false;
+            if (player.getActionsTaken() == 1 && pickedCard.getColor().equals("LOCO")) {
+                System.out.println("you cannot draw a LOCO");
+                return false;
+            }
+
+            player.setActionsTaken(player.getActionsTaken() + 1);
+            player.addTrainCard(pickedCard);
+            System.out.printf("Open card picked, color: %s%n", pickedCard.getColor());
+
+            openCards.remove(index);
+            openCards.add(getRandomCard(gameState));
+
+            // FIXME
+            // In this if statement, gameController.endTurn() updates the GameState
+            // After the if statement, gameState is updated as well
+            // And also there's a SnapShotListener listening for OpenDeck changes
+            // This results in weird behavior when adding open card to hand if that card
+            // is the second card drawn that turn
+            if (pickedCard.getColor().equals("LOCO") || player.getActionsTaken() >= 2) {
+                System.out.println("Turn ended!");
+                gameController.endTurn();
+                player.setActionsTaken(0);
+            }
+
+            MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
+            return true;
         }
-
-        player.setActionsTaken(player.getActionsTaken() + 1);
-        player.addTrainCard(pickedCard);
-        System.out.printf("Open card picked, color: %s%n", pickedCard.getColor());
-
-        openCards.remove(index);
-        openCards.add(getRandomCard(gameState));
-
-        // FIXME
-        // In this if statement, gameController.endTurn() updates the GameState
-        // After the if statement, gameState is updated as well
-        // And also there's a SnapShotListener listening for OpenDeck changes
-        // This results in weird behavior when adding open card to hand if that card
-        // is the second card drawn that turn
-        if(pickedCard.getColor().equals("LOCO") || player.getActionsTaken() >= 2) {
-            System.out.println("Turn ended!");
-            gameController.endTurn();
-            player.setActionsTaken(0);
-        }
-
-        MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
-        return true;
+        return false;
     }
 
     private ArrayList<TrainCard> generateClosedDeck() {

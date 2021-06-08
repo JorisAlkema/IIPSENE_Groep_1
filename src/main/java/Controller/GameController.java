@@ -63,6 +63,10 @@ public class GameController implements TimerObservable {
         return null;
     }
 
+    public Controller.playerTurnController getPlayerTurnController() {
+        return playerTurnController;
+    }
+
     public void endTurn() {
         playerTurnController.endTurn();
     }
