@@ -79,7 +79,7 @@ public class GameView extends BorderPane implements TimerObserver {
 
         //
         gameController.registerObserver(this);
-        gameController.setTimerText(gameController.getTimer());
+//        gameController.setTimerText(gameController.getTimer());
     }
 
     @Override
