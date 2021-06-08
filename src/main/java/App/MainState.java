@@ -20,4 +20,8 @@ public class MainState {
 
     public static final String MenuCSS = "css/mainMenuStyle.css";
     public static final String mainCSS = "css/mainStyle.css";
+
+    public static Player getLocalPlayer() {
+        return firebaseService.getPlayerFromLobby(roomCode, player_uuid);
+    }
 }

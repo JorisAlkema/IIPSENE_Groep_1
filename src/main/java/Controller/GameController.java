@@ -73,7 +73,7 @@ public class GameController implements TimerObservable {
 
     public void playerColors(){
         //the hosts gives the other players their color
-        if (MainState.firebaseService.getPlayerFromLobby(MainState.roomCode, MainState.player_uuid).getHost()) {
+        if (MainState.getLocalPlayer().getHost()) {
             GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
             for(int i =0; MainState.firebaseService.getGameStateOfLobby(MainState.roomCode).getPlayers().size() > i; i++){
                 gameState.getPlayers().get(i).setPlayerColor(colors[i]);

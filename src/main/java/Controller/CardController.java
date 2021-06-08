@@ -21,7 +21,7 @@ public class CardController {
         this.gameController = gameController;
 
         // If host generate decks and put on firebase and show
-        if (MainState.firebaseService.getPlayerFromLobby(MainState.roomCode, MainState.player_uuid).getHost()) {
+        if (MainState.getLocalPlayer().getHost()) {
             GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
             ArrayList<TrainCard> closedCards = generateClosedDeck();
             gameState.setOpenDeck(generateOpenDeck(closedCards));
