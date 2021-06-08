@@ -23,7 +23,7 @@ public class playerTurnController {
         checkTurnListener();
 
         // if host
-        if (MainState.firebaseService.getPlayerFromLobby(MainState.roomCode, MainState.player_uuid).getHost()) {
+        if (MainState.getLocalPlayer().getHost()) {
             giveTurnToFirstPlayer();
         }
     }

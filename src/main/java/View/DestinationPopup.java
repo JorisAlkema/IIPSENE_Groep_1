@@ -1,7 +1,6 @@
 package View;
 
 import App.MainState;
-import Model.City;
 import Model.DestinationTicket;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -48,7 +47,7 @@ public class DestinationPopup {
                 stage.close();
             }
             for (DestinationTicket destinationTicket: selectedTickets){
-                MainState.firebaseService.getPlayerFromLobby(MainState.roomCode,MainState.player_uuid).addDestinationTicket(destinationTicket);
+                MainState.getLocalPlayer().addDestinationTicket(destinationTicket);
             }
         });
 
