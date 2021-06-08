@@ -54,18 +54,18 @@ public class LoginController {
         String code = inputCode.getText();
 
         if (username.isBlank() || code.isBlank()) {
-            login.notifyAllObservers("Fill in all the required fields");
+            login.notifyObservers("Fill in all the required fields");
             return;
         }
 
 
         if(this.checkUsername(username)) {
-            login.notifyAllObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
+            login.notifyObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
             return;
         }
 
         if(!this.checkRoomCode(code)) {
-            login.notifyAllObservers("Enter a valid roomcode");
+            login.notifyObservers("Enter a valid roomcode");
             return;
         }
 
@@ -96,7 +96,7 @@ public class LoginController {
                     login.setBusy(false);
 
                     if (exception != null) {
-                        login.notifyAllObservers(exception.getMessage());
+                        login.notifyObservers(exception.getMessage());
                         return;
                     }
 
@@ -115,12 +115,12 @@ public class LoginController {
     public void host(TextField inputUsername) {
         String username = inputUsername.getText();
         if (username.isBlank()) {
-            login.notifyAllObservers("Fill in all the required fields");
+            login.notifyObservers("Fill in all the required fields");
             return;
         }
 
         if(this.checkUsername(username)) {
-            login.notifyAllObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
+            login.notifyObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
             return;
         }
 
@@ -149,7 +149,7 @@ public class LoginController {
                     creatingLobbyAnimation.cancel();
 
                     if (exception != null) {
-                        login.notifyAllObservers(exception.getMessage());
+                        login.notifyObservers(exception.getMessage());
                         return;
                     }
 
@@ -178,7 +178,7 @@ public class LoginController {
             public void run() {
                 n = (n + 1) % 4;
                 String dots = new String(new char[n]).replace("\0", ".");
-                login.notifyAllObservers(message + dots);
+                login.notifyObservers(message + dots);
             }
         };
         Timer timer = new Timer();

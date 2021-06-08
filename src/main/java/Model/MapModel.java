@@ -1,17 +1,16 @@
 package Model;
 
-import Controller.MapController;
-import Service.Observable;
-import Service.Observer;
-
+import Observers.MapObservable;
+import Observers.MapObserver;
+import Observers.MusicObserver;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import java.util.ArrayList;
 
-public class MapModel implements Observable {
-    private final ArrayList<Observer> observers;
+public class MapModel implements MapObservable {
+    private final ArrayList<MapObserver> observers;
     private final ArrayList<Route> routes;
     private final ArrayList<City> cities;
     private ArrayList<RouteCell> routeCellOverlays;
@@ -99,19 +98,19 @@ public class MapModel implements Observable {
     }
 
     @Override
-    public void registerObserver(Observer observer) {
-        this.observers.add(observer);
+    public void registerObserver(MapObserver observer) {
+        observers.add(observer);
     }
 
     @Override
-    public void unregisterObserver(Observer observer) {
-
+    public void unregisterObserver(MapObserver observer) {
+        observers.remove(observer);
     }
 
     @Override
-    public void notifyAllObservers(Object o) {
-        for(Observer observer : this.observers) {
-            observer.update(this, o);
+    public void notifyObservers() {
+        for(MapObserver observer : this.observers) {
+            observer.update();
         }
     }
 }

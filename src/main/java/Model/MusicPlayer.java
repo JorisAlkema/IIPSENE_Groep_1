@@ -1,17 +1,16 @@
 package Model;
 
-import Service.Observable;
-import Service.Observer;
-import View.MusicPlayerView;
+import Observers.MusicObservable;
+import Observers.MusicObserver;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 import java.io.File;
 import java.util.ArrayList;
 
-public class MusicPlayer implements Observable {
+public class MusicPlayer implements MusicObservable {
     private boolean isPlaying = true;
-    private ArrayList<Observer> observers = new ArrayList<>();
+    private ArrayList<MusicObserver> observers = new ArrayList<>();
     private Media media;
     private MediaPlayer mediaPlayer;
 
@@ -24,7 +23,7 @@ public class MusicPlayer implements Observable {
     public void toggleMusic() {
         isPlaying = !isPlaying;
         playAudio(isPlaying);
-        this.notifyAllObservers(isPlaying);
+        this.notifyObservers();
     }
 
     public void playAudio(boolean isPlaying) {
@@ -41,19 +40,19 @@ public class MusicPlayer implements Observable {
     }
 
     @Override
-    public void registerObserver(Observer observer) {
+    public void registerObserver(MusicObserver observer) {
         observers.add(observer);
     }
 
     @Override
-    public void unregisterObserver(Observer observer) {
+    public void unregisterObserver(MusicObserver observer) {
         observers.remove(observer);
     }
 
     @Override
-    public void notifyAllObservers(Object o) {
-        for(Observer observer : observers) {
-            observer.update( this, o);
+    public void notifyObservers() {
+        for(MusicObserver observer : observers) {
+            observer.update();
         }
     }
 }
