@@ -6,36 +6,41 @@ import Observers.HandObserver;
 import java.util.ArrayList;
 
 public class HandModel implements HandObservable {
-    ArrayList<TrainCard> trainCards;
-    private ArrayList<HandObserver> observers;
+    static ArrayList<TrainCard> trainCardsInHand;
+    static ArrayList<HandObserver> observers;
+    static HandModel handModel;
 
     public HandModel(ArrayList<TrainCard> trainCards) {
-        this.trainCards = trainCards;
+        trainCardsInHand = trainCards;
+        observers = new ArrayList<>();
+    }
+
+    public static HandModel getInstance(ArrayList<TrainCard> trainCards) {
+        if (handModel == null) {
+            handModel = new HandModel(trainCards);
+        }
+        return handModel;
+    }
+
+    public void setTrainCards(ArrayList<TrainCard> trainCards) {
+        trainCardsInHand = trainCards;
+        notifyObservers();
     }
 
     @Override
     public void registerObserver(HandObserver observer) {
-        if (this.observers == null) {
-            this.observers = new ArrayList<>();
-        }
-        this.observers.add(observer);
+        observers.add(observer);
     }
 
     @Override
     public void unregisterObserver(HandObserver observer) {
-        if (this.observers == null) {
-            this.observers = new ArrayList<>();
-        }
-        this.observers.remove(observer);
+        observers.remove(observer);
     }
 
     @Override
     public void notifyObservers() {
-        if (this.observers == null) {
-            return;
-        }
-        for (HandObserver observer : this.observers) {
-            observer.update(this.trainCards);
+        for (HandObserver observer : observers) {
+            observer.update(trainCardsInHand);
         }
     }
 }
