@@ -2,8 +2,8 @@ package Controller;
 
 import Model.DestinationTicket;
 import Model.DestinationTicketDeck;
-import java.util.Random;
 
+import java.util.Random;
 import java.util.ArrayList;
 
 public class DestinationTicketController {
@@ -13,24 +13,28 @@ public class DestinationTicketController {
         this.destinationTicketDeck = new DestinationTicketDeck(destinationTickets);
     }
 
-    public ArrayList<DestinationTicket> getDestinationTickets(boolean drawExtra){
-        ArrayList<DestinationTicket> randomDestinationTickets = new ArrayList<DestinationTicket>();
-        ArrayList<DestinationTicket> ticketDeck = destinationTicketDeck.getDestinationTickets();
-
-        while (randomDestinationTickets.size() < 3){
-            Random rand = new Random();
-            DestinationTicket randomTicket = ticketDeck.get(rand.nextInt(ticketDeck.size()));
-            if(randomTicket.getType().equals("short")){
-                randomDestinationTickets.add(randomTicket);
-            }
+    private DestinationTicket drawSingleCard(String type) {
+        Random random = new Random();
+        int deckSize = destinationTicketDeck.getDestinationTickets().size();
+        DestinationTicket randomTicket = destinationTicketDeck.draw(random.nextInt(deckSize));
+        while ( ! randomTicket.getType().equals(type)) {
+            returnCardToDeck(randomTicket);
+            randomTicket = destinationTicketDeck.draw(random.nextInt(deckSize));
         }
+        return randomTicket;
+    }
 
-        while(drawExtra && randomDestinationTickets.size() < 4){
-            Random rand = new Random();
-            DestinationTicket randomTicket = ticketDeck.get(rand.nextInt(ticketDeck.size()));
-            if(randomTicket.getType().equals("long")){
-                randomDestinationTickets.add(randomTicket);
-            }
+    public void returnCardToDeck(DestinationTicket ticket) {
+        this.destinationTicketDeck.addCardToDeck(ticket);
+    }
+
+    public ArrayList<DestinationTicket> drawTickets(boolean drawExtra){
+        ArrayList<DestinationTicket> randomDestinationTickets = new ArrayList<>();
+        while (randomDestinationTickets.size() < 3){
+            randomDestinationTickets.add(drawSingleCard("short"));
+        }
+        if (drawExtra) {
+            randomDestinationTickets.add(drawSingleCard("long"));
         }
         return randomDestinationTickets;
     }

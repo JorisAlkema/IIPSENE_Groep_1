@@ -1,6 +1,7 @@
 package View;
 
 import App.MainState;
+import Controller.DestinationTicketController;
 import Model.DestinationTicket;
 import Model.Player;
 import javafx.event.Event;
@@ -16,12 +17,21 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class DestinationPopUp {
+    private final DestinationTicketController destinationTicketController;
     private static final int WIDTH = 300;
     private static final int CARDHEIGHT = 161;
     private static final double UNSELECTED_OPACITY = 0.6;
     private static final double SELECTED_OPACITY = 1;
 
-    public static void showPopUp(ArrayList<DestinationTicket> destinationTickets) {
+    public DestinationPopUp(ArrayList<DestinationTicket> destinationTickets) {
+        this.destinationTicketController = new DestinationTicketController(destinationTickets);
+    }
+
+    public void show(boolean drawExtra) {
+        this.showPopUp(this.destinationTicketController.drawTickets(drawExtra));
+    }
+
+    private void showPopUp(ArrayList<DestinationTicket> destinationTickets) {
         Stage stage = new Stage();
         stage.setWidth(WIDTH);
         stage.setHeight( (destinationTickets.size() + 1) * CARDHEIGHT );
