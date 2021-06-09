@@ -55,7 +55,9 @@ public class GameView extends BorderPane implements TurnTimerObserver, CardsObse
             MainState.primaryStage.setScene(newScene);
         });
 
-        vBox.getChildren().addAll(mapZoomButton, mainmenuButton);
+        currentPlayerLabel = new Label();
+
+        vBox.getChildren().addAll(mapZoomButton, mainmenuButton, currentPlayerLabel);
 
         for (StackPane stackPane : gameController.createOpponentViews()) {
             vBox.getChildren().add(stackPane);
