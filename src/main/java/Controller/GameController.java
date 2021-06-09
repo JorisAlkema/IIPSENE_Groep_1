@@ -198,7 +198,7 @@ public class GameController {
     // ===============================================================
 
     private void addTrainCardToPlayerInventoryInGameState(TrainCard trainCard) {
-        gameState.getPlayer(MainState.player_uuid).getTrainCards().add(trainCard);
+        getLocalPlayerFromGameState().addTrainCard(trainCard);
     }
 
     private Player getLocalPlayerFromGameState() {
