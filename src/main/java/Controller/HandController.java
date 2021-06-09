@@ -1,16 +1,12 @@
 package Controller;
 
-import App.MainState;
 import Model.HandModel;
-import Model.Player;
 import Observers.HandObserver;
 
 public class HandController {
-    private final Player localPlayer;
     private final HandModel handModel;
 
     public HandController() {
-        localPlayer = MainState.getLocalPlayer();
         handModel = HandModel.getInstance();
     }
 
