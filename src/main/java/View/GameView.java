@@ -1,6 +1,7 @@
 package View;
 
 import App.MainState;
+import Controller.DestinationTicketController;
 import Controller.GameController;
 import Model.TrainCard;
 import Observers.CardsObserver;
@@ -86,7 +87,10 @@ public class GameView extends BorderPane implements TimerObserver, CardsObserver
 
         //
         gameController.registerObserver(this);
+
         gameController.registerCardsObserver(this);
+        DestinationTicketController destinationTicketController = new DestinationTicketController(mapView.getMapController().getGameSetupService().getDestinationTickets());
+        DestinationPopup.showPopUp(destinationTicketController.getDestinationTickets(true));
 //        gameController.setTimerText(gameController.getTimer());
     }
 

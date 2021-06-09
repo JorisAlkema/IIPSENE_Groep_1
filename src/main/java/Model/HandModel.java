@@ -12,7 +12,7 @@ public class HandModel implements HandObservable {
     static HandModel handModel;
 
     public HandModel() {
-        trainCardsInHand = MainState.firebaseService.getPlayerFromLobby(MainState.roomCode, MainState.player_uuid).getTrainCards();
+        trainCardsInHand = MainState.getLocalPlayer().getTrainCards();
         observers = new ArrayList<>();
     }
 

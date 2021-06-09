@@ -69,13 +69,6 @@
     -fx-padding: 30 15;
 }
 
-
-.playerinfo {
-	-fx-font-family: Merriweather;
-	-fx-fill: white;
-	-fx-font-size: 12;
-}
-
 #musicbutton {
 	-fx-cursor: hand;
 

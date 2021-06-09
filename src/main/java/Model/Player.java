@@ -63,6 +63,10 @@ public class Player {
         handModel.setTrainCards(this.trainCards);
     }
 
+    public void addDestinationTicket(DestinationTicket destinationTicket){
+        this.destinationTickets.add(destinationTicket);
+    }
+
     public void incrementPoints(int points) {
         this.points += points;
     }
