@@ -110,7 +110,7 @@ public class MapModel implements MapObservable {
     @Override
     public void notifyObservers() {
         for(MapObserver observer : this.observers) {
-            observer.update();
+            observer.update(zoomedIn, getBackgroundImage());
         }
     }
 }
