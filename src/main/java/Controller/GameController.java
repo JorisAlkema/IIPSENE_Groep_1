@@ -90,7 +90,7 @@ public class GameController {
                     }
                     try {
                         playerTurnController.checkMyTurn(gameState);
-                        if (firstTurn){
+                        if (firstTurn && playerTurnController.getTurn()) {
                             firstTurn = false;
                             DestinationPopUp destinationPopUp = new DestinationPopUp();
                             destinationPopUp.showAtStartOfGame();
