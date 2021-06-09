@@ -15,6 +15,9 @@ public class CardsController {
     private Cards cards = new Cards();
 
     public TrainCard pickClosedCard(GameState gameState) {
+        /* Calculate closed cards by generating a new card deck and subtracting
+        both the player cards and the open cards */
+
         TrainCard pickedClosedCard = getRandomCard(gameState);
         System.out.println(String.format("Closed card picked, color: %s", pickedClosedCard.getColor()));
         return pickedClosedCard;
