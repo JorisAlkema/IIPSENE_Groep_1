@@ -28,7 +28,7 @@ public class GameController {
 
     private GameSetupService gameSetupService = new GameSetupService();
 
-
+    boolean firstTurn = true;
 
     public GameController() {
         MainState.primaryStage.setOnCloseRequest(event -> {
@@ -90,7 +90,6 @@ public class GameController {
                     }
                     try {
                         playerTurnController.checkMyTurn(gameState);
-                        boolean firstTurn = true;
                         if (firstTurn){
                             firstTurn = false;
                             DestinationPopUp destinationPopUp = new DestinationPopUp();
