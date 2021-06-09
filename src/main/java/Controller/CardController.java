@@ -128,8 +128,12 @@ public class CardController {
         listenerRegistration = MainState.firebaseService.getLobbyReference(MainState.roomCode).addSnapshotListener((document, e) -> {
             Platform.runLater(() -> {
                 GameState gameState = document.toObject(GameState.class);
-                if (gameState.getOpenDeck() != null) {
-                    cardView.createButtons(gameState.getOpenDeck());
+                try {
+                    if (gameState.getOpenDeck() != null) {
+                        cardView.createButtons(gameState.getOpenDeck());
+                    }
+                } catch (Exception exception) {
+                    System.out.println(exception.getMessage());
                 }
             });
         });

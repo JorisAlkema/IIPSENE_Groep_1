@@ -17,7 +17,6 @@ import javafx.scene.layout.VBox;
 
 public class GameView extends BorderPane implements TimerObserver {
     Label timerLabel;
-    Label currentPlayerLabel;
     GameController gameController;
 
     public GameView() {
@@ -45,10 +44,7 @@ public class GameView extends BorderPane implements TimerObserver {
             MainState.primaryStage.setScene(newScene);
         });
 
-        currentPlayerLabel = new Label("Current player: ");
-
-
-        vBox.getChildren().addAll(mapZoomButton, mainmenuButton, currentPlayerLabel);
+        vBox.getChildren().addAll(mapZoomButton, mainmenuButton);
 
         for (StackPane stackPane : gameController.createOpponentViews()) {
             vBox.getChildren().add(stackPane);

@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 
 public class CardView extends VBox {
+
     private CardController cardController;
 
     public CardView(GameController gameController) {
