@@ -4,6 +4,8 @@ import App.MainState;
 import Controller.DestinationTicketController;
 import Controller.GameController;
 import Model.DestinationTicketDeck;
+import Model.MusicPlayer;
+import Observers.MusicObserver;
 import Observers.TimerObserver;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,6 +23,7 @@ public class GameView extends BorderPane implements TimerObserver {
     Label timerLabel;
     Label currentPlayerLabel;
     GameController gameController;
+    MusicPlayerView musicPlayerView;
 
     public GameView() {
         // Init
@@ -74,7 +77,12 @@ public class GameView extends BorderPane implements TimerObserver {
         });
 
         // Right Pane
-        setRight(new CardView(gameController));
+        ImageView musicImageView = MusicPlayerView.getInstance().getMusicImageView();
+        System.out.println(MusicPlayerView.getInstance().getMusicImageView());
+        VBox vbox = new VBox();
+        vbox.getChildren().add(new CardView(gameController));
+        vbox.getChildren().add(musicImageView);
+        setRight(vbox);
 
         // Bottom pane
         setBottom(new HandView());
@@ -90,4 +98,5 @@ public class GameView extends BorderPane implements TimerObserver {
     public void update(String timerText) {
             timerLabel.setText(timerText);
     }
+
 }
