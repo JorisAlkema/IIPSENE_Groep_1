@@ -18,13 +18,10 @@ import java.util.ArrayList;
 
 public class DestinationPopUp {
     private final DestinationTicketController destinationTicketController;
-    private final int CARDHEIGHT = 161;
-    private final double UNSELECTED_OPACITY = 0.6;
-    private final double SELECTED_OPACITY = 1;
-    private final int WINDOW_X_POSITION = 1640;
-    private final int WINDOW_Y_POSITION = 50;
-    private final int WINDOW_WIDTH = 300;
-    private final int WINDOW_HEIGHT = 936;
+    private static final int WIDTH = 300;
+    private static final int CARDHEIGHT = 161;
+    private static final double UNSELECTED_OPACITY = 0.6;
+    private static final double SELECTED_OPACITY = 1;
 
     public DestinationPopUp(ArrayList<DestinationTicket> destinationTickets) {
         this.destinationTicketController = new DestinationTicketController(destinationTickets);
@@ -40,9 +37,7 @@ public class DestinationPopUp {
 
     private void showPopUp(ArrayList<DestinationTicket> destinationTickets) {
         Stage stage = new Stage();
-        stage.getIcons().add(new Image("traincards/traincard_back_small.png"));
-        stage.setWidth(WINDOW_WIDTH);
-        stage.setHeight(WINDOW_HEIGHT);
+        stage.setWidth(WIDTH);
         stage.setHeight( (destinationTickets.size() + 1) * CARDHEIGHT );
         stage.setOnCloseRequest(Event::consume);
 
@@ -50,7 +45,7 @@ public class DestinationPopUp {
         int minimumTickets = destinationTickets.size() / 2;
 
         VBox vBox = new VBox();
-        vBox.setAlignment(Pos.TOP_CENTER);
+        vBox.setAlignment(Pos.CENTER);
         Label label = new Label("Select at least " + minimumTickets + " destination tickets");
         label.setStyle("-fx-font-size:18px");
         vBox.getChildren().add(label);
@@ -87,7 +82,5 @@ public class DestinationPopUp {
         stage.setScene(scene);
         stage.show();
         stage.setAlwaysOnTop(true);
-        stage.setX(WINDOW_X_POSITION);
-        stage.setY(WINDOW_Y_POSITION);
     }
 }

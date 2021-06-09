@@ -65,6 +65,8 @@ public class Player {
 
     public void addDestinationTicket(DestinationTicket destinationTicket){
         this.destinationTickets.add(destinationTicket);
+        HandModel handModel = HandModel.getInstance();
+        handModel.setDestinationTicketsInHand(this.destinationTickets);
     }
 
     public void incrementPoints(int points) {
