@@ -11,13 +11,22 @@ import java.util.ArrayList;
 public class MusicPlayer implements MusicObservable {
     private boolean isPlaying = true;
     private ArrayList<MusicObserver> observers = new ArrayList<>();
+    static MusicPlayer musicPlayer;
     private Media media;
     private MediaPlayer mediaPlayer;
 
     public MusicPlayer() {
         media = new Media(new File("src/main/resources/music/europe.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(media);
-//        mediaPlayer.play();
+        mediaPlayer.play();
+    }
+
+    public static MusicPlayer getInstance() {
+        if (musicPlayer == null) {
+            musicPlayer = new MusicPlayer();
+        }
+
+        return musicPlayer;
     }
 
     public void toggleMusic() {
