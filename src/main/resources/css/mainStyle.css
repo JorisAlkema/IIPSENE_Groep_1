@@ -17,4 +17,5 @@
     -fx-scale-y: 1.1;
     -fx-scale-z: 1.1;
     -fx-cursor: hand;
+    -fx-view-order: -1;
 }

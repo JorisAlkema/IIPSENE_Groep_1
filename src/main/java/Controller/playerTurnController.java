@@ -78,7 +78,7 @@ public class playerTurnController {
         return true;
     }
     
-    private Player getCurrent(GameState gameState) {
+    public Player getCurrent(GameState gameState) {
         for (Player player : gameState.getPlayers()) {
             if (player.isTurn()) {
                 return player;

@@ -1,11 +1,10 @@
 package View;
 
 import App.MainState;
-import Controller.DestinationTicketController;
 import Controller.GameController;
 import Model.TrainCard;
 import Observers.CardsObserver;
-import Observers.TimerObserver;
+import Observers.TurnTimerObserver;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,7 +19,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
-public class GameView extends BorderPane implements TimerObserver, CardsObserver {
+public class GameView extends BorderPane implements TurnTimerObserver, CardsObserver {
     Label timerLabel;
     Label currentPlayerLabel;
     GameController gameController;
@@ -86,7 +85,7 @@ public class GameView extends BorderPane implements TimerObserver, CardsObserver
         setBottom(new HandView());
 
         //
-        gameController.registerObserver(this);
+        gameController.registerTurnTimerObserver(this);
         gameController.registerCardsObserver(this);
 
         // TODO: find more MVC-like way to pass initial list of tickets that should form the deck

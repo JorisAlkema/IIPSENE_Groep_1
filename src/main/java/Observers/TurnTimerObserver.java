@@ -1,5 +1,5 @@
 package Observers;
 
-public interface TimerObserver {
+public interface TurnTimerObserver {
     void update(String timerText);
 }
