@@ -1,12 +1,17 @@
 package View;
 
 import Controller.HandController;
+import Model.DestinationTicket;
 import Model.TrainCard;
 import Observers.HandObserver;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -26,18 +31,27 @@ public class HandView extends HBox implements HandObserver {
     private final ImageView yellowCard = new ImageView("traincards/traincard_yellow_small.png");
     private final ImageView locoCard = new ImageView("traincards/traincard_loco_small.png");
     private final ArrayList<ImageView> cardImageViews;
-    private final ArrayList<StackPane> stackPanes;
+    private final ArrayList<StackPane> trainCardPanes;
+    private final ScrollPane destinationTicketPane;
 
     public HandView() {
         this.handController = new HandController();
         handController.registerObserver(this);
-
+        setAlignment(Pos.CENTER_RIGHT);
         this.cardImageViews = new ArrayList<>();
         fillCardImageViews();
-        this.stackPanes = createStackPaneList();
+        this.trainCardPanes = createStackPaneList();
+        this.destinationTicketPane = new ScrollPane();
+        initDestinationTicketPane();
 
-        getChildren().add(new DestinationTicketView());
-        getChildren().addAll(stackPanes);
+        getChildren().add(destinationTicketPane);
+        getChildren().addAll(trainCardPanes);
+    }
+
+    private void initDestinationTicketPane() {
+        destinationTicketPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        destinationTicketPane.setMaxHeight(174); // TrainCard height in hand
+        destinationTicketPane.setMinWidth(203); // Ticket width in hand
     }
 
     private ArrayList<StackPane> createStackPaneList() {
@@ -63,8 +77,12 @@ public class HandView extends HBox implements HandObserver {
         amount.setTranslateX(35);
         amount.setTranslateY(-70);
 
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setSaturation(-1);
+        imageView.setEffect(colorAdjust);
+        imageView.setOpacity(0.6);
         stackPane.getChildren().addAll(imageView, outcerCircle, innerCircle, amount);
-        stackPane.setVisible(false);
+
         return stackPane;
     }
 
@@ -78,29 +96,48 @@ public class HandView extends HBox implements HandObserver {
      * Calculates the amount of each card color, then updates the text for the corresponding stackpane
      */
     @Override
-    public void update(ArrayList<TrainCard> trainCards) {
-        HashMap<String, Integer> map = new HashMap<>();
-        for (TrainCard trainCard : trainCards) {
-            String color = trainCard.getColor();
-            if (map.containsKey(color)) {
-                map.put(color, map.get(color) + 1);
-            } else {
-                map.put(color, 1);
-            }
+    public void update(HashMap<String, Integer> trainCardMap, ArrayList<DestinationTicket> destinationTickets) {
+        updateDestinationTickets(destinationTickets);
+        updateTrainCards(trainCardMap);
+    }
+
+    private void updateDestinationTickets(ArrayList<DestinationTicket> destinationTickets) {
+        VBox vBox = new VBox();
+        for (DestinationTicket destinationTicket: destinationTickets){
+            String path = destinationTicket.fileNameSmall();
+            vBox.getChildren().addAll(new ImageView(path));
         }
-        for (StackPane stackPane : stackPanes) {
+        destinationTicketPane.setContent(vBox);
+    }
+
+    private void updateTrainCards(HashMap<String, Integer> map) {
+        for (StackPane stackPane : trainCardPanes) {
             Node node = stackPane.getChildren().get(0);
             ImageView imageView = (ImageView) node;
-            boolean visible = false;
+            int saturation = -1;
+            double opacity = 0.6;
+            boolean canHover = false;
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 if (imageView.getImage().getUrl().contains(entry.getKey().toLowerCase())) {
                     if (entry.getValue() != 0) {
                         setTextOnStackPane(stackPane, Integer.toString(entry.getValue()));
-                        visible = true;
+                        saturation = 0;
+                        opacity = 1;
+                        canHover = true;
                     }
                 }
             }
-            stackPane.setVisible(visible);
+
+            ColorAdjust colorAdjust = new ColorAdjust();
+            colorAdjust.setSaturation(saturation);
+            imageView.setOpacity(opacity);
+            imageView.setEffect(colorAdjust);
+
+            if (canHover) {
+                stackPane.setId("onHoverUp");
+            } else {
+                stackPane.setId("");
+            }
         }
     }
 

@@ -19,8 +19,8 @@ public class DestinationTicketView extends ScrollPane {
         this.setHbarPolicy(ScrollBarPolicy.NEVER);
         this.setMaxHeight(174);
         vBox = new VBox();
-        for (DestinationTicket destinationTicket: MainState.getLocalPlayer().getDestinationTickets()){
-            String path = destinationTicket.getFileName();
+        for (DestinationTicket destinationTicket: MainState.firebaseService.getPlayerFromLobby(MainState.roomCode,MainState.player_uuid).getDestinationTickets()){
+            String path = destinationTicket.fileName();
             vBox.getChildren().addAll(new ImageView(new Image(path)));
         }
         setContent(vBox);

@@ -5,14 +5,18 @@ import Observers.HandObservable;
 import Observers.HandObserver;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HandModel implements HandObservable {
-    private ArrayList<TrainCard> trainCardsInHand;
+    private HashMap<String, Integer> trainCardMap;
+    private ArrayList<DestinationTicket> destinationTicketsInHand;
     private ArrayList<HandObserver> observers;
     static HandModel handModel;
 
     public HandModel() {
-        trainCardsInHand = MainState.getLocalPlayer().getTrainCards();
+        Player localPlayer = MainState.getLocalPlayer();
+        trainCardMap = localPlayer.trainCardsAsMap();
+        destinationTicketsInHand = localPlayer.getDestinationTickets();
         observers = new ArrayList<>();
     }
 
@@ -23,8 +27,13 @@ public class HandModel implements HandObservable {
         return handModel;
     }
 
-    public void setTrainCards(ArrayList<TrainCard> trainCards) {
-        trainCardsInHand = trainCards;
+    public void setTrainCardsMap(HashMap<String, Integer> trainCardMap) {
+        this.trainCardMap = trainCardMap;
+        notifyObservers();
+    }
+
+    public void setDestinationTicketsInHand(ArrayList<DestinationTicket> destinationTicketsInHand) {
+        this.destinationTicketsInHand = destinationTicketsInHand;
         notifyObservers();
     }
 
@@ -41,7 +50,7 @@ public class HandModel implements HandObservable {
     @Override
     public void notifyObservers() {
         for (HandObserver observer : observers) {
-            observer.update(trainCardsInHand);
+            observer.update(trainCardMap, destinationTicketsInHand);
         }
     }
 }
