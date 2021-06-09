@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 // The Player class represents a player in the game
 public class Player {
@@ -159,5 +160,18 @@ public class Player {
 
     public void setClaimedRoutes(ArrayList<Route> claimedRoutes) {
         this.claimedRoutes = claimedRoutes;
+    }
+
+    public HashMap<String, Integer> getTrainCardsAsMap() {
+        HashMap<String, Integer> map = new HashMap<>();
+        for (TrainCard trainCard : this.trainCards) {
+            String color = trainCard.getColor();
+            if (map.containsKey(color)) {
+                map.put(color, map.get(color) + 1);
+            } else {
+                map.put(color, 1);
+            }
+        }
+        return map;
     }
 }
