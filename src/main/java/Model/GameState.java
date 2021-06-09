@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class GameState {
     private String message;
     private Boolean ongoing;
+    private Boolean loadedByHost = false;
     private ArrayList<Player> players;
     private ArrayList<TrainCard> openDeck;
     private ArrayList<TrainCard> closedDeck;
@@ -66,5 +67,13 @@ public class GameState {
             }
         }
         return null;
+    }
+
+    public Boolean isLoadedByHost() {
+        return loadedByHost;
+    }
+
+    public void setLoadedByHost(Boolean loadedByHost) {
+        this.loadedByHost = loadedByHost;
     }
 }
