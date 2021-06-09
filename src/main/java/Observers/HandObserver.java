@@ -4,7 +4,8 @@ import Model.DestinationTicket;
 import Model.TrainCard;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface HandObserver {
-    void update(ArrayList<TrainCard> trainCards, ArrayList<DestinationTicket> destinationTickets);
+    void update(HashMap<String, Integer> trainCardMap, ArrayList<DestinationTicket> destinationTickets);
 }

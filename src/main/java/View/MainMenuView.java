@@ -1,5 +1,6 @@
 package View;
 
+import App.MainState;
 import Controller.MainMenuController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,8 +22,8 @@ public class MainMenuView extends StackPane {
         grid.setPadding(new Insets(40));
 
         ImageView title = new ImageView("images/main_menu_logo.png");
-        title.setFitWidth(title.getImage().getWidth() * 0.9);
-        title.setFitHeight(title.getImage().getHeight() * 0.9);
+        title.setFitWidth(title.getImage().getWidth() * 0.7);
+        title.setFitHeight(title.getImage().getHeight() * 0.7);
 
         grid.add(title, 0,0,2,1);
 
@@ -31,8 +32,8 @@ public class MainMenuView extends StackPane {
         colorAdjust.setBrightness(-0.5);
 
         ImageView background = new ImageView("images/main_menu_background.jpg");
-        background.setFitWidth(1280);
-        background.setFitHeight(720);
+        background.setFitWidth(MainState.WINDOW_WIDTH);
+        background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
 
         // Button layout

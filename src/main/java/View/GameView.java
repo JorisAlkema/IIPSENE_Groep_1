@@ -1,11 +1,13 @@
 package View;
 
 import App.MainState;
-import Controller.DestinationTicketController;
 import Controller.GameController;
+import Model.Player;
+import Model.PlayerTurn;
 import Model.TrainCard;
 import Observers.CardsObserver;
-import Observers.TimerObserver;
+import Observers.PlayerTurnObverser;
+import Observers.TurnTimerObserver;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,9 +22,10 @@ import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
-public class GameView extends BorderPane implements TimerObserver, CardsObserver {
+public class GameView extends BorderPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser {
     Label timerLabel;
     Label currentPlayerLabel;
+  
     GameController gameController;
 
     VBox cardsBox = new VBox();
@@ -52,8 +55,7 @@ public class GameView extends BorderPane implements TimerObserver, CardsObserver
             MainState.primaryStage.setScene(newScene);
         });
 
-        currentPlayerLabel = new Label("Current player: ");
-
+        currentPlayerLabel = new Label();
 
         vBox.getChildren().addAll(mapZoomButton, mainmenuButton, currentPlayerLabel);
 
@@ -86,8 +88,9 @@ public class GameView extends BorderPane implements TimerObserver, CardsObserver
         setBottom(new HandView());
 
         //
-        gameController.registerObserver(this);
+        gameController.registerTurnTimerObserver(this);
         gameController.registerCardsObserver(this);
+        gameController.registerPlayerTurnObserver(this);
 
         // TODO: find more MVC-like way to pass initial list of tickets that should form the deck
         DestinationPopUp destinationPopUp = new DestinationPopUp(mapView.getMapController().getGameSetupService().getDestinationTickets());
@@ -113,12 +116,14 @@ public class GameView extends BorderPane implements TimerObserver, CardsObserver
                 openTrainCards.add(new ImageView(new Image(path)));
             }
 
-            // onClick events
+            // onClick events and ID
+            closedTrainCard.setId("TrainCard");
             closedTrainCard.setOnMouseClicked(e -> {
                 this.gameController.pickClosedCard();
             });
 
             for (ImageView openTrainCard : openTrainCards) {
+                openTrainCard.setId("TrainCard");
                 openTrainCard.setOnMouseClicked(e -> {
                     this.gameController.pickOpenCard(openTrainCards.indexOf(openTrainCard));
                 });
@@ -128,5 +133,10 @@ public class GameView extends BorderPane implements TimerObserver, CardsObserver
             cardsBox.getChildren().add(closedTrainCard);
             cardsBox.getChildren().addAll(openTrainCards);
         }
+    }
+
+    @Override
+    public void update(PlayerTurn playerTurn) {
+        currentPlayerLabel.setText("Current player: " + playerTurn.getCurrentPlayerUsername());
     }
 }
