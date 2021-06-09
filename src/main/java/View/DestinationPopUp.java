@@ -26,7 +26,8 @@ public class DestinationPopUp {
     private final int WINDOW_WIDTH = 300;
     private final int WINDOW_HEIGHT = 936;
 
-    public DestinationPopUp(ArrayList<DestinationTicket> destinationTickets) {
+    public DestinationPopUp() {
+        ArrayList<DestinationTicket> destinationTickets = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode).getDestinationDeck();
         this.destinationTicketController = new DestinationTicketController(destinationTickets);
     }
 
@@ -76,6 +77,9 @@ public class DestinationPopUp {
             if(selectedTickets.size() >= minimumTickets){
                 for (DestinationTicket destinationTicket: selectedTickets){
                     player.addDestinationTicket(destinationTicket);
+
+                    destinationTickets.remove(destinationTicket);
+                    MainState.firebaseService.getGameStateOfLobby(MainState.roomCode).setDestinationDeck(destinationTickets);
                 }
                 stage.close();
             }
