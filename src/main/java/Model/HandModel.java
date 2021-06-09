@@ -8,11 +8,14 @@ import java.util.ArrayList;
 
 public class HandModel implements HandObservable {
     private ArrayList<TrainCard> trainCardsInHand;
+    private ArrayList<DestinationTicket> destinationTicketsInHand;
     private ArrayList<HandObserver> observers;
     static HandModel handModel;
 
     public HandModel() {
-        trainCardsInHand = MainState.firebaseService.getPlayerFromLobby(MainState.roomCode, MainState.player_uuid).getTrainCards();
+        Player localPlayer = MainState.getLocalPlayer();
+        trainCardsInHand = localPlayer.getTrainCards();
+        destinationTicketsInHand = localPlayer.getDestinationTickets();
         observers = new ArrayList<>();
     }
 
@@ -25,6 +28,11 @@ public class HandModel implements HandObservable {
 
     public void setTrainCards(ArrayList<TrainCard> trainCards) {
         trainCardsInHand = trainCards;
+        notifyObservers();
+    }
+
+    public void setDestinationTicketsInHand(ArrayList<DestinationTicket> destinationTicketsInHand) {
+        this.destinationTicketsInHand = destinationTicketsInHand;
         notifyObservers();
     }
 
@@ -41,7 +49,7 @@ public class HandModel implements HandObservable {
     @Override
     public void notifyObservers() {
         for (HandObserver observer : observers) {
-            observer.update(trainCardsInHand);
+            observer.update(trainCardsInHand, destinationTicketsInHand);
         }
     }
 }

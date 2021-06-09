@@ -25,5 +25,4 @@ public class DestinationTicketView extends ScrollPane {
         }
         setContent(vBox);
     }
-
 }

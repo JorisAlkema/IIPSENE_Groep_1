@@ -16,4 +16,12 @@ public class DestinationTicketDeck {
     public ArrayList<DestinationTicket> getDestinationTickets() {
         return destinationTickets;
     }
+
+    public DestinationTicket draw(int index) {
+        return this.destinationTickets.remove(index);
+    }
+
+    public void addCardToDeck(DestinationTicket ticket) {
+        this.destinationTickets.add(ticket);
+    }
 }
