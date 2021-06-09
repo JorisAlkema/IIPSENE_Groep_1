@@ -90,9 +90,9 @@ public class HandView extends HBox implements HandObserver {
      * Calculates the amount of each card color, then updates the text for the corresponding stackpane
      */
     @Override
-    public void update(ArrayList<TrainCard> trainCards, ArrayList<DestinationTicket> destinationTickets) {
+    public void update(HashMap<String, Integer> trainCardMap, ArrayList<DestinationTicket> destinationTickets) {
         updateDestinationTickets(destinationTickets);
-        updateTrainCards(trainCards);
+        updateTrainCards(trainCardMap);
     }
 
     private void updateDestinationTickets(ArrayList<DestinationTicket> destinationTickets) {
@@ -104,16 +104,7 @@ public class HandView extends HBox implements HandObserver {
         destinationTicketPane.setContent(vBox);
     }
 
-    private void updateTrainCards(ArrayList<TrainCard> trainCards) {
-        HashMap<String, Integer> map = new HashMap<>();
-        for (TrainCard trainCard : trainCards) {
-            String color = trainCard.getColor();
-            if (map.containsKey(color)) {
-                map.put(color, map.get(color) + 1);
-            } else {
-                map.put(color, 1);
-            }
-        }
+    private void updateTrainCards(HashMap<String, Integer> map) {
         for (StackPane stackPane : trainCardPanes) {
             Node node = stackPane.getChildren().get(0);
             ImageView imageView = (ImageView) node;
