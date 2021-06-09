@@ -1,7 +1,9 @@
 package View;
 
 import App.MainState;
+import Controller.DestinationTicketController;
 import Controller.GameController;
+import Model.DestinationTicketDeck;
 import Observers.TimerObserver;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -75,6 +77,8 @@ public class GameView extends BorderPane implements TimerObserver {
 
         //
         gameController.registerObserver(this);
+        DestinationTicketController destinationTicketController = new DestinationTicketController(mapView.getMapController().getGameSetupService().getDestinationTickets());
+        DestinationPopup.showPopUp(destinationTicketController.getDestinationTickets(true));
 //        gameController.setTimerText(gameController.getTimer());
     }
 

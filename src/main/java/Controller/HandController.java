@@ -10,7 +10,7 @@ public class HandController {
     private final HandModel handModel;
 
     public HandController() {
-        localPlayer = MainState.firebaseService.getPlayerFromLobby(MainState.roomCode, MainState.player_uuid);
+        localPlayer = MainState.getLocalPlayer();
         handModel = HandModel.getInstance();
     }
 

@@ -31,7 +31,7 @@ public class DestinationTicket {
     }
 
     public String getFileName() {
-        return "eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase();
+        return "destination_tickets/eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase() + ".png";
     }
 
     @Override
@@ -48,5 +48,9 @@ public class DestinationTicket {
 
     public City getSecondCity() {
         return secondCity;
+    }
+
+    public String getType() {
+        return type;
     }
 }
