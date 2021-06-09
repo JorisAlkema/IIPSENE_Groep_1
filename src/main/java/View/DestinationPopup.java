@@ -1,11 +1,14 @@
 package View;
 
 import App.MainState;
+import Controller.DestinationTicketController;
 import Model.DestinationTicket;
-import javafx.geometry.Insets;
+import Model.Player;
+import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -13,60 +16,77 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
-public class DestinationPopup {
+public class DestinationPopUp {
+    private final DestinationTicketController destinationTicketController;
+    private final int CARDHEIGHT = 161;
+    private final double UNSELECTED_OPACITY = 0.6;
+    private final double SELECTED_OPACITY = 1;
+    private final int WINDOW_X_POSITION = 1640;
+    private final int WINDOW_Y_POSITION = 50;
+    private final int WINDOW_WIDTH = 300;
+    private final int WINDOW_HEIGHT = 936;
 
-    public static void showPopUp(ArrayList<DestinationTicket> destinationTickets) {
-        final int WINDOW_X_POSITION = 1640;
-        final int WINDOW_Y_POSITION = 50;
-        final int WINDOW_WIDTH = 270;
-        final int WINDOW_HEIGHT = 936;
+    public DestinationPopUp(ArrayList<DestinationTicket> destinationTickets) {
+        this.destinationTicketController = new DestinationTicketController(destinationTickets);
+    }
 
+    public void showAtStartOfGame() {
+        this.showPopUp(this.destinationTicketController.drawTickets(true));
+    }
+
+    public void showDuringGame() {
+        this.showPopUp(this.destinationTicketController.drawTickets(false));
+    }
+
+    private void showPopUp(ArrayList<DestinationTicket> destinationTickets) {
         Stage stage = new Stage();
+        stage.getIcons().add(new Image("traincards/traincard_back_small.png"));
         stage.setWidth(WINDOW_WIDTH);
         stage.setHeight(WINDOW_HEIGHT);
-        stage.setTitle("Tickets");
-        stage.getIcons().add(new Image("traincards/traincard_back_small.png"));
+        stage.setHeight( (destinationTickets.size() + 1) * CARDHEIGHT );
+        stage.setOnCloseRequest(Event::consume);
+
+        ArrayList<DestinationTicket> selectedTickets = new ArrayList<>();
+        int minimumTickets = destinationTickets.size() / 2;
+
         VBox vBox = new VBox();
+        vBox.setAlignment(Pos.TOP_CENTER);
+        Label label = new Label("Select at least " + minimumTickets + " destination tickets");
+        label.setStyle("-fx-font-size:18px");
+        vBox.getChildren().add(label);
 
-        ArrayList<DestinationTicket> selectedTickets = new ArrayList<DestinationTicket>();
-
-        for (int i=0; i < destinationTickets.size();i++){
-            String path = destinationTickets.get(i).getFileName();
-            ImageView destinationTicket = new ImageView(new Image(path));
-            destinationTicket.setOpacity(0.7);
-
-            int index = i;
-            int selectedcards;
-            destinationTicket.setOnMouseClicked(e -> {
-                if(destinationTicket.getOpacity() == 0.7){
-                    selectedTickets.add(destinationTickets.get(index));
-                    destinationTicket.setOpacity(1);
+        for (DestinationTicket destinationTicket : destinationTickets) {
+            String path = destinationTicket.getFileName();
+            ImageView ticketImageView = new ImageView(new Image(path));
+            ticketImageView.setOpacity(UNSELECTED_OPACITY);
+            ticketImageView.setOnMouseClicked(e -> {
+                if ( ! selectedTickets.contains(destinationTicket)) {
+                    selectedTickets.add(destinationTicket);
+                    ticketImageView.setOpacity(SELECTED_OPACITY);
                 } else {
-                    selectedTickets.remove(destinationTickets.get(index));
-                    destinationTicket.setOpacity(0.7);
+                    selectedTickets.remove(destinationTicket);
+                    ticketImageView.setOpacity(UNSELECTED_OPACITY);
                 }
             });
-            vBox.getChildren().add(destinationTicket);
+            vBox.getChildren().add(ticketImageView);
         }
 
-        Button closeButton = new Button("Ok");
-        closeButton.setPadding(new Insets(0, 0, 0, 10));
+        Button closeButton = new Button("Confirm");
+        Player player = MainState.getLocalPlayer();
         closeButton.setOnAction(e -> {
-            if(selectedTickets.size() != 0){
+            if(selectedTickets.size() >= minimumTickets){
+                for (DestinationTicket destinationTicket: selectedTickets){
+                    player.addDestinationTicket(destinationTicket);
+                }
                 stage.close();
             }
-            for (DestinationTicket destinationTicket: selectedTickets){
-                MainState.getLocalPlayer().addDestinationTicket(destinationTicket);
-            }
         });
-
-        vBox.getChildren().addAll(closeButton);
-        vBox.setAlignment(Pos.TOP_CENTER);
+        vBox.getChildren().add(closeButton);
 
         Scene scene = new Scene(vBox);
-        scene.getStylesheets().add(MainState.MenuCSS);
         stage.setScene(scene);
-        stage.show(); // or showAndWait
+        stage.show();
+        stage.setAlwaysOnTop(true);
         stage.setX(WINDOW_X_POSITION);
         stage.setY(WINDOW_Y_POSITION);
     }
