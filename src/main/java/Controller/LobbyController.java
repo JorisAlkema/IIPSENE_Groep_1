@@ -15,6 +15,11 @@ public class LobbyController {
 
     private Lobby lobby = new Lobby();
 
+    private final int WINDOW_X_POSITION = 20;
+    private final int WINDOW_Y_POSITION = 50;
+    private final int WINDOW_WIDTH = 1620;
+    private final int WINDOW_HEIGHT = 936;
+
     public LobbyController(LobbyView lobbyView) {
         lobby.registerObserver(lobbyView);
 
@@ -59,6 +64,11 @@ public class LobbyController {
                         Scene scene = new Scene(new GameView());
                         scene.getStylesheets().add(MainState.mainCSS);
                         MainState.primaryStage.setScene(scene);
+
+                        MainState.primaryStage.setWidth(WINDOW_WIDTH);
+                        MainState.primaryStage.setHeight(WINDOW_HEIGHT);
+                        MainState.primaryStage.setX(WINDOW_X_POSITION);
+                        MainState.primaryStage.setY(WINDOW_Y_POSITION);
                     });
                 }
             }

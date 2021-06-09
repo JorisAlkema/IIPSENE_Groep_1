@@ -22,7 +22,6 @@ import java.util.ArrayList;
 
 public class GameView extends BorderPane implements TimerObserver, CardsObserver {
     Label timerLabel;
-    Label currentPlayerLabel;
     GameController gameController;
 
     VBox cardsBox = new VBox();
@@ -52,10 +51,7 @@ public class GameView extends BorderPane implements TimerObserver, CardsObserver
             MainState.primaryStage.setScene(newScene);
         });
 
-        currentPlayerLabel = new Label("Current player: ");
-
-
-        vBox.getChildren().addAll(mapZoomButton, mainmenuButton, currentPlayerLabel);
+        vBox.getChildren().addAll(mapZoomButton, mainmenuButton);
 
         for (StackPane stackPane : gameController.createOpponentViews()) {
             vBox.getChildren().add(stackPane);
