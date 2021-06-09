@@ -19,7 +19,7 @@ public class GameController implements TimerObservable {
     private ListenerRegistration listenerRegistration;
 
     private playerTurnController playerTurnController = new playerTurnController();
-    private CardController cardController = new CardController();
+    private CardsController cardsController = new CardsController();
 
     // Timer needs to be model
     private String timerText;
@@ -83,7 +83,7 @@ public class GameController implements TimerObservable {
                         removeLeftPlayers(incomingGameState);
                     } else {
                         gameState = incomingGameState;
-                        cardController.notifyObservers(gameState.getOpenDeck());
+                        cardsController.notifyObservers(gameState.getOpenDeck());
                     }
 
                     try {
@@ -99,8 +99,8 @@ public class GameController implements TimerObservable {
 
     // Step 1
     public void generateDecks() {
-        ArrayList<TrainCard> closedCards = cardController.generateClosedDeck();
-        gameState.setOpenDeck(cardController.generateOpenDeck(closedCards));
+        ArrayList<TrainCard> closedCards = cardsController.generateClosedDeck();
+        gameState.setOpenDeck(cardsController.generateOpenDeck(closedCards));
         gameState.setClosedDeck(closedCards);
     }
 
@@ -132,7 +132,7 @@ public class GameController implements TimerObservable {
         // Check if player turn
         System.out.println(playerTurnController.getTurn());
         if (playerTurnController.getTurn()) {
-            TrainCard pickedClosedCard = cardController.pickClosedCard(gameState);
+            TrainCard pickedClosedCard = cardsController.pickClosedCard(gameState);
             System.out.println("Picked Closed Card");
             addTrainCardToPlayerInventoryInGameState(pickedClosedCard);
             incrementPlayerActionsTaken();
@@ -145,7 +145,7 @@ public class GameController implements TimerObservable {
     public void pickOpenCard(int index) {
         try {
             if (playerTurnController.getTurn()) {
-                TrainCard pickedOpenCard = cardController.pickOpenCard(gameState, index);
+                TrainCard pickedOpenCard = cardsController.pickOpenCard(gameState, index);
                 System.out.println("Picked Open Card");
                 addTrainCardToPlayerInventoryInGameState(pickedOpenCard);
 
@@ -193,7 +193,7 @@ public class GameController implements TimerObservable {
     }
 
     public void registerCardsObserver(CardsObserver cardsObserver) {
-        cardController.registerObserver(cardsObserver);
+        cardsController.registerObserver(cardsObserver);
     }
 
     private void checkIfTurnIsOver() {
@@ -212,6 +212,7 @@ public class GameController implements TimerObservable {
         incomingGameState.getPlayers().forEach((n) -> remainingPlayers.add(n.getUUID()));
         gameState.getPlayers().removeIf(player -> !remainingPlayers.contains(player.getUUID()));
     }
+
     // ===============================================================
 
     public void countdownTimer() {

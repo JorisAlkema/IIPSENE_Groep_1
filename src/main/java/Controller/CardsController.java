@@ -1,6 +1,7 @@
 package Controller;
 
 import App.MainState;
+import Model.Cards;
 import Model.GameState;
 import Model.Player;
 import Model.TrainCard;
@@ -10,8 +11,8 @@ import Observers.CardsObserver;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class CardController implements CardsObservable {
-    private ArrayList<CardsObserver> cardsObservers = new ArrayList<>();
+public class CardsController {
+    private Cards cards = new Cards();
 
     public TrainCard pickClosedCard(GameState gameState) {
         TrainCard pickedClosedCard = getRandomCard(gameState);
@@ -70,20 +71,16 @@ public class CardController implements CardsObservable {
         return randomCard;
     }
 
-    @Override
+
     public void registerObserver(CardsObserver observer) {
-        cardsObservers.add(observer);
+        cards.registerObserver(observer);
     }
 
-    @Override
     public void unregisterObserver(CardsObserver observer) {
-        cardsObservers.remove(observer);
+        cards.unregisterObserver(observer);
     }
 
-    @Override
     public void notifyObservers(ArrayList<TrainCard> openCards) {
-        for (CardsObserver cardsObserver : cardsObservers) {
-            cardsObserver.update(openCards);
-        }
+        cards.notifyObservers(openCards);
     }
 }
