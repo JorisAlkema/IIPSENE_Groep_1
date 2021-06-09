@@ -113,12 +113,14 @@ public class GameView extends BorderPane implements TimerObserver, CardsObserver
                 openTrainCards.add(new ImageView(new Image(path)));
             }
 
-            // onClick events
+            // onClick events and ID
+            closedTrainCard.setId("TrainCard");
             closedTrainCard.setOnMouseClicked(e -> {
                 this.gameController.pickClosedCard();
             });
 
             for (ImageView openTrainCard : openTrainCards) {
+                openTrainCard.setId("TrainCard");
                 openTrainCard.setOnMouseClicked(e -> {
                     this.gameController.pickOpenCard(openTrainCards.indexOf(openTrainCard));
                 });
