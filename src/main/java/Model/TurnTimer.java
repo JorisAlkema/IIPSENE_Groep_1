@@ -23,7 +23,7 @@ public class TurnTimer implements TurnTimerObservable {
         timer = new Timer();
 
         // Increase time by 1, since 0:00 is counted as the final second
-        seconds = 10 + 1;
+        seconds = 90 + 1;
 
         // Schedules the timer for repeated fixed-rate execution, beginning after the specified delay
         timer.scheduleAtFixedRate(new TimerTask() {
