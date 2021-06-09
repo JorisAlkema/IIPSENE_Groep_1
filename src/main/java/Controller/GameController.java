@@ -3,6 +3,8 @@ package Controller;
 import App.MainState;
 import Model.*;
 import Observers.CardsObserver;
+import Service.GameSetupService;
+import View.DestinationPopUp;
 import View.RoutePopUp;
 import Observers.PlayerTurnObverser;
 import com.google.cloud.firestore.ListenerRegistration;
@@ -24,7 +26,9 @@ public class GameController {
     private MapController mapController = new MapController();
     private TurnTimerController turnTimerController = new TurnTimerController();
 
+    private GameSetupService gameSetupService = new GameSetupService();
 
+    boolean firstTurn = true;
 
     public GameController() {
         MainState.primaryStage.setOnCloseRequest(event -> {
@@ -84,11 +88,12 @@ public class GameController {
                         // End old timer and Make time init timer
                         turnTimerController.resetTimer(this);
                     }
-
                     try {
                         playerTurnController.checkMyTurn(gameState);
-                        if (playerTurnController.getTurn()) {
-
+                        if (firstTurn && playerTurnController.getTurn()) {
+                            firstTurn = false;
+                            DestinationPopUp destinationPopUp = new DestinationPopUp();
+                            destinationPopUp.showAtStartOfGame();
                         }
                     } catch (Exception exception) {
                         exception.printStackTrace();
@@ -104,6 +109,7 @@ public class GameController {
         ArrayList<TrainCard> closedCards = cardsController.generateClosedDeck();
         gameState.setOpenDeck(cardsController.generateOpenDeck(closedCards));
         gameState.setClosedDeck(closedCards);
+        gameState.setDestinationDeck(gameSetupService.getDestinationTickets());
     }
 
     // Step 2

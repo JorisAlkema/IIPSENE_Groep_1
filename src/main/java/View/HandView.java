@@ -104,7 +104,7 @@ public class HandView extends HBox implements HandObserver {
     private void updateDestinationTickets(ArrayList<DestinationTicket> destinationTickets) {
         VBox vBox = new VBox();
         for (DestinationTicket destinationTicket: destinationTickets){
-            String path = destinationTicket.getFileNameSmall();
+            String path = destinationTicket.fileNameSmall();
             vBox.getChildren().addAll(new ImageView(path));
         }
         destinationTicketPane.setContent(vBox);

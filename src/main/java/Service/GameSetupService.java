@@ -28,7 +28,7 @@ public class GameSetupService {
         this.cities = readCitiesFromFile(citiesFile);
         this.routes = readRoutesFromFile(routeFile);
         this.destinationTickets = readDestinationTicketsFromFile(destinationTicketsFile);
-        addNeighborCities();
+//        addNeighborCities();
     }
 
     public void addNeighborCities() {
