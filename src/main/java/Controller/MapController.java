@@ -1,26 +1,23 @@
 package Controller;
 
 import Model.*;
+import Observers.MapObserver;
 import Service.GameSetupService;
 import Service.OverlayEventHandler;
-import View.MapView;
 import javafx.event.Event;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 
 public class MapController {
     private final MapModel mapModel;
-    private final MapView mapView;
     private final GameSetupService gameSetupService;
     private GameController gameController;
 
-    public MapController(MapView mapView) {
+    public MapController() {
         this.gameSetupService = new GameSetupService();
-        this.mapView = mapView;
         this.mapModel = new MapModel(gameSetupService.getRoutes(), gameSetupService.getCities());
         this.mapModel.setCityOverlays(createCityOverlays());
         this.mapModel.setRouteCellOverlays(createRouteCellOverlays());
@@ -174,8 +171,6 @@ public class MapController {
             return;
         }
         this.mapModel.setZoomedIn(true);
-        this.mapView.setPannable(true);
-        this.mapView.setBackgroundImage(this.mapModel.getBackgroundImage());
 
         for (RouteCell routeCell : this.mapModel.getRouteCellOverlays()) {
             routeCell.setWidth(this.mapModel.getCellWidth());
@@ -189,9 +184,7 @@ public class MapController {
             circle.setTranslateX(circle.getTranslateX() * 2);
             circle.setTranslateY(circle.getTranslateY() * 2);
         }
-        this.mapView.layout();
-        this.mapView.setHvalue(this.mapView.getHmin() + (this.mapView.getHmax() - this.mapView.getHmin()) / 2);
-        this.mapView.setVvalue(this.mapView.getVmin() + (this.mapView.getVmax() - this.mapView.getVmin()) / 2);
+        this.mapModel.notifyObservers();
     }
 
     /**
@@ -202,8 +195,6 @@ public class MapController {
             return;
         }
         this.mapModel.setZoomedIn(false);
-        this.mapView.setPannable(false);
-        this.mapView.setBackgroundImage(this.mapModel.getBackgroundImage());
 
         for (RouteCell routeCell : this.mapModel.getRouteCellOverlays()) {
             routeCell.setWidth(this.mapModel.getCellWidth());
@@ -217,6 +208,7 @@ public class MapController {
             circle.setTranslateX(circle.getTranslateX() / 2);
             circle.setTranslateY(circle.getTranslateY() / 2);
         }
+        this.mapModel.notifyObservers();
     }
 
     public MapModel getMapModel() {
@@ -229,5 +221,13 @@ public class MapController {
 
     public GameSetupService getGameSetupService() {
         return gameSetupService;
+    }
+
+    public void registerObserver(MapObserver observer) {
+        this.mapModel.registerObserver(observer);
+    }
+
+    public void unregisterObserver(MapObserver observer) {
+        this.mapModel.unregisterObserver(observer);
     }
 }
