@@ -56,7 +56,7 @@ public class DestinationPopUp {
         vBox.getChildren().add(label);
 
         for (DestinationTicket destinationTicket : destinationTickets) {
-            String path = destinationTicket.getFileName();
+            String path = destinationTicket.fileName();
             ImageView ticketImageView = new ImageView(new Image(path));
             ticketImageView.setOpacity(UNSELECTED_OPACITY);
             ticketImageView.setOnMouseClicked(e -> {
