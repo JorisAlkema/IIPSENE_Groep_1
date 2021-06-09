@@ -87,16 +87,17 @@ public class GameView extends BorderPane implements TimerObserver, CardsObserver
 
         //
         gameController.registerObserver(this);
-
         gameController.registerCardsObserver(this);
-        DestinationTicketController destinationTicketController = new DestinationTicketController(mapView.getMapController().getGameSetupService().getDestinationTickets());
-        DestinationPopup.showPopUp(destinationTicketController.getDestinationTickets(true));
+
+        // TODO: find more MVC-like way to pass initial list of tickets that should form the deck
+        DestinationPopUp destinationPopUp = new DestinationPopUp(mapView.getMapController().getGameSetupService().getDestinationTickets());
+        destinationPopUp.showAtStartOfGame();
 //        gameController.setTimerText(gameController.getTimer());
     }
 
     @Override
     public void update(String timerText) {
-            timerLabel.setText(timerText);
+        timerLabel.setText(timerText);
     }
 
     @Override

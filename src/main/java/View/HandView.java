@@ -1,12 +1,15 @@
 package View;
 
 import Controller.HandController;
+import Model.DestinationTicket;
 import Model.TrainCard;
 import Observers.HandObserver;
 import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -26,7 +29,8 @@ public class HandView extends HBox implements HandObserver {
     private final ImageView yellowCard = new ImageView("traincards/traincard_yellow_small.png");
     private final ImageView locoCard = new ImageView("traincards/traincard_loco_small.png");
     private final ArrayList<ImageView> cardImageViews;
-    private final ArrayList<StackPane> stackPanes;
+    private final ArrayList<StackPane> trainCardPanes;
+    private final ScrollPane destinationTicketPane;
 
     public HandView() {
         this.handController = new HandController();
@@ -34,10 +38,18 @@ public class HandView extends HBox implements HandObserver {
 
         this.cardImageViews = new ArrayList<>();
         fillCardImageViews();
-        this.stackPanes = createStackPaneList();
+        this.trainCardPanes = createStackPaneList();
+        this.destinationTicketPane = new ScrollPane();
+        initDestinationTicketPane();
 
-        getChildren().add(new DestinationTicketView());
-        getChildren().addAll(stackPanes);
+        getChildren().add(destinationTicketPane);
+        getChildren().addAll(trainCardPanes);
+    }
+
+    private void initDestinationTicketPane() {
+        destinationTicketPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        destinationTicketPane.setMaxHeight(174); // TrainCard height in hand
+        destinationTicketPane.setMinWidth(193); // Ticket width in hand
     }
 
     private ArrayList<StackPane> createStackPaneList() {
@@ -78,7 +90,21 @@ public class HandView extends HBox implements HandObserver {
      * Calculates the amount of each card color, then updates the text for the corresponding stackpane
      */
     @Override
-    public void update(ArrayList<TrainCard> trainCards) {
+    public void update(ArrayList<TrainCard> trainCards, ArrayList<DestinationTicket> destinationTickets) {
+        updateDestinationTickets(destinationTickets);
+        updateTrainCards(trainCards);
+    }
+
+    private void updateDestinationTickets(ArrayList<DestinationTicket> destinationTickets) {
+        VBox vBox = new VBox();
+        for (DestinationTicket destinationTicket: destinationTickets){
+            String path = destinationTicket.getFileNameSmall();
+            vBox.getChildren().addAll(new ImageView(path));
+        }
+        destinationTicketPane.setContent(vBox);
+    }
+
+    private void updateTrainCards(ArrayList<TrainCard> trainCards) {
         HashMap<String, Integer> map = new HashMap<>();
         for (TrainCard trainCard : trainCards) {
             String color = trainCard.getColor();
@@ -88,7 +114,7 @@ public class HandView extends HBox implements HandObserver {
                 map.put(color, 1);
             }
         }
-        for (StackPane stackPane : stackPanes) {
+        for (StackPane stackPane : trainCardPanes) {
             Node node = stackPane.getChildren().get(0);
             ImageView imageView = (ImageView) node;
             boolean visible = false;

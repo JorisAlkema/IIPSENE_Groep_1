@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 public class MainState {
     public static FirebaseService firebaseService = new FirebaseService();
     public static Stage primaryStage;
+
     public static String roomCode;
 
     public static String player_uuid;
