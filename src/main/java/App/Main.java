@@ -11,8 +11,8 @@ import java.awt.*;
 public class Main extends Application {
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    private final int WINDOW_X_POSITION = screenSize.width / 2 - MainState.SCREEN_WIDTH / 2;
-    private final int WINDOW_Y_POSITION = screenSize.height / 2 - MainState.SCREEN_HEIGHT / 2;
+    private final int WINDOW_X_POSITION = screenSize.width / 2 - MainState.WINDOW_WIDTH / 2;
+    private final int WINDOW_Y_POSITION = screenSize.height / 2 - MainState.WINDOW_HEIGHT / 2;
 
     // https://stackoverflow.com/a/52654791
     // "For Maven the solution is exactly the same: provide a new main class that doesn't extend from Application."
@@ -30,7 +30,7 @@ public class Main extends Application {
         MainState.primaryStage = primaryStage;
         MainMenuView mainMenuView = new MainMenuView();
 
-        Scene scene = new Scene(mainMenuView, MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
+        Scene scene = new Scene(mainMenuView);
         scene.getStylesheets().add(MainState.MenuCSS);
 
         primaryStage.setScene(scene);
@@ -39,6 +39,8 @@ public class Main extends Application {
         primaryStage.setResizable(false);
         primaryStage.setX(WINDOW_X_POSITION);
         primaryStage.setY(WINDOW_Y_POSITION);
+        primaryStage.setHeight(MainState.WINDOW_HEIGHT);
+        primaryStage.setWidth(MainState.WINDOW_WIDTH);
         primaryStage.show();
     }
 }

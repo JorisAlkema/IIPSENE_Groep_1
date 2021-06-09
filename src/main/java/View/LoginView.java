@@ -1,5 +1,6 @@
 package View;
 
+import App.MainState;
 import Controller.LoginController;
 import Observers.LoginObserver;
 import javafx.geometry.Insets;
@@ -30,8 +31,8 @@ public class LoginView extends StackPane implements LoginObserver {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(40));
         ImageView title = new ImageView("images/main_menu_logo.png");
-        title.setFitWidth(title.getImage().getWidth() * 0.9);
-        title.setFitHeight(title.getImage().getHeight() * 0.9);
+        title.setFitWidth(title.getImage().getWidth() * 0.7);
+        title.setFitHeight(title.getImage().getHeight() * 0.7);
         grid.add(title, 0,0,2,1);
 
         // Background Effect
@@ -40,8 +41,8 @@ public class LoginView extends StackPane implements LoginObserver {
 
         // Background for textFields and return to menu button
         ImageView background = new ImageView("images/main_menu_background.jpg");
-        background.setFitWidth(1280);
-        background.setFitHeight(720);
+        background.setFitWidth(MainState.WINDOW_WIDTH);
+        background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
 
         // Layout

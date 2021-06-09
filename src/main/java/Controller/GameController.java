@@ -4,37 +4,32 @@ import App.MainState;
 import Model.*;
 import Observers.CardsObserver;
 import View.RoutePopUp;
+import Observers.PlayerTurnObverser;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import Observers.TimerObservable;
-import Observers.TimerObserver;
+import Observers.TurnTimerObserver;
 
 import java.util.*;
 
-public class GameController implements TimerObservable {
+public class GameController {
     private GameState gameState;
     private ListenerRegistration listenerRegistration;
 
-    private playerTurnController playerTurnController = new playerTurnController();
+    private PlayerTurnController playerTurnController = new PlayerTurnController();
     private CardsController cardsController = new CardsController();
     private MapController mapController = new MapController();
+    private TurnTimerController turnTimerController = new TurnTimerController();
 
-    // Timer needs to be model
-    private String timerText;
-    private ArrayList<TimerObserver> observers = new ArrayList<>();
-    private String lastPlayerUUID;
-    private int seconds;
-    private Timer timer;
 
 
     public GameController() {
         MainState.primaryStage.setOnCloseRequest(event -> {
             try {
-                stopTimer();
+                turnTimerController.stopTimer();
                 MainState.firebaseService.removePlayer(MainState.roomCode, MainState.player_uuid);
                 // If nobody is in the room, delete it.
                 if (MainState.firebaseService.getPlayersFromLobby(MainState.roomCode).size() == 0) {
@@ -86,6 +81,8 @@ public class GameController implements TimerObservable {
                     } else {
                         gameState = incomingGameState;
                         cardsController.notifyObservers(gameState.getOpenDeck());
+                        // End old timer and Make time init timer
+                        turnTimerController.resetTimer(this);
                     }
 
                     try {
@@ -124,6 +121,7 @@ public class GameController implements TimerObservable {
     // Step 2: if Actions = 2, End turn and set next player turn = true
     // Step 3: update gameState
     public void updateGameState() {
+        System.out.println("updateGameState");
         MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
     }
 
@@ -191,8 +189,10 @@ public class GameController implements TimerObservable {
     }
 
     public void endTurn() {
-        getLocalPlayerFromGameState().setActionsTaken(2);
-        checkIfTurnIsOver();
+        if (playerTurnController.getTurn()) {
+            getLocalPlayerFromGameState().setActionsTaken(2);
+            checkIfTurnIsOver();
+        }
     }
 
     // ===============================================================
@@ -217,6 +217,14 @@ public class GameController implements TimerObservable {
         cardsController.registerObserver(cardsObserver);
     }
 
+    public void registerTurnTimerObserver(TurnTimerObserver turnTimerObserver) {
+        turnTimerController.registerObserver(turnTimerObserver);
+    }
+
+    public void registerPlayerTurnObserver(PlayerTurnObverser playerTurnObverser) {
+        playerTurnController.registerObserver(playerTurnObverser);
+    }
+
     private void checkIfTurnIsOver() {
         System.out.println("CHECK");
         if (isPlayerActionsTakenEquals2()) {
@@ -236,72 +244,15 @@ public class GameController implements TimerObservable {
 
     // ===============================================================
 
-    public void countdownTimer() {
-        timer = new Timer();
-        int delay = 1000;
-        int period = 1000;
-
-        // Increase time by 1, since 0:00 is counted as the final second
-        seconds = 10 + 1;
-
-        // Schedules the timer for repeated fixed-rate execution, beginning after the specified delay
-        timer.scheduleAtFixedRate(new TimerTask() {
-            public void run() {
-                if (seconds > 0 ) {
-                    setTimerText(formatTimer(setSeconds()));
-                } else if (seconds == 0) {
-                    // Code that gets executed after the countdown has hit 0
-                    setTimerText(formatTimer(setSeconds()));
-                }
-            }
-        }, delay, period);
-    }
-
+    // Do you have enough trains to build a route
     public void checkTrains() {
         if (getCurrentPlayer().getTrains() <= 2) {
-            lastPlayerUUID = getCurrentPlayer().getUUID();
+
         }
     }
 
     public Player getCurrentPlayer() {
-        for (Player player : MainState.firebaseService.getPlayersFromLobby(MainState.roomCode)) {
-            if (player.isTurn()) {
-                return player;
-            }
-        }
-        return null;
-    }
-
-    public Controller.playerTurnController getPlayerTurnController() {
-        return playerTurnController;
-    }
-
-    private int setSeconds() {
-        if (seconds == 0) {
-            return seconds;
-        }
-        return --seconds;
-    }
-
-    public String getTimer() {
-        return formatTimer(setSeconds());
-    }
-
-    public void stopTimer() {
-        if (timer != null) {
-            timer.cancel();
-        }
-    }
-
-    public void setTimerText(String timerText) {
-        this.timerText = timerText;
-        Platform.runLater(this::notifyObservers);
-    }
-
-    private String formatTimer(int seconds) {
-        int minutes = (int) Math.floor(seconds / 60.0);
-        int displaySeconds = (seconds % 60);
-        return String.format("%d:%02d", minutes, displaySeconds);
+        return playerTurnController.getCurrent(gameState);
     }
 
     public ArrayList<StackPane> createOpponentViews() {
@@ -397,22 +348,5 @@ public class GameController implements TimerObservable {
         // Unmark the location and go back to previous step
         currentCity.setVisited(false);
         return false;
-    }
-
-    @Override
-    public void registerObserver(TimerObserver observer) {
-        this.observers.add(observer);
-    }
-
-    @Override
-    public void unregisterObserver(TimerObserver observer) {
-        this.observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for (TimerObserver observer : observers) {
-            observer.update(this.timerText);
-        }
     }
 }
