@@ -3,6 +3,7 @@ package Controller;
 import App.MainState;
 import Model.*;
 import Observers.CardsObserver;
+import View.RoutePopUp;
 import Observers.PlayerTurnObverser;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
@@ -20,7 +21,9 @@ public class GameController {
 
     private PlayerTurnController playerTurnController = new PlayerTurnController();
     private CardsController cardsController = new CardsController();
+    private MapController mapController = new MapController();
     private TurnTimerController turnTimerController = new TurnTimerController();
+
 
 
     public GameController() {
@@ -160,12 +163,28 @@ public class GameController {
         }
     }
 
-    public void buildRoute() {
-        if (playerTurnController.getTurn()) {
-            // Code for building route
+    public void buildRoute(Route route) {
+        ArrayList<String> equalAmount = new ArrayList<>();
+        String selectedColor;
 
+        if (playerTurnController.getTurn()) {
+            if (route.getColor().equals("GREY")) {
+                for (Map.Entry<String, Integer> entry : getCurrentPlayer().getTrainCardsAsMap().entrySet()) {
+                    if (entry.getValue() == route.getLength()) {
+                        equalAmount.add(entry.getKey());
+                    }
+                }
+                RoutePopUp routePopUp = new RoutePopUp(equalAmount);
+                selectedColor = routePopUp.showRoutePopUp();
+                mapController.claimRoute(route, selectedColor);
+            }
+            else {
+                mapController.claimRoute(route, route.getColor());
+            }
             incrementPlayerActionsTaken();
             checkIfTurnIsOver();
+        } else {
+            System.out.println("IT'S NOT YOUR TURN");
         }
     }
 
