@@ -8,11 +8,8 @@ import javafx.stage.Stage;
 public class MainState {
     public static FirebaseService firebaseService = new FirebaseService();
     public static Stage primaryStage;
-    public static Player getLocalPlayer() {
-        return firebaseService.getPlayerFromLobby(roomCode, player_uuid);
-    }
     public static String roomCode;
-//    public static Player player;
+
     public static String player_uuid;
 
     public static MusicPlayer musicPlayer;
