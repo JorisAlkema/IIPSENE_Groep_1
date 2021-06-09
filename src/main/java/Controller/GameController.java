@@ -3,6 +3,7 @@ package Controller;
 import App.MainState;
 import Model.*;
 import Observers.CardsObserver;
+import Observers.PlayerTurnObverser;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
 import javafx.scene.image.ImageView;
@@ -17,7 +18,7 @@ public class GameController {
     private GameState gameState;
     private ListenerRegistration listenerRegistration;
 
-    private playerTurnController playerTurnController = new playerTurnController();
+    private PlayerTurnController playerTurnController = new PlayerTurnController();
     private CardsController cardsController = new CardsController();
     private TurnTimerController turnTimerController = new TurnTimerController();
 
@@ -162,6 +163,7 @@ public class GameController {
     public void buildRoute() {
         if (playerTurnController.getTurn()) {
             // Code for building route
+
             incrementPlayerActionsTaken();
             checkIfTurnIsOver();
         }
@@ -198,6 +200,10 @@ public class GameController {
 
     public void registerTurnTimerObserver(TurnTimerObserver turnTimerObserver) {
         turnTimerController.registerObserver(turnTimerObserver);
+    }
+
+    public void registerPlayerTurnObserver(PlayerTurnObverser playerTurnObverser) {
+        playerTurnController.registerObserver(playerTurnObverser);
     }
 
     private void checkIfTurnIsOver() {
