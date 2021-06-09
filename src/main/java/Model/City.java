@@ -5,7 +5,7 @@ import java.util.ArrayList;
 // A City represents a city on the map, meaning it has a name, location (x/y offset) and size (radius)
 // Should we choose to implement trainstation, this class would be a logical place to keep track of them
 public class City {
-    private final String name;
+    private String name;
     private double offsetX;
     private double offsetY;
     private ArrayList<City> neighborCities;
@@ -17,6 +17,10 @@ public class City {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.visited = false;
+    }
+
+    public City() {
+
     }
 
     @Override

@@ -9,6 +9,7 @@ public class GameState {
     private ArrayList<Player> players;
     private ArrayList<TrainCard> openDeck;
     private ArrayList<TrainCard> closedDeck;
+    private ArrayList<DestinationTicket> destinationDeck;
 
     public GameState(String message, Boolean ongoing, ArrayList<Player> players) {
         this.message = message;
@@ -18,6 +19,14 @@ public class GameState {
 
     public GameState() {
 
+    }
+
+    public ArrayList<DestinationTicket> getDestinationDeck() {
+        return destinationDeck;
+    }
+
+    public void setDestinationDeck(ArrayList<DestinationTicket> destinationDeck) {
+        this.destinationDeck = destinationDeck;
     }
 
     public String getMessage() {

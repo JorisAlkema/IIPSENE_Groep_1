@@ -59,9 +59,6 @@ public class LobbyController {
                         Scene scene = new Scene(new GameView());
                         scene.getStylesheets().add(MainState.mainCSS);
                         MainState.primaryStage.setScene(scene);
-
-                        MainState.primaryStage.setWidth(MainState.WINDOW_WIDTH);
-                        MainState.primaryStage.setHeight(MainState.WINDOW_HEIGHT);
                         MainState.primaryStage.setX(MainState.WINDOW_X_POSITION);
                         MainState.primaryStage.setY(MainState.WINDOW_Y_POSITION);
                     });
