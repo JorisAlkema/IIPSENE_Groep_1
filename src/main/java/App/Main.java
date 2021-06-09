@@ -1,5 +1,6 @@
 package App;
 
+import View.GameView;
 import View.MainMenuView;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -29,7 +30,6 @@ public class Main extends Application {
 
         MainState.primaryStage = primaryStage;
         MainMenuView mainMenuView = new MainMenuView();
-
         Scene scene = new Scene(mainMenuView);
         scene.getStylesheets().add(MainState.MenuCSS);
 

@@ -13,16 +13,18 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
-public class GameView extends BorderPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser {
+public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser {
     Label timerLabel;
     Label currentPlayerLabel;
   
@@ -34,11 +36,18 @@ public class GameView extends BorderPane implements TurnTimerObserver, CardsObse
         // Init
         gameController = new GameController();
 
-        // Top pane
-        timerLabel = new Label("0:00");
-        setAlignment(timerLabel, Pos.CENTER);
-        timerLabel.setId("timerLabel");
-        setTop(timerLabel);
+        // Background Effect
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.5);
+
+        // Background for textFields and return to menu button
+        ImageView background = new ImageView("images/bg-splash.jpg");
+        background.setFitWidth(MainState.WINDOW_WIDTH);
+        background.setFitHeight(MainState.WINDOW_HEIGHT);
+        background.setEffect(colorAdjust);
+
+        BorderPane borderPane = new BorderPane();
+
 
         // Left pane
         VBox vBox = new VBox();
@@ -55,20 +64,25 @@ public class GameView extends BorderPane implements TurnTimerObserver, CardsObse
             MainState.primaryStage.setScene(newScene);
         });
 
+        // Top pane
+        timerLabel = new Label("0:00");
+        borderPane.setAlignment(timerLabel, Pos.CENTER);
+        timerLabel.setId("timerLabel");
+
         currentPlayerLabel = new Label();
 
-        vBox.getChildren().addAll(mapZoomButton, mainmenuButton, currentPlayerLabel);
+        vBox.getChildren().addAll(timerLabel, mapZoomButton, mainmenuButton, currentPlayerLabel);
 
         for (StackPane stackPane : gameController.createOpponentViews()) {
             vBox.getChildren().add(stackPane);
         }
 
-        setLeft(vBox);
+        borderPane.setLeft(vBox);
 
         // Center pane
         MapView mapView = new MapView();
         mapView.getMapController().setGameController(gameController);
-        setCenter(mapView);
+        borderPane.setCenter(mapView);
 
         mapZoomButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (mapView.getMapController().getMapModel().isZoomedIn()) {
@@ -81,13 +95,15 @@ public class GameView extends BorderPane implements TurnTimerObserver, CardsObse
         });
 
         // Closed and open Cards View
-        cardsBox.setPadding(new Insets(0, 35, 0, 35));
-        setRight(cardsBox);
+//        cardsBox.setPadding(new Insets(0, 5, 0, 5));
+        borderPane.setRight(cardsBox);
 
         // Bottom pane
-        setBottom(new HandView());
+        borderPane.setBottom(new HandView());
 
-        //
+        getChildren().add(background);
+        getChildren().add(borderPane);
+
         gameController.registerTurnTimerObserver(this);
         gameController.registerCardsObserver(this);
         gameController.registerPlayerTurnObserver(this);
@@ -100,6 +116,7 @@ public class GameView extends BorderPane implements TurnTimerObserver, CardsObse
 
     @Override
     public void update(String timerText) {
+        System.out.println(timerLabel.getHeight());
         timerLabel.setText(timerText);
     }
 

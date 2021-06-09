@@ -87,6 +87,9 @@ public class GameController {
 
                     try {
                         playerTurnController.checkMyTurn(gameState);
+                        if (playerTurnController.getTurn()) {
+
+                        }
                     } catch (Exception exception) {
                         exception.printStackTrace();
                         updateGameState();
