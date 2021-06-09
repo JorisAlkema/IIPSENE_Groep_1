@@ -102,6 +102,8 @@ public class GameController implements TimerObservable {
         ArrayList<TrainCard> closedCards = cardsController.generateClosedDeck();
         gameState.setOpenDeck(cardsController.generateOpenDeck(closedCards));
         gameState.setClosedDeck(closedCards);
+
+        gameState.setDestinationDeck();
     }
 
     // Step 2
