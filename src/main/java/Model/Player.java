@@ -70,6 +70,19 @@ public class Player {
         handModel.setDestinationTicketsInHand(this.destinationTickets);
     }
 
+    public HashMap<String, Integer> trainCardsAsMap() {
+        HashMap<String, Integer> map = new HashMap<>();
+        for (TrainCard trainCard : this.trainCards) {
+            String color = trainCard.getColor();
+            if (map.containsKey(color)) {
+                map.put(color, map.get(color) + 1);
+            } else {
+                map.put(color, 1);
+            }
+        }
+        return map;
+    }
+
     public void incrementPoints(int points) {
         this.points += points;
     }
@@ -160,18 +173,5 @@ public class Player {
 
     public void setClaimedRoutes(ArrayList<Route> claimedRoutes) {
         this.claimedRoutes = claimedRoutes;
-    }
-
-    public HashMap<String, Integer> getTrainCardsAsMap() {
-        HashMap<String, Integer> map = new HashMap<>();
-        for (TrainCard trainCard : this.trainCards) {
-            String color = trainCard.getColor();
-            if (map.containsKey(color)) {
-                map.put(color, map.get(color) + 1);
-            } else {
-                map.put(color, 1);
-            }
-        }
-        return map;
     }
 }

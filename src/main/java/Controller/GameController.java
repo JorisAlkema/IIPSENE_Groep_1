@@ -169,7 +169,7 @@ public class GameController {
 
         if (playerTurnController.getTurn()) {
             if (route.getColor().equals("GREY")) {
-                for (Map.Entry<String, Integer> entry : getCurrentPlayer().getTrainCardsAsMap().entrySet()) {
+                for (Map.Entry<String, Integer> entry : getCurrentPlayer().trainCardsAsMap().entrySet()) {
                     if (entry.getValue() == route.getLength()) {
                         equalAmount.add(entry.getKey());
                     }
