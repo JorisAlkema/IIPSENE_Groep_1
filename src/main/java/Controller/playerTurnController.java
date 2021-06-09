@@ -1,98 +1,91 @@
 package Controller;
 
-import App.Main;
+
 import App.MainState;
 import Model.GameState;
 import Model.Player;
-import Model.TrainCard;
-import com.google.cloud.firestore.ListenerRegistration;
-import javafx.application.Platform;
 
 import java.util.ArrayList;
 
 public class playerTurnController {
-    private GameController gameController;
-    private ListenerRegistration listenerRegistration;
-
+//    private TurnTimer turnTimer = new TurnTimer();
     private Boolean isTurn = false;
-    private String currentTurnUUID;
-    private String nextTurnUUID;
 
-    public playerTurnController(GameController gameController) {
-        this.gameController = gameController;
-        checkTurnListener();
+    // Just in case if the player with turn leaves and the timer ends
+    private String nextPlayerUUID;
 
-        // if host
-        if (MainState.getLocalPlayer().getHost()) {
-            giveTurnToFirstPlayer();
-        }
-    }
-
-    /**
-     * When you start the game run this function only once
-     */
-    public void giveTurnToFirstPlayer() {
-        GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
-        gameState.getPlayers().get(0).setTurn(true);
-        MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
-    }
-
-    /**
-     * End the turn of yourself when some conditions are met, or the timer is finished.
-     * If you call this function and it's not your turn, nothing happens.
-     * Otherwise it sets your players object's turn to false and sets the next player's isTurn to true.
-     * If the player that has the turn leaves, nextTurnUUID will be used to set the next turn
-    */
-    public void endTurn() {
-        GameState gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
+    // Give turn to other player, only if you have host
+    public void nextTurn(GameState gameState) {
         ArrayList<Player> players = gameState.getPlayers();
-        Player player = gameState.getPlayer(MainState.player_uuid);
-        if (player.isTurn()) {
-            int nextIndex = (players.indexOf(player) + 1) % players.size();
-            player.setTurn(false);
-            players.get(nextIndex).setTurn(true);
-            MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
-            return;
-        }
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).isTurn()) {
+                players.get(i).setTurn(false);
 
-        if (gameController.getCurrentPlayer() == null) {
-            player = gameState.getPlayer(nextTurnUUID);
-            player.setTurn(true);
-            MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
-            return;
-        }
-    }
+                int nextPlayerIndex = (i + 1) % players.size();
+                players.get(nextPlayerIndex).setTurn(true);
 
-    /**
-     * Check the turn on new room update event.
-     * When the currentTurnUUID is the same, it means the turn is still on the same player. So therefore ignore it
-     * If the player object turn is true and the object belongs to your id, that means it's your turn. isTurn = true.
-     */
-    public void checkTurnListener() {
-        listenerRegistration = MainState.firebaseService.getLobbyReference(MainState.roomCode).addSnapshotListener((document, e) -> {
-            GameState gameState = document.toObject(GameState.class);
-            ArrayList<Player> players = gameState.getPlayers();
-            for (int index = 0; index < players.size(); index++) {
-                if (players.get(index).isTurn()) {
-                    if (!players.get(index).getUUID().equals(currentTurnUUID)) {
-                        currentTurnUUID = players.get(index).getUUID();
-                        nextTurnUUID = players.get((index + 1) % players.size()).getUUID();
-                        if (players.get(index).getUUID().equals(MainState.player_uuid)) {
-                            this.isTurn = true;
-                        } else {
-                            this.isTurn = false;
-                        }
-                        Platform.runLater(() -> {
-                            gameController.stopTimer();
-                            gameController.countdownTimer();
-                        });
-                    }
-                    break;
-                }
+                calculateNextPlayer(gameState);
+                break;
             }
-        });
+        }
     }
 
+    // Start turn system, only if you have host
+    public void start(GameState gameState) {
+        gameState.getPlayers().get(0).setTurn(true);
+        calculateNextPlayer(gameState);
+        System.out.println(nextPlayerUUID);
+    }
+
+    public void checkMyTurn(GameState gameState) throws Exception {
+        System.out.println("CHECKED");
+        if (gameState.getPlayer(MainState.player_uuid).isTurn()) {
+            isTurn = true;
+            System.out.println("It's your turn");
+        } else {
+            isTurn = false;
+            if (getCurrent(gameState) != null) {
+                System.out.println(getCurrent(gameState).getName() + " has the turn.");
+            }
+        }
+        System.out.println(isTurn);
+
+        if (!playerWithTurnLeft(gameState)) {
+            if (nextPlayerUUID.equals(MainState.player_uuid)) {
+                gameState.getPlayer(nextPlayerUUID).setTurn(true);
+                throw new Exception("Player turn has been recalibrated");
+            }
+        }
+
+        calculateNextPlayer(gameState);
+    }
+
+    //TODO: Calculate the next player when the player that has the turn leaves.
+    private void calculateNextPlayer(GameState gameState) {
+        ArrayList<Player> players = gameState.getPlayers();
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).isTurn()) {
+                int nextPlayerIndex = (i + 1) % players.size();
+                nextPlayerUUID = players.get(nextPlayerIndex).getUUID();
+            }
+        }
+    }
+
+    private Boolean playerWithTurnLeft(GameState gameState) {
+        if (getCurrent(gameState) == null) {
+            return false;
+        }
+        return true;
+    }
+    
+    private Player getCurrent(GameState gameState) {
+        for (Player player : gameState.getPlayers()) {
+            if (player.isTurn()) {
+                return player;
+            }
+        }
+        return null;
+    }
 
     public Boolean getTurn() {
         return isTurn;
