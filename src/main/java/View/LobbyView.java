@@ -32,22 +32,23 @@ public class LobbyView extends StackPane implements LobbyObserver {
 
         // Background for textFields and return to menu button
         ImageView background = new ImageView("images/main_menu_background.jpg");
-        background.setFitWidth(1280);
-        background.setFitHeight(720);
+        background.setFitWidth(MainState.WINDOW_WIDTH);
+        background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
 
         // Layout
         GridPane grid = new GridPane();
-        grid.getColumnConstraints().add(new ColumnConstraints(890)); // column 0 is 100 wide
+        grid.setAlignment(Pos.CENTER);
+        grid.getColumnConstraints().add(new ColumnConstraints(1200)); // column 0 is 100 wide
         grid.getColumnConstraints().add(new ColumnConstraints(300)); // column 1 is 200 wide
-        grid.getRowConstraints().add(new RowConstraints(100));
-        grid.getRowConstraints().add(new RowConstraints(580));
+        grid.getRowConstraints().add(new RowConstraints(150));
+        grid.getRowConstraints().add(new RowConstraints(680));
         grid.setHgap(10);
         grid.setPadding(new Insets(40));
 
         ImageView title = new ImageView("images/main_menu_logo.png");
-        title.setFitWidth(title.getImage().getWidth() * 0.4);
-        title.setFitHeight(title.getImage().getHeight() * 0.4);
+        title.setFitWidth(title.getImage().getWidth() * 0.7);
+        title.setFitHeight(title.getImage().getHeight() * 0.7);
 
         players_wrapper = new VBox(10);
         players_wrapper.setId("black_bg");
@@ -82,8 +83,9 @@ public class LobbyView extends StackPane implements LobbyObserver {
         party.getChildren().add(partyCode);
 
         VBox messageBox = new VBox(10);
+        messageBox.setPrefHeight(300);
         messageBox.setId("black_bg");
-        messageBox.setAlignment(Pos.CENTER);
+        messageBox.setAlignment(Pos.TOP_CENTER);
         messageBox.setPadding(new Insets(10));
         message = new Text("Retrieving data...\n");
         message.setWrappingWidth(300);
