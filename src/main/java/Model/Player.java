@@ -61,7 +61,7 @@ public class Player {
     public void addTrainCard(TrainCard trainCard){
         this.trainCards.add(trainCard);
         HandModel handModel = HandModel.getInstance();
-        handModel.setTrainCards(this.trainCards);
+        handModel.setTrainCardsMap(trainCardsAsMap());
     }
 
     public void addDestinationTicket(DestinationTicket destinationTicket){
