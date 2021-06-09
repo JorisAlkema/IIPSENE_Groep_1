@@ -1,8 +1,6 @@
 package View;
 
 import Controller.MapController;
-import Service.Observable;
-import Service.Observer;
 
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;

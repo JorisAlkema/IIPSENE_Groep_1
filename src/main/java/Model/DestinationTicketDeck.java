@@ -12,4 +12,16 @@ public class DestinationTicketDeck {
     public DestinationTicketDeck(ArrayList<DestinationTicket> destinationTickets) {
         this.destinationTickets = destinationTickets;
     }
+
+    public ArrayList<DestinationTicket> getDestinationTickets() {
+        return destinationTickets;
+    }
+
+    public DestinationTicket draw(int index) {
+        return this.destinationTickets.remove(index);
+    }
+
+    public void addCardToDeck(DestinationTicket ticket) {
+        this.destinationTickets.add(ticket);
+    }
 }

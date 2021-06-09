@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class GameState {
     private String message;
     private Boolean ongoing;
+    private Boolean loadedByHost = false;
     private ArrayList<Player> players;
     private ArrayList<TrainCard> openDeck;
     private ArrayList<TrainCard> closedDeck;
@@ -57,5 +58,22 @@ public class GameState {
 
     public void setClosedDeck(ArrayList<TrainCard> closedDeck) {
         this.closedDeck = closedDeck;
+    }
+
+    public Player getPlayer(String player_uuid) {
+        for(Player x: this.players) {
+            if (x.getUUID().equals(player_uuid)) {
+                return x;
+            }
+        }
+        return null;
+    }
+
+    public Boolean isLoadedByHost() {
+        return loadedByHost;
+    }
+
+    public void setLoadedByHost(Boolean loadedByHost) {
+        this.loadedByHost = loadedByHost;
     }
 }

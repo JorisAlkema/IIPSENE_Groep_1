@@ -86,7 +86,7 @@ public class MapController {
     public void handleRouteCellClickEvent(RouteCell routeCell) {
         if (routeCell.getFill().equals(Color.TRANSPARENT)) {
             for (RouteCell cellInSameRoute : routeCell.getParentRoute().getRouteCells()) {
-                cellInSameRoute.setFill(this.mapModel.getImagePattern());
+                cellInSameRoute.setFill(this.mapModel.getImagePattern("PURPLE"));
             }
         } else {
             for (RouteCell cellInSameRoute : routeCell.getParentRoute().getRouteCells()) {
@@ -99,10 +99,10 @@ public class MapController {
     // When this method is called, we assume that the player has already selected the color
     // with which they want to build the route, in case it is grey.
     public boolean claimRoute(Route route, String color) {
-        // Route already claimed
         if (route.getOwner() != null) {
             return false;
         }
+
         String routeColor = route.getColor();
         // If the Route is grey, check for cards of the given color
         if (routeColor.equals("GREY")) {
@@ -157,7 +157,12 @@ public class MapController {
 
         currentPlayer.getClaimedRoutes().add(route);
         route.setOwner(currentPlayer);
+        currentPlayer.givePointForRouteSize(routeLength);
+        for (RouteCell routeCell : route.getRouteCells()) {
+            routeCell.setFill(this.mapModel.getImagePattern(gameController.getCurrentPlayer().getPlayerColor()));
+        }
 
+        gameController.checkTrains();
         return true;
     }
 
@@ -172,14 +177,11 @@ public class MapController {
         this.mapView.setPannable(true);
         this.mapView.setBackgroundImage(this.mapModel.getBackgroundImage());
 
-        for (Rectangle rectangle : this.mapModel.getRouteCellOverlays()) {
-            rectangle.setWidth(this.mapModel.getCellWidth());
-            rectangle.setHeight(this.mapModel.getCellHeight());
-            rectangle.setTranslateX(rectangle.getTranslateX() * 2);
-            rectangle.setTranslateY(rectangle.getTranslateY() * 2);
-            if ( ! rectangle.getFill().equals(Color.TRANSPARENT)) {
-                rectangle.setFill(this.mapModel.getImagePattern());
-            }
+        for (RouteCell routeCell : this.mapModel.getRouteCellOverlays()) {
+            routeCell.setWidth(this.mapModel.getCellWidth());
+            routeCell.setHeight(this.mapModel.getCellHeight());
+            routeCell.setTranslateX(routeCell.getTranslateX() * 2);
+            routeCell.setTranslateY(routeCell.getTranslateY() * 2);
         }
 
         for (Circle circle : this.mapModel.getCityOverlays()) {
@@ -203,14 +205,11 @@ public class MapController {
         this.mapView.setPannable(false);
         this.mapView.setBackgroundImage(this.mapModel.getBackgroundImage());
 
-        for (Rectangle rectangle : this.mapModel.getRouteCellOverlays()) {
-            rectangle.setWidth(this.mapModel.getCellWidth());
-            rectangle.setHeight(this.mapModel.getCellHeight());
-            rectangle.setTranslateX(rectangle.getTranslateX() / 2);
-            rectangle.setTranslateY(rectangle.getTranslateY() / 2);
-            if ( ! rectangle.getFill().equals(Color.TRANSPARENT)) {
-                rectangle.setFill(this.mapModel.getImagePattern());
-            }
+        for (RouteCell routeCell : this.mapModel.getRouteCellOverlays()) {
+            routeCell.setWidth(this.mapModel.getCellWidth());
+            routeCell.setHeight(this.mapModel.getCellHeight());
+            routeCell.setTranslateX(routeCell.getTranslateX() / 2);
+            routeCell.setTranslateY(routeCell.getTranslateY() / 2);
         }
 
         for (Circle circle : this.mapModel.getCityOverlays()) {
@@ -226,5 +225,9 @@ public class MapController {
 
     public void setGameController(GameController gameController) {
         this.gameController = gameController;
+    }
+
+    public GameSetupService getGameSetupService() {
+        return gameSetupService;
     }
 }

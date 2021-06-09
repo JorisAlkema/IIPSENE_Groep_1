@@ -1,0 +1,13 @@
+/* GameView */
+#timerLabel {
+	-fx-font-family: Merriweather;
+	-fx-font-weight: bold;
+	-fx-font-size: 20;
+	-fx-padding: 13px 0;
+}
+
+.playerinfo {
+	-fx-font-family: Merriweather;
+	-fx-fill: white;
+	-fx-font-size: 12;
+}
