@@ -55,7 +55,6 @@ public class MainMenuView extends StackPane {
 
         // Music button
         ImageView musicImageView = MusicPlayerView.getInstance().getMusicImageView();
-        System.out.println(MusicPlayerView.getInstance().getMusicImageView());
         // There's probably a better way to align this, but at least the menu buttons are clickable now
         musicImageView.setTranslateX(background.getFitWidth() / 2 - musicImageView.getFitWidth() - 45);
         musicImageView.setTranslateY(background.getFitHeight() / 2 - musicImageView.getFitHeight() - 55);
