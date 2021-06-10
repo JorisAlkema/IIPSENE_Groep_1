@@ -233,27 +233,13 @@ public class GameController {
 
     private void givePointForRouteSize(int routeLength) {
         switch (routeLength) {
-            case 1:
-                getLocalPlayerFromGameState().incrementPoints(1);
-                break;
-            case 2:
-                getLocalPlayerFromGameState().incrementPoints(2);
-                break;
-            case 3:
-                getLocalPlayerFromGameState().incrementPoints(4);
-                break;
-            case 4:
-                getLocalPlayerFromGameState().incrementPoints(7);
-                break;
-            case 6:
-                getLocalPlayerFromGameState().incrementPoints(15);
-                break;
-            case 8:
-                getLocalPlayerFromGameState().incrementPoints(21);
-                break;
-            default:
-                getLocalPlayerFromGameState().incrementPoints(0);
-                break;
+            case 1:  getLocalPlayerFromGameState().incrementPoints(1); break;
+            case 2: getLocalPlayerFromGameState().incrementPoints(2); break;
+            case 3: getLocalPlayerFromGameState().incrementPoints(4); break;
+            case 4: getLocalPlayerFromGameState().incrementPoints(7); break;
+            case 6: getLocalPlayerFromGameState().incrementPoints(15); break;
+            case 8: getLocalPlayerFromGameState().incrementPoints(21); break;
+            default: getLocalPlayerFromGameState().incrementPoints(0); break;
         }
     }
 
