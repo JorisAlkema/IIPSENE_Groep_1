@@ -40,7 +40,7 @@ public class RoutePopUp {
         ArrayList<ImageView> availableColors = new ArrayList<>();
 
         for (String color : possibleColors) {
-            ImageView trainCard = new ImageView(new Image("traincards/traincard_" + color.toLowerCase() + "_small.png"));
+            ImageView trainCard = new ImageView(new Image("images/traincards/traincard_" + color.toLowerCase() + "_small.png"));
             availableColors.add(trainCard);
 
             trainCard.setOpacity(UNSELECTED_OPACITY);
