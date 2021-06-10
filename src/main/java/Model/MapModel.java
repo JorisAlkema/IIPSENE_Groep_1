@@ -7,13 +7,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+
 import java.util.ArrayList;
 
 public class MapModel implements MapObservable {
     private final ArrayList<MapObserver> observers;
     private final ArrayList<Route> routes;
     private final ArrayList<City> cities;
-    private ArrayList<RouteCell> routeCellOverlays;
+    private ArrayList<Rectangle> routeCellOverlays;
     private ArrayList<Circle> cityOverlays;
     private boolean zoomedIn;
     private static final ImageView bigBackgroundImage = new ImageView("maps/map_big.jpg");
@@ -77,7 +79,7 @@ public class MapModel implements MapObservable {
         return cityOverlays;
     }
 
-    public ArrayList<RouteCell> getRouteCellOverlays() {
+    public ArrayList<Rectangle> getRouteCellOverlays() {
         return routeCellOverlays;
     }
 
@@ -85,7 +87,7 @@ public class MapModel implements MapObservable {
         this.cityOverlays = cityOverlays;
     }
 
-    public void setRouteCellOverlays(ArrayList<RouteCell> routeCellOverlays) {
+    public void setRouteCellOverlays(ArrayList<Rectangle> routeCellOverlays) {
         this.routeCellOverlays = routeCellOverlays;
     }
 
