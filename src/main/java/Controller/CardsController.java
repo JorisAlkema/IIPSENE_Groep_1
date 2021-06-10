@@ -15,14 +15,12 @@ public class CardsController {
     private Cards cards = new Cards();
 
     public TrainCard pickClosedCard(GameState gameState) {
-        /* Calculate closed cards by generating a new card deck and subtracting
-        both the player cards and the open cards */
-
         TrainCard pickedClosedCard = getRandomCard(gameState);
-        System.out.println(String.format("Closed card picked, color: %s", pickedClosedCard.getColor()));
+        System.out.println("Closed card picked, color: " + pickedClosedCard.getColor());
         return pickedClosedCard;
     }
-    // Pick open card and return new open card
+
+    // Return clicked open card and generate new open card to take its place
     public TrainCard pickOpenCard(GameState gameState, int index) throws Exception {
         ArrayList<TrainCard> openCards = gameState.getOpenDeck();
         TrainCard pickedCard = openCards.get(index);
@@ -32,7 +30,7 @@ public class CardsController {
             throw new Exception("you cannot draw a LOCO");
         }
 
-        // Get random closed card and place it in the open cards deck
+        // Replace open card
         openCards.remove(index);
         openCards.add(getRandomCard(gameState));
 
@@ -56,7 +54,6 @@ public class CardsController {
     }
 
     public ArrayList<TrainCard> generateOpenDeck(ArrayList<TrainCard> closedCards) {
-
         ArrayList<TrainCard> openCards = new ArrayList<>();
         while(openCards.size() < 5){
             TrainCard randomCard = closedCards.get(new Random().nextInt(closedCards.size()));
@@ -68,31 +65,27 @@ public class CardsController {
 
     private TrainCard getRandomCard(GameState gameState) {
         ArrayList<TrainCard> closedDeck = gameState.getClosedDeck();
+        System.out.println(">>>> Before shuffle" + closedDeck.size());
+        if (closedDeck.size() == 0){
+            closedDeck = reshuffleCards(gameState);
+        }
+        System.out.println(">>>> After shuffle" + closedDeck.size());
         TrainCard randomCard = closedDeck.get(new Random().nextInt(closedDeck.size()));
         closedDeck.remove(randomCard);
-        if (closedDeck.size() == 0){
-            closedDeck.addAll(reshuffleCards(gameState));
-        }
         gameState.setClosedDeck(closedDeck);
         return randomCard;
     }
-
-    public ArrayList<TrainCard> reshuffleCards(GameState gameState){
-        ArrayList<TrainCard> shuffledCards;
-        ArrayList<Player> players = gameState.getPlayers();
-        ArrayList<TrainCard> currentCards = gameState.getOpenDeck();
-
-        for (Player player:players){
-            currentCards.addAll(player.getTrainCards());
+    private ArrayList<TrainCard> reshuffleCards(GameState gameState){
+        ArrayList<TrainCard> newClosedDeck;
+        ArrayList<TrainCard> cardsToRemove = new ArrayList<>(gameState.getOpenDeck());
+        for (Player player: gameState.getPlayers()){
+            cardsToRemove.addAll(player.getTrainCards());
         }
-
-        shuffledCards = generateClosedDeck();
-
-        for (TrainCard trainCard: currentCards){
-            shuffledCards.remove(trainCard);
+        newClosedDeck = generateClosedDeck();
+        for (TrainCard trainCard: cardsToRemove){
+            newClosedDeck.remove(trainCard);
         }
-
-        return shuffledCards;
+        return newClosedDeck;
     }
 
 
