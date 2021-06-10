@@ -19,17 +19,17 @@ public class MusicPlayer implements MusicObservable {
     public MusicPlayer() {
         media = new Media(new File("src/main/resources/music/europe.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(media);
-//        mediaPlayer.play();
+        mediaPlayer.play();
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
     }
 
     public static MusicPlayer getInstance() {
-        if(musicPlayer == null) {
+        if (musicPlayer == null) {
             musicPlayer = new MusicPlayer();
         }
-
         return musicPlayer;
     }
+
 
     public void toggleMusic() {
         isPlaying = !isPlaying;
