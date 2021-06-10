@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -31,7 +32,7 @@ public class RoutePopUp {
         stage.getIcons().add(new Image("images/traincards/traincard_back_small.png"));
         stage.setOnCloseRequest(Event::consume);
 
-        VBox vBox = new VBox();
+        HBox vBox = new HBox();
         vBox.setAlignment(Pos.TOP_CENTER);
         Label label = new Label("Select your route color.");
         label.setStyle("-fx-font-size:18px");
