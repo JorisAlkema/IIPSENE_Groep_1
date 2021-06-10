@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class LobbyView extends StackPane implements LobbyObserver {
 
-    private LobbyController controller = new LobbyController(this);;
+    private LobbyController controller = new LobbyController(this);
     private Text message;
     private Text partyCode;
     private VBox players_wrapper;
