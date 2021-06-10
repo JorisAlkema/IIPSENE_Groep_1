@@ -136,16 +136,19 @@ public class MapController {
         if (correctColorCards.size() + locosInHand.size() < routeLength) {
             return false;
         }
+        int cardsToRemove = routeLength - requiredLocos;
+
         if (type.equals("TUNNEL")) {
-            // TODO
-            // Something like gameController.getTrainCardDeck.drawTunnelCards() ?
+            int tunnels = generateTunnels(routeColor);
+            cardsToRemove = cardsToRemove + tunnels;
         }
         if (type.equals("FERRY") && locosInHand.size() < requiredLocos) {
             return false;
         }
+
         // Remove cards from hand
         // TODO: probably in handController?
-        int cardsToRemove = routeLength - requiredLocos;
+
         int locosToRemove = requiredLocos;
         for (TrainCard trainCard : correctColorCards) {
             if (cardsToRemove > 0) {
