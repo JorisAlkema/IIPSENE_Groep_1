@@ -7,10 +7,10 @@ package Model;
 // short DestinationTickets, and has to keep at least two of them. After this, all DestinationTickets of the long type
 // that are not kept in a Players hand are discarded; they are not added to the DestinationTicketDeck
 public class DestinationTicket {
-    private final City firstCity;
-    private final City secondCity;
-    private final int points;
-    private final String type;
+    private City firstCity;
+    private City secondCity;
+    private int points;
+    private String type;
     private boolean connected;
 
     public DestinationTicket(City firstCity, City secondCity, int points, String type) {
@@ -20,12 +20,16 @@ public class DestinationTicket {
         this.type = type;
         connected = false;
     }
+    public DestinationTicket() {
 
-    public String getFileName() {
+
+    }
+
+    public String fileName() {
         return "destination_tickets/eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase() + ".png";
     }
 
-    public String getFileNameSmall() {
+    public String fileNameSmall() {
         return "destination_tickets/eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase() + "-small.png";
     }
 

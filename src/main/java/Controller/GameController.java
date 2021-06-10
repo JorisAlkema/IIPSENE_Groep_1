@@ -2,37 +2,46 @@ package Controller;
 
 import App.MainState;
 import Model.*;
+import Observers.BannerObserver;
 import Observers.CardsObserver;
+import Service.GameSetupService;
+import View.DestinationPopUp;
+import View.RoutePopUp;
+import Observers.PlayerTurnObverser;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import Observers.TimerObservable;
-import Observers.TimerObserver;
+import Observers.TurnTimerObserver;
 
 import java.util.*;
 
-public class GameController implements TimerObservable {
+public class GameController {
     private GameState gameState;
     private ListenerRegistration listenerRegistration;
 
-    private playerTurnController playerTurnController = new playerTurnController();
+    private PlayerTurnController playerTurnController = new PlayerTurnController();
     private CardsController cardsController = new CardsController();
+    private MapController mapController = MapController.getInstance();
+    private TurnTimerController turnTimerController = new TurnTimerController();
+    private PlayerBannerController bannerController = new PlayerBannerController();
 
-    // Timer needs to be model
-    private String timerText;
-    private ArrayList<TimerObserver> observers = new ArrayList<>();
-    private String lastPlayerUUID;
-    private int seconds;
-    private Timer timer;
+    private GameSetupService gameSetupService = new GameSetupService();
 
+    private boolean firstTurn = true;
+
+    private boolean lastRound = false;
+    private boolean lastActionTaken = false;
 
     public GameController() {
+        // Ugly
+        mapController.setCardsController(cardsController);
+
         MainState.primaryStage.setOnCloseRequest(event -> {
             try {
-                stopTimer();
+                turnTimerController.stopTimer();
                 MainState.firebaseService.removePlayer(MainState.roomCode, MainState.player_uuid);
                 // If nobody is in the room, delete it.
                 if (MainState.firebaseService.getPlayersFromLobby(MainState.roomCode).size() == 0) {
@@ -81,13 +90,27 @@ public class GameController implements TimerObservable {
                     // A player has leaved
                     if (incomingGameState.getPlayers().size() < gameState.getPlayers().size()) {
                         removeLeftPlayers(incomingGameState);
+                        bannerController.updatePlayersArray(gameState.getPlayers());
                     } else {
                         gameState = incomingGameState;
+                        // Check trains for all players
+                        checkTrains();
                         cardsController.notifyObservers(gameState.getOpenDeck());
+                        bannerController.updatePlayersArray(gameState.getPlayers());
+                        // End old timer and Make time init timer
+                        turnTimerController.resetTimer(this);
                     }
-
                     try {
                         playerTurnController.checkMyTurn(gameState);
+                        if (firstTurn && playerTurnController.getTurn()) {
+                            firstTurn = false;
+                            DestinationPopUp destinationPopUp = new DestinationPopUp();
+                            destinationPopUp.showAtStartOfGame();
+                            endTurn();
+                        }
+                        if (playerTurnController.getTurn()) {
+                            checkEndGame();
+                        }
                     } catch (Exception exception) {
                         exception.printStackTrace();
                         updateGameState();
@@ -102,6 +125,7 @@ public class GameController implements TimerObservable {
         ArrayList<TrainCard> closedCards = cardsController.generateClosedDeck();
         gameState.setOpenDeck(cardsController.generateOpenDeck(closedCards));
         gameState.setClosedDeck(closedCards);
+        gameState.setDestinationDeck(gameSetupService.getDestinationTickets());
     }
 
     // Step 2
@@ -122,6 +146,7 @@ public class GameController implements TimerObservable {
     // Step 2: if Actions = 2, End turn and set next player turn = true
     // Step 3: update gameState
     public void updateGameState() {
+        System.out.println("updateGameState");
         MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
     }
 
@@ -163,21 +188,84 @@ public class GameController implements TimerObservable {
         }
     }
 
-    public void buildRoute() {
-        // Code for building route
-        incrementPlayerActionsTaken();
-        checkIfTurnIsOver();
+    public void buildRoute(Route route) {
+        String selectedColor = null;
+        boolean isBuilt = false;
+        if (playerTurnController.getTurn()) {
+            if (route.routeLength() <= getLocalPlayerFromGameState().getTrains()) {
+                if (route.getColor().equals("GREY")) {
+                    selectedColor = pickColorForGreyRoute(route);
+                    isBuilt = mapController.claimRoute(route, selectedColor);
+                } else {
+                    isBuilt = mapController.claimRoute(route, route.getColor());
+                }
+                if (isBuilt) {
+                    givePointForRouteSize(route.routeLength());
+                    endTurn();
+                } else {
+                    if (selectedColor == null) {
+                        System.out.println("Not enough cards of color " + route.getColor());
+                    } else {
+                        System.out.println("Not enough cards of color " + selectedColor);
+                    }
+                }
+            } else {
+                System.out.println("NOT ENOUGH TRAINS");
+            }
+        } else {
+            System.out.println("IT'S NOT YOUR TURN");
+        }
+    }
+
+    private String pickColorForGreyRoute(Route route) {
+        ArrayList<String> possibleColors = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : getLocalPlayerFromGameState().trainCardsAsMap().entrySet()) {
+            if (entry.getValue() >= route.routeLength()) {
+                possibleColors.add(entry.getKey());
+            }
+        }
+        if (possibleColors.size() == 0) {
+            System.out.println("Not enough cards to build GREY route.");
+            return null;
+        }
+        RoutePopUp routePopUp = new RoutePopUp(possibleColors);
+        return routePopUp.showRoutePopUp();
+    }
+
+    private void givePointForRouteSize(int routeLength) {
+        switch (routeLength) {
+            case 1: getLocalPlayerFromGameState().incrementPoints(1); break;
+            case 2: getLocalPlayerFromGameState().incrementPoints(2); break;
+            case 3: getLocalPlayerFromGameState().incrementPoints(4); break;
+            case 4: getLocalPlayerFromGameState().incrementPoints(7); break;
+            case 6: getLocalPlayerFromGameState().incrementPoints(15); break;
+            case 8: getLocalPlayerFromGameState().incrementPoints(21); break;
+            default: getLocalPlayerFromGameState().incrementPoints(0); break;
+        }
     }
 
     public void endTurn() {
-        getLocalPlayerFromGameState().setActionsTaken(2);
-        checkIfTurnIsOver();
+        if (playerTurnController.getTurn()) {
+            getLocalPlayerFromGameState().setActionsTaken(2);
+            checkIfTurnIsOver();
+        }
+    }
+
+    public void endGame() {
+        System.out.println("GAME IS ENDED");
+        listenerRegistration.remove();
+    }
+
+    public void checkEndGame() {
+        if (lastRound && lastActionTaken) {
+            endGame();
+        }
     }
 
     // ===============================================================
 
     private void addTrainCardToPlayerInventoryInGameState(TrainCard trainCard) {
-        gameState.getPlayer(MainState.player_uuid).getTrainCards().add(trainCard);
+        getLocalPlayerFromGameState().addTrainCard(trainCard);
     }
 
     private Player getLocalPlayerFromGameState() {
@@ -196,11 +284,28 @@ public class GameController implements TimerObservable {
         cardsController.registerObserver(cardsObserver);
     }
 
+    public void registerTurnTimerObserver(TurnTimerObserver turnTimerObserver) {
+        turnTimerController.registerObserver(turnTimerObserver);
+    }
+
+    public void registerPlayerTurnObserver(PlayerTurnObverser playerTurnObverser) {
+        playerTurnController.registerObserver(playerTurnObverser);
+    }
+
+    public void registerBannerObserver(BannerObserver bannerObserver) {
+        bannerController.registerObserver(bannerObserver);
+    }
+
     private void checkIfTurnIsOver() {
         System.out.println("CHECK");
         if (isPlayerActionsTakenEquals2()) {
             // End turn
             System.out.println("NEXT TURN");
+
+            if (lastRound) {
+                lastActionTaken = true;
+            }
+
             getLocalPlayerFromGameState().setActionsTaken(0);
             playerTurnController.nextTurn(gameState);
             updateGameState();
@@ -215,117 +320,20 @@ public class GameController implements TimerObservable {
 
     // ===============================================================
 
-    public void countdownTimer() {
-        timer = new Timer();
-        int delay = 1000;
-        int period = 1000;
-
-        // Increase time by 1, since 0:00 is counted as the final second
-        seconds = 10 + 1;
-
-        // Schedules the timer for repeated fixed-rate execution, beginning after the specified delay
-        timer.scheduleAtFixedRate(new TimerTask() {
-            public void run() {
-                if (seconds > 0 ) {
-                    setTimerText(formatTimer(setSeconds()));
-                } else if (seconds == 0) {
-                    // Code that gets executed after the countdown has hit 0
-                    setTimerText(formatTimer(setSeconds()));
+    // Does anyone have 2 or less trains?
+    public void checkTrains() {
+        if (!lastRound) {
+            for (Player player : gameState.getPlayers()) {
+                if (player.getTrains() <= 2) {
+                    lastRound = true;
+                    break;
                 }
             }
-        }, delay, period);
-    }
-
-    public void checkTrains() {
-        if (getCurrentPlayer().getTrains() <= 2) {
-            lastPlayerUUID = getCurrentPlayer().getUUID();
         }
     }
 
     public Player getCurrentPlayer() {
-        for (Player player : MainState.firebaseService.getPlayersFromLobby(MainState.roomCode)) {
-            if (player.isTurn()) {
-                return player;
-            }
-        }
-        return null;
-    }
-
-    public Controller.playerTurnController getPlayerTurnController() {
-        return playerTurnController;
-    }
-
-    private int setSeconds() {
-        if (seconds == 0) {
-            return seconds;
-        }
-        return --seconds;
-    }
-
-    public String getTimer() {
-        return formatTimer(setSeconds());
-    }
-
-    public void stopTimer() {
-        if (timer != null) {
-            timer.cancel();
-        }
-    }
-
-    public void setTimerText(String timerText) {
-        this.timerText = timerText;
-        Platform.runLater(this::notifyObservers);
-    }
-
-    private String formatTimer(int seconds) {
-        int minutes = (int) Math.floor(seconds / 60.0);
-        int displaySeconds = (seconds % 60);
-        return String.format("%d:%02d", minutes, displaySeconds);
-    }
-
-    public ArrayList<StackPane> createOpponentViews() {
-        ArrayList<StackPane> stackPanes = new ArrayList<>();
-        ArrayList<ImageView> banners = new ArrayList<>();
-        banners.add(new ImageView("images/player_banner_green.png"));
-        banners.add(new ImageView("images/player_banner_blue.png"));
-        banners.add(new ImageView("images/player_banner_purple.png"));
-        banners.add(new ImageView("images/player_banner_red.png"));
-        banners.add(new ImageView("images/player_banner_yellow.png"));
-        ArrayList<Player> players = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
-        for (int i = 0; i < players.size(); i++) {
-            Text playerName = new Text("Player: " + players.get(i).getName());
-            //String playerTrainCards = "Traincards: " + player.getTrainCards().size() + "\n";
-            //String playerDestTickets = "Tickets: " + player.getDestinationTickets().size() + "\n";
-            Text playerTrainCards = new Text("Traincards: 15");
-            Text playerDestTickets = new Text("Tickets: 3");
-            Text playerPoints = new Text("Points: " + players.get(i).getPoints());
-            Text playerTrains = new Text("Trains: " + players.get(i).getTrains());
-            playerName.getStyleClass().add("playerinfo");
-            playerTrainCards.getStyleClass().add("playerinfo");
-            playerDestTickets.getStyleClass().add("playerinfo");
-            playerPoints.getStyleClass().add("playerinfo");
-            playerTrains.getStyleClass().add("playerinfo");
-
-            GridPane gridPane = new GridPane();
-            gridPane.add(playerName, 0, 0, 2, 1);
-            gridPane.add(playerTrainCards, 0, 1);
-            gridPane.add(playerDestTickets, 1, 1);
-            gridPane.add(playerPoints, 0, 2);
-            gridPane.add(playerTrains, 1, 2);
-            gridPane.setHgap(10);
-            gridPane.setTranslateX(40);
-            gridPane.setTranslateY(17);
-
-            ImageView playerBanner = banners.get(i);
-            playerBanner.setPreserveRatio(true);
-            playerBanner.setFitHeight(100);
-
-            StackPane stackPane = new StackPane();
-            stackPane.getChildren().addAll(playerBanner, gridPane);
-
-            stackPanes.add(stackPane);
-        }
-        return stackPanes;
+        return playerTurnController.getCurrent(gameState);
     }
 
     /**
@@ -376,22 +384,5 @@ public class GameController implements TimerObservable {
         // Unmark the location and go back to previous step
         currentCity.setVisited(false);
         return false;
-    }
-
-    @Override
-    public void registerObserver(TimerObserver observer) {
-        this.observers.add(observer);
-    }
-
-    @Override
-    public void unregisterObserver(TimerObserver observer) {
-        this.observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for (TimerObserver observer : observers) {
-            observer.update(this.timerText);
-        }
     }
 }

@@ -1,6 +1,5 @@
 package Controller;
 
-import App.Main;
 import App.MainState;
 import Model.Login;
 import Model.Player;
@@ -27,7 +26,7 @@ public class LoginController {
     // Return to Menu
     public void returnToMenu() {
         MainMenuView menuView = new MainMenuView();
-        Scene scene = new Scene(menuView, MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
+        Scene scene = new Scene(menuView, MainState.WINDOW_WIDTH, MainState.WINDOW_HEIGHT);
         scene.getStylesheets().add(MainState.MenuCSS);
         MainState.primaryStage.setScene(scene);
     }
@@ -166,7 +165,7 @@ public class LoginController {
     // Private
 
     private void showLobby() {
-        Scene scene = new Scene(new LobbyView(), MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
+        Scene scene = new Scene(new LobbyView(), MainState.WINDOW_WIDTH, MainState.WINDOW_HEIGHT);
         scene.getStylesheets().add(MainState.MenuCSS);
         MainState.primaryStage.setScene(scene);
     }

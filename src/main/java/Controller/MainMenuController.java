@@ -1,10 +1,8 @@
 package Controller;
 
 import App.MainState;
-import View.GameView;
 import View.LoginView;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.File;
@@ -35,7 +33,7 @@ public class MainMenuController {
     }
 
     private void switchScene(Boolean isHost) {
-        Scene scene = new Scene(new LoginView(isHost), MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
+        Scene scene = new Scene(new LoginView(isHost), MainState.WINDOW_WIDTH, MainState.WINDOW_HEIGHT);
         scene.getStylesheets().add(MainState.MenuCSS);
         MainState.primaryStage.setScene(scene);
     }

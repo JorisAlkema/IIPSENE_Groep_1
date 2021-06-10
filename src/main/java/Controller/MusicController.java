@@ -9,7 +9,7 @@ public class MusicController {
 
     public MusicController(MusicPlayerView musicPlayerView) {
         this.musicPlayerView = musicPlayerView;
-        this.musicPlayer = new MusicPlayer();
+        this.musicPlayer = MusicPlayer.getInstance();
         this.musicPlayer.registerObserver(musicPlayerView);
     }
 

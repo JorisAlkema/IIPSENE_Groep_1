@@ -1,73 +1,72 @@
 package View;
 
 import App.MainState;
-import Controller.DestinationTicketController;
 import Controller.GameController;
+import Model.Player;
+import Model.PlayerBanner;
+import Model.PlayerTurn;
 import Model.TrainCard;
+import Observers.BannerObserver;
 import Observers.CardsObserver;
-import Observers.TimerObserver;
+import Observers.PlayerTurnObverser;
+import Observers.TurnTimerObserver;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 
-public class GameView extends BorderPane implements TimerObserver, CardsObserver {
-    Label timerLabel;
-    Label currentPlayerLabel;
-    GameController gameController;
-
-    VBox cardsBox = new VBox();
+public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser, BannerObserver {
+    private Label timerLabel;
+    private Label currentPlayerLabel;
+    private BorderPane borderPane;
+    private VBox cardsBox;
+    private VBox playerBanners;
+    private MapView mapView;
+    private GameController gameController;
 
     public GameView() {
         // Init
         gameController = new GameController();
+        gameController.registerTurnTimerObserver(this);
+        gameController.registerCardsObserver(this);
+        gameController.registerPlayerTurnObserver(this);
+        gameController.registerBannerObserver(this);
 
-        // Top pane
-        timerLabel = new Label("0:00");
-        setAlignment(timerLabel, Pos.CENTER);
-        timerLabel.setId("timerLabel");
-        setTop(timerLabel);
+        borderPane = new BorderPane();
+        initLeftPane();
+        initCenterPane();
+        initRightPane();
+        initBottomPane();
 
-        // Left pane
-        VBox vBox = new VBox();
-        vBox.setPadding(new Insets(30));
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.5);
+        ImageView background = new ImageView("images/bg-splash.jpg");
+        background.setFitWidth(MainState.WINDOW_WIDTH);
+        background.setFitHeight(MainState.WINDOW_HEIGHT);
+        background.setEffect(colorAdjust);
+
+        MusicPlayerView musicPlayerView = MusicPlayerView.getInstance();
+        ImageView musicImageView = musicPlayerView.getMusicImageView();
+
+        musicImageView.setTranslateX(background.getFitWidth() / 2 - 1465);
+        musicImageView.setTranslateY(MainState.WINDOW_HEIGHT / 2 - musicImageView.getFitHeight() - 55);
+
+        this.getChildren().addAll(background, borderPane, musicImageView);
+    }
+
+    private void initLeftPane() {
         Image zoomInImage = new Image("icons/button_zoom_in.png");
         Image zoomOutImage = new Image("icons/button_zoom_out.png");
         ImageView mapZoomButton = new ImageView(zoomInImage);
-
-        Button mainmenuButton = new Button("Return to menu");
-        mainmenuButton.setOnAction(e -> {
-            Scene newScene = new Scene(new MainMenuView());
-            String css = "css/mainMenuStyle.css";
-            newScene.getStylesheets().add(css);
-            MainState.primaryStage.setScene(newScene);
-        });
-
-        currentPlayerLabel = new Label("Current player: ");
-
-
-        vBox.getChildren().addAll(mapZoomButton, mainmenuButton, currentPlayerLabel);
-
-        for (StackPane stackPane : gameController.createOpponentViews()) {
-            vBox.getChildren().add(stackPane);
-        }
-
-        setLeft(vBox);
-
-        // Center pane
-        MapView mapView = new MapView();
-        mapView.getMapController().setGameController(gameController);
-        setCenter(mapView);
-
         mapZoomButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (mapView.getMapController().getMapModel().isZoomedIn()) {
                 mapView.getMapController().zoomOut();
@@ -77,27 +76,33 @@ public class GameView extends BorderPane implements TimerObserver, CardsObserver
                 mapZoomButton.setImage(zoomOutImage);
             }
         });
+        timerLabel = new Label("0:00");
+        timerLabel.setId("timerLabel");
+        currentPlayerLabel = new Label();
 
-        // Closed and open Cards View
-        cardsBox.setPadding(new Insets(0, 35, 0, 35));
-        setRight(cardsBox);
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(10));
 
-        // Bottom pane
-        setBottom(new HandView());
+        playerBanners = new VBox();
 
-        //
-        gameController.registerObserver(this);
-        gameController.registerCardsObserver(this);
-
-        // TODO: find more MVC-like way to pass initial list of tickets that should form the deck
-        DestinationPopUp destinationPopUp = new DestinationPopUp(mapView.getMapController().getGameSetupService().getDestinationTickets());
-        destinationPopUp.showAtStartOfGame();
-//        gameController.setTimerText(gameController.getTimer());
+        vBox.getChildren().addAll(timerLabel, mapZoomButton, currentPlayerLabel, playerBanners);
+        borderPane.setLeft(vBox);
     }
 
-    @Override
-    public void update(String timerText) {
-        timerLabel.setText(timerText);
+    private void initCenterPane() {
+        mapView = new MapView();
+        mapView.getMapController().setGameController(gameController);
+        borderPane.setCenter(mapView);
+    }
+
+    private void initRightPane() {
+        cardsBox = new VBox();
+        borderPane.setRight(cardsBox);
+    }
+
+    private void initBottomPane() {
+        HandView handView = new HandView();
+        borderPane.setBottom(handView);
     }
 
     @Override
@@ -113,12 +118,14 @@ public class GameView extends BorderPane implements TimerObserver, CardsObserver
                 openTrainCards.add(new ImageView(new Image(path)));
             }
 
-            // onClick events
+            // onClick events and ID
+            closedTrainCard.setId("TrainCard");
             closedTrainCard.setOnMouseClicked(e -> {
                 this.gameController.pickClosedCard();
             });
 
             for (ImageView openTrainCard : openTrainCards) {
+                openTrainCard.setId("TrainCard");
                 openTrainCard.setOnMouseClicked(e -> {
                     this.gameController.pickOpenCard(openTrainCards.indexOf(openTrainCard));
                 });
@@ -128,5 +135,61 @@ public class GameView extends BorderPane implements TimerObserver, CardsObserver
             cardsBox.getChildren().add(closedTrainCard);
             cardsBox.getChildren().addAll(openTrainCards);
         }
+    }
+
+    @Override
+    public void update(PlayerTurn playerTurn) {
+        currentPlayerLabel.setText("Current player: " + playerTurn.getCurrentPlayerUsername());
+    }
+
+    @Override
+    public void update(String timerText) {
+        timerLabel.setText(timerText);
+    }
+
+    @Override
+    public void update(PlayerBanner playerBanner) {
+        ArrayList<StackPane> stackPanes = new ArrayList<>();
+        ArrayList<ImageView> banners = new ArrayList<>();
+        banners.add(new ImageView("images/player_banner_green.png"));
+        banners.add(new ImageView("images/player_banner_blue.png"));
+        banners.add(new ImageView("images/player_banner_purple.png"));
+        banners.add(new ImageView("images/player_banner_red.png"));
+        banners.add(new ImageView("images/player_banner_yellow.png"));
+        ArrayList<Player> players = playerBanner.getPlayers();
+        for (int i = 0; i < players.size(); i++) {
+            Text playerName = new Text("Player: " + players.get(i).getName());
+            Text playerTrainCards = new Text("Traincards: " + players.get(i).getTrainCards().size());
+            Text playerDestTickets = new Text("Tickets: " + players.get(i).getDestinationTickets().size());
+            Text playerPoints = new Text("Points: " + players.get(i).getPoints());
+            Text playerTrains = new Text("Trains: " + players.get(i).getTrains());
+
+            playerName.getStyleClass().add("playerinfo");
+            playerTrainCards.getStyleClass().add("playerinfo");
+            playerDestTickets.getStyleClass().add("playerinfo");
+            playerPoints.getStyleClass().add("playerinfo");
+            playerTrains.getStyleClass().add("playerinfo");
+
+            GridPane gridPane = new GridPane();
+            gridPane.add(playerName, 0, 0, 2, 1);
+            gridPane.add(playerTrainCards, 0, 1);
+            gridPane.add(playerDestTickets, 1, 1);
+            gridPane.add(playerPoints, 0, 2);
+            gridPane.add(playerTrains, 1, 2);
+            gridPane.setHgap(10);
+            gridPane.setTranslateX(40);
+            gridPane.setTranslateY(17);
+
+            ImageView playerBannerImageView = banners.get(i);
+            playerBannerImageView.setPreserveRatio(true);
+            playerBannerImageView.setFitHeight(100);
+
+            StackPane stackPane = new StackPane();
+            stackPane.getChildren().addAll(playerBannerImageView, gridPane);
+
+            stackPanes.add(stackPane);
+        }
+        playerBanners.getChildren().removeAll(playerBanners.getChildren());
+        playerBanners.getChildren().addAll(stackPanes);
     }
 }

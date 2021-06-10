@@ -59,6 +59,8 @@ public class LobbyController {
                         Scene scene = new Scene(new GameView());
                         scene.getStylesheets().add(MainState.mainCSS);
                         MainState.primaryStage.setScene(scene);
+                        MainState.primaryStage.setX(MainState.WINDOW_X_POSITION);
+                        MainState.primaryStage.setY(MainState.WINDOW_Y_POSITION);
                     });
                 }
             }
@@ -70,7 +72,7 @@ public class LobbyController {
     }
 
     public void returnToMenu() {
-        Scene scene = new Scene(new MainMenuView(), MainState.SCREEN_WIDTH, MainState.SCREEN_HEIGHT);
+        Scene scene = new Scene(new MainMenuView(), MainState.WINDOW_WIDTH, MainState.WINDOW_HEIGHT);
         scene.getStylesheets().add(MainState.MenuCSS);
         MainState.primaryStage.setScene(scene);
     }

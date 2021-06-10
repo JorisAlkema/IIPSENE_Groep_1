@@ -1,6 +1,9 @@
 package View;
 
+import App.MainState;
 import Controller.MainMenuController;
+import Model.MusicPlayer;
+import Observers.MusicObserver;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -21,8 +24,8 @@ public class MainMenuView extends StackPane {
         grid.setPadding(new Insets(40));
 
         ImageView title = new ImageView("images/main_menu_logo.png");
-        title.setFitWidth(title.getImage().getWidth() * 0.9);
-        title.setFitHeight(title.getImage().getHeight() * 0.9);
+        title.setFitWidth(title.getImage().getWidth() * 0.7);
+        title.setFitHeight(title.getImage().getHeight() * 0.7);
 
         grid.add(title, 0,0,2,1);
 
@@ -31,8 +34,8 @@ public class MainMenuView extends StackPane {
         colorAdjust.setBrightness(-0.5);
 
         ImageView background = new ImageView("images/main_menu_background.jpg");
-        background.setFitWidth(1280);
-        background.setFitHeight(720);
+        background.setFitWidth(MainState.WINDOW_WIDTH);
+        background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
 
         // Button layout
@@ -51,11 +54,10 @@ public class MainMenuView extends StackPane {
         buttons.getChildren().add(quit);
 
         // Music button
-        musicPlayerView = new MusicPlayerView();
-        ImageView musicImageView = musicPlayerView.getMusicImageView();
+        ImageView musicImageView = MusicPlayerView.getInstance().getMusicImageView();
         // There's probably a better way to align this, but at least the menu buttons are clickable now
         musicImageView.setTranslateX(background.getFitWidth() / 2 - musicImageView.getFitWidth() - 45);
-        musicImageView.setTranslateY(background.getFitHeight() / 2 - musicImageView.getFitHeight() - 40);
+        musicImageView.setTranslateY(background.getFitHeight() / 2 - musicImageView.getFitHeight() - 55);
 
         getChildren().add(background);
         getChildren().add(grid);
@@ -68,4 +70,5 @@ public class MainMenuView extends StackPane {
         rules.setOnMouseClicked(e -> mainMenuController.openRules());
         quit.setOnMouseClicked(e -> System.exit(0));
     }
+
 }

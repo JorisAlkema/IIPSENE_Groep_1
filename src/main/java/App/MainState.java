@@ -15,8 +15,11 @@ public class MainState {
 
     public static MusicPlayer musicPlayer;
 
-    public static final int SCREEN_WIDTH = 1280;
-    public static final int SCREEN_HEIGHT = 720;
+
+    public static final int WINDOW_X_POSITION = 20;
+    public static final int WINDOW_Y_POSITION = 50;
+    public static final int WINDOW_WIDTH = 1510;
+    public static final int WINDOW_HEIGHT = 883;
 
     public static final String MenuCSS = "css/mainMenuStyle.css";
     public static final String mainCSS = "css/mainStyle.css";

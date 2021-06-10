@@ -4,10 +4,23 @@
 	-fx-font-weight: bold;
 	-fx-font-size: 20;
 	-fx-padding: 13px 0;
+	-fx-text-fill: white;
 }
 
 .playerinfo {
 	-fx-font-family: Merriweather;
 	-fx-fill: white;
 	-fx-font-size: 12;
+}
+
+#TrainCard:hover {
+    -fx-translate-x: -10;
+    -fx-cursor: hand;
+    -fx-view-order: -1;
+}
+
+#onHoverUp:hover {
+    -fx-translate-y: -10;
+    -fx-cursor: hand;
+    -fx-view-order: -1;
 }
