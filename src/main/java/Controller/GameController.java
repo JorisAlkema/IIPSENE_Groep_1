@@ -6,15 +6,13 @@ import Observers.BannerObserver;
 import Observers.CardsObserver;
 import Service.GameSetupService;
 import View.DestinationPopUp;
+import View.EndGameView;
 import View.RoutePopUp;
 import Observers.PlayerTurnObverser;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
 import Observers.TurnTimerObserver;
+import javafx.scene.Scene;
 
 import java.util.*;
 
@@ -245,6 +243,7 @@ public class GameController {
 
     public void endGame() {
         System.out.println("GAME IS ENDED");
+        MainState.primaryStage.setScene(new Scene(new EndGameView()));
         listenerRegistration.remove();
     }
 

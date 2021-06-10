@@ -2,7 +2,6 @@ package Model;
 
 import Observers.MapObservable;
 import Observers.MapObserver;
-import Observers.MusicObserver;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.ImagePattern;
@@ -16,13 +15,13 @@ public class MapModel implements MapObservable {
     private ArrayList<RouteCell> routeCellOverlays;
     private ArrayList<Circle> cityOverlays;
     private boolean zoomedIn;
-    private static final ImageView bigBackgroundImage = new ImageView("maps/map_big.jpg");
-    private static final ImageView smallBackgroundImage = new ImageView("maps/map_small.jpg");
-    private static final ImagePattern blueImagePattern = new ImagePattern(new Image("icons/train_blue.png"));
-    private static final ImagePattern greenImagePattern = new ImagePattern(new Image("icons/train_green.png"));
-    private static final ImagePattern purpleImagePattern = new ImagePattern(new Image("icons/train_purple.png"));
-    private static final ImagePattern redImagePattern = new ImagePattern(new Image("icons/train_red.png"));
-    private static final ImagePattern yellowImagePattern = new ImagePattern(new Image("icons/train_yellow.png"));
+    private static final ImageView bigBackgroundImage = new ImageView("images/maps/map_big.jpg");
+    private static final ImageView smallBackgroundImage = new ImageView("images/maps/map_small.jpg");
+    private static final ImagePattern blueImagePattern = new ImagePattern(new Image("images/icons/train_blue.png"));
+    private static final ImagePattern greenImagePattern = new ImagePattern(new Image("images/icons/train_green.png"));
+    private static final ImagePattern purpleImagePattern = new ImagePattern(new Image("images/icons/train_purple.png"));
+    private static final ImagePattern redImagePattern = new ImagePattern(new Image("images/icons/train_red.png"));
+    private static final ImagePattern yellowImagePattern = new ImagePattern(new Image("images/icons/train_yellow.png"));
     private static final double smallCellWidth = 35;
     private static final double smallCellHeight = 12;
     private static final double bigCellWidth = 70;

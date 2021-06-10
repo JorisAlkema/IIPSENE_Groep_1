@@ -31,7 +31,7 @@ public class LobbyView extends StackPane implements LobbyObserver {
         colorAdjust.setBrightness(-0.5);
 
         // Background for textFields and return to menu button
-        ImageView background = new ImageView("images/main_menu_background.jpg");
+        ImageView background = new ImageView("images/backgrounds/main_menu_background.jpg");
         background.setFitWidth(MainState.WINDOW_WIDTH);
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
@@ -46,7 +46,7 @@ public class LobbyView extends StackPane implements LobbyObserver {
         grid.setHgap(10);
         grid.setPadding(new Insets(40));
 
-        ImageView title = new ImageView("images/main_menu_logo.png");
+        ImageView title = new ImageView("images/logos/main_menu_logo.png");
         title.setFitWidth(title.getImage().getWidth() * 0.5);
         title.setFitHeight(title.getImage().getHeight() * 0.5);
 
@@ -65,7 +65,7 @@ public class LobbyView extends StackPane implements LobbyObserver {
         Text titleMap = new Text("The map");
         titleMap.setId("text");
         titleMap.minHeight(100);
-        ImageView imageMap = new ImageView("maps/map_big.jpg");
+        ImageView imageMap = new ImageView("images/maps/map_big.jpg");
         imageMap.setPreserveRatio(true);
         imageMap.setFitWidth(300);
         map.getChildren().add(titleMap);

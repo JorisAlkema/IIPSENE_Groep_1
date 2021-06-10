@@ -30,7 +30,7 @@ public class LoginView extends StackPane implements LoginObserver {
         // Logo
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(40));
-        ImageView title = new ImageView("images/main_menu_logo.png");
+        ImageView title = new ImageView("images/logos/main_menu_logo.png");
         title.setFitWidth(title.getImage().getWidth() * 0.7);
         title.setFitHeight(title.getImage().getHeight() * 0.7);
         grid.add(title, 0,0,2,1);
@@ -40,7 +40,7 @@ public class LoginView extends StackPane implements LoginObserver {
         colorAdjust.setBrightness(-0.5);
 
         // Background for textFields and return to menu button
-        ImageView background = new ImageView("images/main_menu_background.jpg");
+        ImageView background = new ImageView("images/backgrounds/main_menu_background.jpg");
         background.setFitWidth(MainState.WINDOW_WIDTH);
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);

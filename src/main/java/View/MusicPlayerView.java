@@ -7,8 +7,8 @@ import javafx.scene.image.ImageView;
 
 public class MusicPlayerView implements MusicObserver {
     private MusicController musicController;
-    private static final Image musicOnImage = new Image("images/music-on.png");
-    private static final Image musicOffImage = new Image("images/music-off.png");
+    private static final Image musicOnImage = new Image("images/icons/music-on.png");
+    private static final Image musicOffImage = new Image("images/icons/music-off.png");
     public ImageView musicImageView;
 
     public MusicPlayerView() {

@@ -26,11 +26,11 @@ public class DestinationTicket {
     }
 
     public String fileName() {
-        return "destination_tickets/eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase() + ".png";
+        return "images/destination_tickets/eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase() + ".png";
     }
 
     public String fileNameSmall() {
-        return "destination_tickets/eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase() + "-small.png";
+        return "images/destination_tickets/eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase() + "-small.png";
     }
 
     public City getFirstCity() {

@@ -1,26 +1,17 @@
 package View;
 
 import App.MainState;
-import Controller.DestinationTicketController;
-import Model.DestinationTicket;
-import Model.Player;
 import javafx.event.Event;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class RoutePopUp {
     private ArrayList<String> equalColors = new ArrayList<>();
@@ -37,7 +28,7 @@ public class RoutePopUp {
 
     public String showRoutePopUp() {
         Stage stage = new Stage();
-        stage.getIcons().add(new Image("traincards/traincard_back_small.png"));
+        stage.getIcons().add(new Image("images/traincards/traincard_back_small.png"));
         stage.setOnCloseRequest(Event::consume);
 
         VBox vBox = new VBox();
@@ -73,7 +64,7 @@ public class RoutePopUp {
         vBox.getChildren().add(closeButton);
 
         Scene scene = new Scene(vBox);
-        scene.getStylesheets().add(MainState.MenuCSS);
+        scene.getStylesheets().add(MainState.menuCSS);
         stage.setScene(scene);
         stage.showAndWait();
         stage.setAlwaysOnTop(true);
