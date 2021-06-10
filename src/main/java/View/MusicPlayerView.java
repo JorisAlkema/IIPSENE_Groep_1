@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class MusicPlayerView implements MusicObserver {
+
     private final MusicController musicController;
     public final ImageView musicImageView;
     static MusicPlayerView musicPlayerView;

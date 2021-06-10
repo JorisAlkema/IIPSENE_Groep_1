@@ -41,7 +41,7 @@ public class DestinationPopUp {
 
     private void showPopUp(ArrayList<DestinationTicket> destinationTickets) {
         Stage stage = new Stage();
-        stage.getIcons().add(new Image("traincards/traincard_back_small.png"));
+        stage.getIcons().add(new Image("images/traincards/traincard_back_small.png"));
         stage.setWidth(WINDOW_WIDTH);
         stage.setHeight(WINDOW_HEIGHT);
         stage.setOnCloseRequest(Event::consume);
@@ -87,7 +87,7 @@ public class DestinationPopUp {
         vBox.getChildren().add(closeButton);
 
         Scene scene = new Scene(vBox);
-        scene.getStylesheets().add(MainState.MenuCSS);
+        scene.getStylesheets().add(MainState.menuCSS);
         stage.setScene(scene);
         stage.setAlwaysOnTop(true);
         stage.setX(WINDOW_X_POSITION);

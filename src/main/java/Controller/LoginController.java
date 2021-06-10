@@ -28,7 +28,7 @@ public class LoginController {
     public void returnToMenu() {
         MainMenuView menuView = new MainMenuView();
         Scene scene = new Scene(menuView, MainState.WINDOW_WIDTH, MainState.WINDOW_HEIGHT);
-        scene.getStylesheets().add(MainState.MenuCSS);
+        scene.getStylesheets().add(MainState.menuCSS);
         MainState.primaryStage.setScene(scene);
     }
 
@@ -167,7 +167,7 @@ public class LoginController {
 
     private void showLobby() {
         Scene scene = new Scene(new LobbyView(), MainState.WINDOW_WIDTH, MainState.WINDOW_HEIGHT);
-        scene.getStylesheets().add(MainState.MenuCSS);
+        scene.getStylesheets().add(MainState.menuCSS);
         MainState.primaryStage.setScene(scene);
     }
 

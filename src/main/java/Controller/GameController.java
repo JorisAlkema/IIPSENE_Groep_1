@@ -8,9 +8,14 @@ import Observers.PlayerTurnObverser;
 import Observers.TurnTimerObserver;
 import Service.GameSetupService;
 import View.DestinationPopUp;
+import View.EndGameView;
 import View.RoutePopUp;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
+
+import Observers.TurnTimerObserver;
+import javafx.scene.Scene;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -252,6 +257,7 @@ public class GameController {
 
     public void endGame() {
         System.out.println("GAME IS ENDED");
+        MainState.primaryStage.setScene(new Scene(new EndGameView()));
         listenerRegistration.remove();
     }
 

@@ -28,7 +28,7 @@ public class RoutePopUp {
 
     public String showRoutePopUp() {
         Stage stage = new Stage();
-        stage.getIcons().add(new Image("traincards/traincard_back_small.png"));
+        stage.getIcons().add(new Image("images/traincards/traincard_back_small.png"));
         stage.setOnCloseRequest(Event::consume);
 
         VBox vBox = new VBox();
@@ -64,7 +64,7 @@ public class RoutePopUp {
         vBox.getChildren().add(closeButton);
 
         Scene scene = new Scene(vBox);
-        scene.getStylesheets().add(MainState.MenuCSS);
+        scene.getStylesheets().add(MainState.menuCSS);
         stage.setScene(scene);
         stage.showAndWait();
         stage.setAlwaysOnTop(true);
