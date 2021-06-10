@@ -23,7 +23,7 @@ public class GameController {
 
     private PlayerTurnController playerTurnController = new PlayerTurnController();
     private CardsController cardsController = new CardsController();
-    private MapController mapController = new MapController();
+    private MapController mapController = new MapController(cardsController);
     private TurnTimerController turnTimerController = new TurnTimerController();
 
     private GameSetupService gameSetupService = new GameSetupService();

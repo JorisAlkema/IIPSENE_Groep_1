@@ -74,6 +74,24 @@ public class CardsController {
         return randomCard;
     }
 
+    public ArrayList<TrainCard> reshuffleCards(){
+        ArrayList<TrainCard> shuffledCards;
+        ArrayList<Player> players = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
+        ArrayList<TrainCard> currentCards = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode).getOpenDeck();
+
+        for (Player player:players){
+            currentCards.addAll(player.getTrainCards());
+        }
+
+        shuffledCards = generateClosedDeck();
+
+        for (TrainCard trainCard: currentCards){
+            shuffledCards.remove(trainCard);
+        }
+
+        return shuffledCards;
+    }
+
 
     public void registerObserver(CardsObserver observer) {
         cards.registerObserver(observer);
