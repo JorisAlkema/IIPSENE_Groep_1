@@ -18,7 +18,7 @@ public class MainState {
 
     public static final int WINDOW_X_POSITION = 20;
     public static final int WINDOW_Y_POSITION = 50;
-    public static final int WINDOW_WIDTH = 1550;
+    public static final int WINDOW_WIDTH = 1510;
     public static final int WINDOW_HEIGHT = 883;
 
     public static final String MenuCSS = "css/mainMenuStyle.css";
