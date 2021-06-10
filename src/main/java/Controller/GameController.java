@@ -269,7 +269,6 @@ public class GameController {
 
     private void incrementPlayerActionsTaken() {
         getLocalPlayerFromGameState().setActionsTaken(getLocalPlayerFromGameState().getActionsTaken() + 1);
-        getLocalPlayerFromGameState().setTrains(getLocalPlayerFromGameState().getTrains() - 1);
     }
 
     public void registerCardsObserver(CardsObserver cardsObserver) {
