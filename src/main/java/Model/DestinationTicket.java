@@ -20,6 +20,7 @@ public class DestinationTicket {
         this.type = type;
         connected = false;
     }
+
     public DestinationTicket() {
 
 

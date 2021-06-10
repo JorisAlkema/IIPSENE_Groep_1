@@ -15,10 +15,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HandView extends HBox implements HandObserver {
-    private final HandController handController;
 
     private final ImageView blackCard = new ImageView("images/traincards/traincard_black_small.png");
     private final ImageView blueCard = new ImageView("images/traincards/traincard_blue_small.png");
@@ -34,7 +35,7 @@ public class HandView extends HBox implements HandObserver {
     private final ScrollPane destinationTicketPane;
 
     public HandView() {
-        this.handController = new HandController();
+        HandController handController = new HandController();
         handController.registerObserver(this);
         setAlignment(Pos.CENTER_RIGHT);
         this.cardImageViews = new ArrayList<>();
@@ -102,7 +103,7 @@ public class HandView extends HBox implements HandObserver {
 
     private void updateDestinationTickets(ArrayList<DestinationTicket> destinationTickets) {
         VBox vBox = new VBox();
-        for (DestinationTicket destinationTicket: destinationTickets){
+        for (DestinationTicket destinationTicket : destinationTickets) {
             String path = destinationTicket.fileNameSmall();
             vBox.getChildren().addAll(new ImageView(path));
         }
@@ -113,25 +114,25 @@ public class HandView extends HBox implements HandObserver {
         for (StackPane stackPane : trainCardPanes) {
             Node node = stackPane.getChildren().get(0);
             ImageView imageView = (ImageView) node;
+            String amount = "0";
             double saturation = -0.5;
             double opacity = 0.3;
             boolean canHover = false;
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 if (imageView.getImage().getUrl().contains(entry.getKey().toLowerCase())) {
                     if (entry.getValue() != 0) {
-                        setTextOnStackPane(stackPane, Integer.toString(entry.getValue()));
+                        amount = Integer.toString(entry.getValue());
                         saturation = 0;
                         opacity = 1;
                         canHover = true;
                     }
                 }
             }
-
             ColorAdjust colorAdjust = new ColorAdjust();
             colorAdjust.setSaturation(saturation);
             imageView.setOpacity(opacity);
             imageView.setEffect(colorAdjust);
-
+            setTextOnStackPane(stackPane, amount);
             if (canHover) {
                 stackPane.setId("onHoverUp");
             } else {

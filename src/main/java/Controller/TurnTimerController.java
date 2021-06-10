@@ -4,7 +4,7 @@ import Model.TurnTimer;
 import Observers.TurnTimerObserver;
 
 public class TurnTimerController {
-    private TurnTimer turnTimer = new TurnTimer();
+    private final TurnTimer turnTimer = new TurnTimer();
 
     public void startTimer(GameController gameController) {
         turnTimer.newCountDownTimer(gameController);

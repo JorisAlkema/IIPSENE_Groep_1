@@ -5,14 +5,13 @@ import Model.Cards;
 import Model.GameState;
 import Model.Player;
 import Model.TrainCard;
-import Observers.CardsObservable;
 import Observers.CardsObserver;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class CardsController {
-    private Cards cards = new Cards();
+    private final Cards cards = new Cards();
 
     public TrainCard pickClosedCard(GameState gameState) {
         TrainCard pickedClosedCard = getRandomCard(gameState);
@@ -39,7 +38,7 @@ public class CardsController {
     }
 
     public ArrayList<TrainCard> generateClosedDeck() {
-        String[] colors  = {"PURPLE", "WHITE", "BLUE", "YELLOW", "ORANGE", "BLACK", "RED", "GREEN"};
+        String[] colors = {"PURPLE", "WHITE", "BLUE", "YELLOW", "ORANGE", "BLACK", "RED", "GREEN"};
         ArrayList<TrainCard> trainCards = new ArrayList<>();
 
         for (String color : colors) {
@@ -55,7 +54,7 @@ public class CardsController {
 
     public ArrayList<TrainCard> generateOpenDeck(ArrayList<TrainCard> closedCards) {
         ArrayList<TrainCard> openCards = new ArrayList<>();
-        while(openCards.size() < 5){
+        while (openCards.size() < 5) {
             TrainCard randomCard = closedCards.get(new Random().nextInt(closedCards.size()));
             closedCards.remove(randomCard);
             openCards.add(randomCard);
@@ -66,7 +65,7 @@ public class CardsController {
     private TrainCard getRandomCard(GameState gameState) {
         ArrayList<TrainCard> closedDeck = gameState.getClosedDeck();
         System.out.println(">>>> Before shuffle" + closedDeck.size());
-        if (closedDeck.size() == 0){
+        if (closedDeck.size() == 0) {
             closedDeck = reshuffleCards(gameState);
         }
         System.out.println(">>>> After shuffle" + closedDeck.size());
@@ -76,14 +75,14 @@ public class CardsController {
         return randomCard;
     }
 
-    private ArrayList<TrainCard> reshuffleCards(GameState gameState){
+    private ArrayList<TrainCard> reshuffleCards(GameState gameState) {
         ArrayList<TrainCard> newClosedDeck;
         ArrayList<TrainCard> cardsToRemove = new ArrayList<>(gameState.getOpenDeck());
-        for (Player player: gameState.getPlayers()){
+        for (Player player : gameState.getPlayers()) {
             cardsToRemove.addAll(player.getTrainCards());
         }
         newClosedDeck = generateClosedDeck();
-        for (TrainCard trainCard: cardsToRemove){
+        for (TrainCard trainCard : cardsToRemove) {
             newClosedDeck.remove(trainCard);
         }
         return newClosedDeck;

@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class RoutePopUp {
-    private ArrayList<String> equalColors = new ArrayList<>();
+    private final ArrayList<String> possibleColors;
     private String selectedColor;
 
     private final double UNSELECTED_OPACITY = 0.6;
@@ -22,8 +22,8 @@ public class RoutePopUp {
     private final int WINDOW_X_POSITION = 1;
     private final int WINDOW_Y_POSITION = 1;
 
-    public RoutePopUp(ArrayList<String> equalColors) {
-        this.equalColors = equalColors;
+    public RoutePopUp(ArrayList<String> possibleColors) {
+        this.possibleColors = possibleColors;
     }
 
     public String showRoutePopUp() {
@@ -39,8 +39,8 @@ public class RoutePopUp {
 
         ArrayList<ImageView> availableColors = new ArrayList<>();
 
-        for (String color : equalColors) {
-            ImageView trainCard = new ImageView(new Image("traincard_" + color.toLowerCase() + "_small.png"));
+        for (String color : possibleColors) {
+            ImageView trainCard = new ImageView(new Image("traincards/traincard_" + color.toLowerCase() + "_small.png"));
             availableColors.add(trainCard);
 
             trainCard.setOpacity(UNSELECTED_OPACITY);
@@ -57,7 +57,7 @@ public class RoutePopUp {
 
         Button closeButton = new Button("Confirm");
         closeButton.setOnAction(e -> {
-            if(selectedColor != null){
+            if (selectedColor != null) {
                 stage.close();
             }
         });

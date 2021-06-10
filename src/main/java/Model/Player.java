@@ -46,25 +46,13 @@ public class Player {
 
     }
 
-    public void givePointForRouteSize(int routeLength) {
-        switch (routeLength) {
-            case 1: incrementPoints(1); break;
-            case 2: incrementPoints(2); break;
-            case 3: incrementPoints(4); break;
-            case 4: incrementPoints(7); break;
-            case 6: incrementPoints(15); break;
-            case 8: incrementPoints(21); break;
-            default: incrementPoints(0); break;
-        }
-    }
-
-    public void addTrainCard(TrainCard trainCard){
+    public void addTrainCard(TrainCard trainCard) {
         this.trainCards.add(trainCard);
         HandModel handModel = HandModel.getInstance();
         handModel.setTrainCardsMap(trainCardsAsMap());
     }
 
-    public void addDestinationTicket(DestinationTicket destinationTicket){
+    public void addDestinationTicket(DestinationTicket destinationTicket) {
         this.destinationTickets.add(destinationTicket);
         HandModel handModel = HandModel.getInstance();
         handModel.setDestinationTicketsInHand(this.destinationTickets);
@@ -169,6 +157,10 @@ public class Player {
 
     public ArrayList<Route> getClaimedRoutes() {
         return claimedRoutes;
+    }
+
+    public void addClaimedRoute(Route route) {
+        this.claimedRoutes.add(route);
     }
 
     public void setClaimedRoutes(ArrayList<Route> claimedRoutes) {

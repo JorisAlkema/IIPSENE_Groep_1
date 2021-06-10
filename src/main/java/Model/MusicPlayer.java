@@ -2,7 +2,6 @@ package Model;
 
 import Observers.MusicObservable;
 import Observers.MusicObserver;
-import View.MusicPlayerView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
@@ -11,25 +10,24 @@ import java.util.ArrayList;
 
 public class MusicPlayer implements MusicObservable {
     private boolean isPlaying = true;
-    private ArrayList<MusicObserver> observers = new ArrayList<>();
+    private final ArrayList<MusicObserver> observers = new ArrayList<>();
     static MusicPlayer musicPlayer;
-    private Media media;
-    private MediaPlayer mediaPlayer;
+    private final MediaPlayer mediaPlayer;
 
     public MusicPlayer() {
-        media = new Media(new File("src/main/resources/music/europe.mp3").toURI().toString());
+        Media media = new Media(new File("src/main/resources/music/europe.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(media);
-//        mediaPlayer.play();
+        mediaPlayer.play();
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
     }
 
     public static MusicPlayer getInstance() {
-        if(musicPlayer == null) {
+        if (musicPlayer == null) {
             musicPlayer = new MusicPlayer();
         }
-
         return musicPlayer;
     }
+
 
     public void toggleMusic() {
         isPlaying = !isPlaying;
@@ -38,7 +36,7 @@ public class MusicPlayer implements MusicObservable {
     }
 
     public void playAudio(boolean isPlaying) {
-        if(isPlaying) {
+        if (isPlaying) {
             mediaPlayer.play();
             mediaPlayer.setAutoPlay(true);
         } else {
@@ -62,7 +60,7 @@ public class MusicPlayer implements MusicObservable {
 
     @Override
     public void notifyObservers() {
-        for(MusicObserver observer : observers) {
+        for (MusicObserver observer : observers) {
             observer.update();
         }
     }

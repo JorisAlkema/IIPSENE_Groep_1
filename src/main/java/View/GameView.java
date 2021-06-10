@@ -16,7 +16,10 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -24,11 +27,11 @@ import java.util.ArrayList;
 public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser, BannerObserver {
     private Label timerLabel;
     private Label currentPlayerLabel;
-    private BorderPane borderPane;
+    private final BorderPane borderPane;
     private VBox cardsBox;
     private VBox playerBanners;
     private MapView mapView;
-    private GameController gameController;
+    private final GameController gameController;
 
     public GameView() {
         // Init
@@ -51,7 +54,13 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
 
-        this.getChildren().addAll(background, borderPane);
+        MusicPlayerView musicPlayerView = MusicPlayerView.getInstance();
+        ImageView musicImageView = musicPlayerView.getMusicImageView();
+
+        musicImageView.setTranslateX(background.getFitWidth() / 2 - 1465);
+        musicImageView.setTranslateY(MainState.WINDOW_HEIGHT / 2 - musicImageView.getFitHeight() - 55);
+
+        this.getChildren().addAll(background, borderPane, musicImageView);
     }
 
     private void initLeftPane() {
@@ -75,6 +84,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         vBox.setPadding(new Insets(10));
 
         playerBanners = new VBox();
+
         vBox.getChildren().addAll(timerLabel, mapZoomButton, currentPlayerLabel, playerBanners);
         borderPane.setLeft(vBox);
     }

@@ -9,18 +9,24 @@ import javafx.event.Event;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class MapController {
     private final MapModel mapModel;
     private final GameSetupService gameSetupService;
     private GameController gameController;
     private CardsController cardsController;
+    private final HashMap<RouteCell, Rectangle> routeCellRectangleHashMap;
     static MapController mapController;
 
     public MapController() {
         this.gameSetupService = new GameSetupService();
+        this.routeCellRectangleHashMap = new HashMap<>();
         this.mapModel = new MapModel(gameSetupService.getRoutes(), gameSetupService.getCities());
         this.mapModel.setCityOverlays(createCityOverlays());
         this.mapModel.setRouteCellOverlays(createRouteCellOverlays());
@@ -41,6 +47,7 @@ public class MapController {
     /**
      * Create the overlays for the cities on the map.
      * Sets the correct location, size and adds event handler
+     *
      * @return A list of Circle objects which represent the overlays
      */
     private ArrayList<Circle> createCityOverlays() {
@@ -54,7 +61,7 @@ public class MapController {
             circle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
                     e -> {
                         if (circle.getFill().equals(Color.TRANSPARENT)) {
-                            circle.setFill( Color.BLACK);
+                            circle.setFill(Color.BLACK);
                         } else {
                             circle.setFill(Color.TRANSPARENT);
                         }
@@ -69,48 +76,42 @@ public class MapController {
     /**
      * Creates the overlays for the individual routecells on the map.
      * Sets the correct location, size, rotation and adds event handler
+     *
      * @return A list of RouteCell object which represent the overlays
      */
-    private ArrayList<RouteCell> createRouteCellOverlays() {
-        ArrayList<RouteCell> overlays = new ArrayList<>();
-        for (Route route : this.mapModel.getRoutes()) {
+    private ArrayList<Rectangle> createRouteCellOverlays() {
+        ArrayList<Rectangle> overlays = new ArrayList<>();
+        ArrayList<Route> routes = this.mapModel.getRoutes();
+        for (Route route : routes) {
             for (RouteCell routeCell : route.getRouteCells()) {
-                routeCell.setTranslateX(routeCell.getTranslateX() / 2);
-                routeCell.setTranslateY(routeCell.getTranslateY() / 2);
-                routeCell.setWidth(this.mapModel.getCellWidth());
-                routeCell.setHeight(this.mapModel.getCellHeight());
-                routeCell.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
-                        e -> handleRouteCellClickEvent(routeCell),
+                Rectangle rectangle = new Rectangle();
+                rectangle.setTranslateX(routeCell.getTranslateX() / 2);
+                rectangle.setTranslateY(routeCell.getTranslateY() / 2);
+                rectangle.setRotate(routeCell.getRotation());
+                rectangle.setWidth(this.mapModel.getCellWidth());
+                rectangle.setHeight(this.mapModel.getCellHeight());
+                rectangle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
+                        e -> {
+                            for (Route route1 : routes) {
+                                if (route1.getRouteCells().contains(routeCell)) {
+                                    gameController.buildRoute(route);
+                                }
+                            }
+                        },
                         Event::consume
                 ));
-                routeCell.setFill(Color.TRANSPARENT);
-                overlays.add( routeCell );
+                rectangle.setFill(Color.TRANSPARENT);
+                routeCellRectangleHashMap.put(routeCell, rectangle);
+                overlays.add(rectangle);
             }
         }
         return overlays;
     }
 
-    /**
-     * Handles click event for when the user clicks on a RouteCell on the mapView
-     * @param routeCell The routeCell overlay that was clicked on
-     */
-    // TODO: Call claimRoute from this function
-    public void handleRouteCellClickEvent(RouteCell routeCell) {
-        if (routeCell.getFill().equals(Color.TRANSPARENT)) {
-            for (RouteCell cellInSameRoute : routeCell.getParentRoute().getRouteCells()) {
-                cellInSameRoute.setFill(this.mapModel.getImagePattern("PURPLE"));
-            }
-        } else {
-            for (RouteCell cellInSameRoute : routeCell.getParentRoute().getRouteCells()) {
-                cellInSameRoute.setFill(Color.TRANSPARENT);
-            }
-        }
-    }
-
     // When this method is called, we assume that the player has already selected the color
     // with which they want to build the route, in case it is grey.
     public boolean claimRoute(Route route, String color) {
-        if (route.getOwner() != null) {
+        if (routeCellRectangleHashMap.get(route.getRouteCells().get(0)).getFill() != Color.TRANSPARENT) {
             return false;
         }
 
@@ -121,7 +122,7 @@ public class MapController {
         }
         String type = route.getType();
         int requiredLocos = route.getRequiredLocomotives();
-        int routeLength = route.getLength();
+        int routeLength = route.routeLength();
         Player currentPlayer = this.gameController.getCurrentPlayer();
         ArrayList<TrainCard> playerHand = currentPlayer.getTrainCards();
         ArrayList<TrainCard> correctColorCards = new ArrayList<>();
@@ -169,11 +170,11 @@ public class MapController {
             }
         }
 
-        currentPlayer.getClaimedRoutes().add(route);
-        route.setOwner(currentPlayer);
-        currentPlayer.givePointForRouteSize(routeLength);
+        HandModel.getInstance().setTrainCardsMap(currentPlayer.trainCardsAsMap());
+
+        currentPlayer.addClaimedRoute(route);
         for (RouteCell routeCell : route.getRouteCells()) {
-            routeCell.setFill(this.mapModel.getImagePattern(gameController.getCurrentPlayer().getPlayerColor()));
+            routeCellRectangleHashMap.get(routeCell).setFill(this.mapModel.getImagePattern(gameController.getCurrentPlayer().getPlayerColor()));
         }
 
         gameController.checkTrains();
@@ -182,7 +183,6 @@ public class MapController {
 
     /**
      * Zooms in on the mapModel and updates the mapView
-     *
      */
     public void zoomIn() {
         if (this.mapModel.isZoomedIn()) {
@@ -190,11 +190,12 @@ public class MapController {
         }
         this.mapModel.setZoomedIn(true);
 
-        for (RouteCell routeCell : this.mapModel.getRouteCellOverlays()) {
-            routeCell.setWidth(this.mapModel.getCellWidth());
-            routeCell.setHeight(this.mapModel.getCellHeight());
-            routeCell.setTranslateX(routeCell.getTranslateX() * 2);
-            routeCell.setTranslateY(routeCell.getTranslateY() * 2);
+        for (Rectangle rectangle : this.mapModel.getRouteCellOverlays()) {
+            RouteCell routeCell = getKeyByValue(routeCellRectangleHashMap, rectangle);
+            rectangle.setWidth(this.mapModel.getCellWidth());
+            rectangle.setHeight(this.mapModel.getCellHeight());
+            rectangle.setTranslateX(routeCell.getTranslateX());
+            rectangle.setTranslateY(routeCell.getTranslateY());
         }
 
         for (Circle circle : this.mapModel.getCityOverlays()) {
@@ -205,20 +206,31 @@ public class MapController {
         this.mapModel.notifyObservers();
     }
 
+    private RouteCell getKeyByValue(Map<RouteCell, Rectangle> map, Rectangle value) {
+        for (Map.Entry<RouteCell, Rectangle> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+
     /**
      * Zooms out on the mapModel and updates the mapView
      */
     public void zoomOut() {
-        if (! this.mapModel.isZoomedIn()) {
+        if (!this.mapModel.isZoomedIn()) {
             return;
         }
         this.mapModel.setZoomedIn(false);
 
-        for (RouteCell routeCell : this.mapModel.getRouteCellOverlays()) {
-            routeCell.setWidth(this.mapModel.getCellWidth());
-            routeCell.setHeight(this.mapModel.getCellHeight());
-            routeCell.setTranslateX(routeCell.getTranslateX() / 2);
-            routeCell.setTranslateY(routeCell.getTranslateY() / 2);
+        for (Rectangle rectangle : this.mapModel.getRouteCellOverlays()) {
+            RouteCell routeCell = getKeyByValue(routeCellRectangleHashMap, rectangle);
+            rectangle.setWidth(this.mapModel.getCellWidth());
+            rectangle.setHeight(this.mapModel.getCellHeight());
+            rectangle.setTranslateX(routeCell.getTranslateX() / 2);
+            rectangle.setTranslateY(routeCell.getTranslateY() / 2);
         }
 
         for (Circle circle : this.mapModel.getCityOverlays()) {
@@ -229,11 +241,11 @@ public class MapController {
         this.mapModel.notifyObservers();
     }
 
-    public int generateTunnels(String color){
+    public int generateTunnels(String color) {
         int tunnels = 0;
-        for(int i =0;i<3;i++){
+        for (int i = 0; i < 3; i++) {
             TrainCard randomCard = cardsController.pickClosedCard(MainState.firebaseService.getGameStateOfLobby(MainState.roomCode));
-            if(randomCard.getColor().equals(color)){
+            if (randomCard.getColor().equals(color)) {
                 tunnels++;
             }
         }

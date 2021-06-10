@@ -10,7 +10,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class TurnTimer implements TurnTimerObservable {
-    private ArrayList<TurnTimerObserver> turnTimerObservers = new ArrayList<>();
+    private final ArrayList<TurnTimerObserver> turnTimerObservers = new ArrayList<>();
     private Timer timer = new Timer();
 
     private String timerText;
@@ -28,7 +28,7 @@ public class TurnTimer implements TurnTimerObservable {
         // Schedules the timer for repeated fixed-rate execution, beginning after the specified delay
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
-                if (seconds > 0 ) {
+                if (seconds > 0) {
                     updateTimerTextInGameView();
                 } else if (seconds == 0) {
                     System.out.println("TIMER ENDED");

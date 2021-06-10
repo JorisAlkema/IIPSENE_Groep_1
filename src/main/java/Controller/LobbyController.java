@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class LobbyController {
 
-    private Lobby lobby = new Lobby();
+    private final Lobby lobby = new Lobby();
 
     public LobbyController(LobbyView lobbyView) {
         lobby.registerObserver(lobbyView);

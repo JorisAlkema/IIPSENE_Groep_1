@@ -12,7 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class MainMenuView extends StackPane {
-    private MainMenuController mainMenuController = new MainMenuController();
+    private final MainMenuController mainMenuController = new MainMenuController();
     private MusicPlayerView musicPlayerView;
 
     public MainMenuView() {
@@ -25,7 +25,7 @@ public class MainMenuView extends StackPane {
         title.setFitWidth(title.getImage().getWidth() * 0.7);
         title.setFitHeight(title.getImage().getHeight() * 0.7);
 
-        grid.add(title, 0,0,2,1);
+        grid.add(title, 0, 0, 2, 1);
 
         // Background
         ColorAdjust colorAdjust = new ColorAdjust();
@@ -52,8 +52,7 @@ public class MainMenuView extends StackPane {
         buttons.getChildren().add(quit);
 
         // Music button
-        musicPlayerView = new MusicPlayerView();
-        ImageView musicImageView = musicPlayerView.getMusicImageView();
+        ImageView musicImageView = MusicPlayerView.getInstance().getMusicImageView();
         // There's probably a better way to align this, but at least the menu buttons are clickable now
         musicImageView.setTranslateX(background.getFitWidth() / 2 - musicImageView.getFitWidth() - 45);
         musicImageView.setTranslateY(background.getFitHeight() / 2 - musicImageView.getFitHeight() - 55);
@@ -69,4 +68,5 @@ public class MainMenuView extends StackPane {
         rules.setOnMouseClicked(e -> mainMenuController.openRules());
         quit.setOnMouseClicked(e -> System.exit(0));
     }
+
 }

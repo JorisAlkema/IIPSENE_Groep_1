@@ -15,10 +15,11 @@ import java.util.TimerTask;
 import java.util.UUID;
 
 public class LoginController {
-    private Login login = new Login();;
+    private final Login login = new Login();
     private final int CHARACTER_MAX = 15;
     private final int CHARACTER_MIN = 2;
     private final int ROOMCODE_CHARACTERS = 6;
+
     public LoginController(LoginView loginView) {
         login.registerObserver(loginView);
     }
@@ -38,8 +39,8 @@ public class LoginController {
 
     public boolean checkRoomCode(String code) {
         int characters = code.length();
-        for (int i = 0; i < characters; i ++) {
-            if(Character.isLetter(code.charAt(i))) {
+        for (int i = 0; i < characters; i++) {
+            if (Character.isLetter(code.charAt(i))) {
                 return false;
             }
         }
@@ -58,12 +59,12 @@ public class LoginController {
         }
 
 
-        if(this.checkUsername(username)) {
-            login.notifyObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
+        if (this.checkUsername(username)) {
+            login.notifyObservers("Your username must be between " + CHARACTER_MIN + " and " + CHARACTER_MAX + " characters long");
             return;
         }
 
-        if(!this.checkRoomCode(code)) {
+        if (!this.checkRoomCode(code)) {
             login.notifyObservers("Enter a valid roomcode");
             return;
         }
@@ -118,8 +119,8 @@ public class LoginController {
             return;
         }
 
-        if(this.checkUsername(username)) {
-            login.notifyObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
+        if (this.checkUsername(username)) {
+            login.notifyObservers("Your username must be between " + CHARACTER_MIN + " and " + CHARACTER_MAX + " characters long");
             return;
         }
 
@@ -173,6 +174,7 @@ public class LoginController {
     private Timer getLoadingAnimation(String message) {
         TimerTask timerTask = new TimerTask() {
             int n = 0;
+
             @Override
             public void run() {
                 n = (n + 1) % 4;

@@ -1,13 +1,14 @@
 package View;
 
 import Controller.MapController;
-
 import Observers.MapObserver;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
-/** Constructs a scene with a pannable Map background. */
+/**
+ * Constructs a scene with a pannable Map background.
+ */
 public class MapView extends ScrollPane implements MapObserver {
     private final MapController mapController;
     private StackPane stackPane;

@@ -1,9 +1,9 @@
 package Observers;
 
 public interface LoginObservable {
-    public void registerObserver(LoginObserver loginObserver);
+    void registerObserver(LoginObserver loginObserver);
 
-    public void unregisterObserver(LoginObserver loginObserver);
+    void unregisterObserver(LoginObserver loginObserver);
 
-    public void notifyObservers(String message);
+    void notifyObservers(String message);
 }

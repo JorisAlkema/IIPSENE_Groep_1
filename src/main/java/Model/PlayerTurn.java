@@ -6,7 +6,7 @@ import Observers.PlayerTurnObverser;
 import java.util.ArrayList;
 
 public class PlayerTurn implements PlayerTurnObservable {
-    private ArrayList<PlayerTurnObverser> playerTurnObversers = new ArrayList<>();
+    private final ArrayList<PlayerTurnObverser> playerTurnObversers = new ArrayList<>();
 
     private String currentPlayerUsername;
 
