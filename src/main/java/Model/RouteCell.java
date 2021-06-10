@@ -1,26 +1,45 @@
 package Model;
 
-import javafx.scene.shape.Rectangle;
-
 // RouteCell represents a single cell on the map. It is part of a Route.
 // A RouteCell has no color or type of its own, this is determined in the Route class.
 // The location of the RouteCell on the map is determined by its offsetX, offsetY and rotation.
-public class RouteCell extends Rectangle {
+public class RouteCell {
 
-    private Route parentRoute;
+    double translateX;
+    double translateY;
+    double rotation;
 
     public RouteCell(double translateX, double translateY, double rotation) {
-        super();
-        setTranslateX(translateX);
-        setTranslateY(translateY);
-        setRotate(rotation);
+        this.translateX = translateX;
+        this.translateY = translateY;
+        this.rotation = rotation;
     }
 
-    public void setParentRoute(Route parentRoute) {
-        this.parentRoute = parentRoute;
+    public RouteCell() {
+
     }
 
-    public Route getParentRoute() {
-        return parentRoute;
+    public double getTranslateX() {
+        return translateX;
+    }
+
+    public double getTranslateY() {
+        return translateY;
+    }
+
+    public double getRotation() {
+        return rotation;
+    }
+
+    public void setTranslateX(double translateX) {
+        this.translateX = translateX;
+    }
+
+    public void setTranslateY(double translateY) {
+        this.translateY = translateY;
+    }
+
+    public void setRotation(double rotation) {
+        this.rotation = rotation;
     }
 }

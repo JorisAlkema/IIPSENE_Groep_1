@@ -11,15 +11,15 @@ import Observers.CardsObserver;
 import Observers.PlayerTurnObverser;
 import Observers.TurnTimerObserver;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -27,11 +27,11 @@ import java.util.ArrayList;
 public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser, BannerObserver {
     private Label timerLabel;
     private Label currentPlayerLabel;
-    private BorderPane borderPane;
+    private final BorderPane borderPane;
     private VBox cardsBox;
     private VBox playerBanners;
     private MapView mapView;
-    private GameController gameController;
+    private final GameController gameController;
 
     public GameView() {
         // Init
@@ -49,7 +49,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
 
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
-        ImageView background = new ImageView("images/bg-splash.jpg");
+        ImageView background = new ImageView("images/backgrounds/bg-splash.jpg");
         background.setFitWidth(MainState.WINDOW_WIDTH);
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
@@ -63,8 +63,8 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     }
 
     private void initLeftPane() {
-        Image zoomInImage = new Image("icons/button_zoom_in.png");
-        Image zoomOutImage = new Image("icons/button_zoom_out.png");
+        Image zoomInImage = new Image("images/icons/button_zoom_in.png");
+        Image zoomOutImage = new Image("images/icons/button_zoom_out.png");
         ImageView mapZoomButton = new ImageView(zoomInImage);
         mapZoomButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (mapView.getMapController().getMapModel().isZoomedIn()) {
@@ -107,13 +107,13 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     @Override
     public void update(ArrayList<TrainCard> openCards) {
         if (openCards != null) {
-            final String CLOSED_CARD_PATH = "traincards/traincard_back_small_rotated.png";
+            final String CLOSED_CARD_PATH = "images/traincards/traincard_back_small_rotated.png";
             ImageView closedTrainCard = new ImageView(new Image(CLOSED_CARD_PATH));
             ArrayList<ImageView> openTrainCards = new ArrayList<>();
 
             for (TrainCard openCard : openCards) {
                 String cardColor = openCard.getColor();
-                String path = "traincards/traincard_" + cardColor + "_small_rotated.png";
+                String path = "images/traincards/traincard_" + cardColor + "_small_rotated.png";
                 openTrainCards.add(new ImageView(new Image(path)));
             }
 
@@ -150,11 +150,11 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     public void update(PlayerBanner playerBanner) {
         ArrayList<StackPane> stackPanes = new ArrayList<>();
         ArrayList<ImageView> banners = new ArrayList<>();
-        banners.add(new ImageView("images/player_banner_green.png"));
-        banners.add(new ImageView("images/player_banner_blue.png"));
-        banners.add(new ImageView("images/player_banner_purple.png"));
-        banners.add(new ImageView("images/player_banner_red.png"));
-        banners.add(new ImageView("images/player_banner_yellow.png"));
+        banners.add(new ImageView("images/banners/player_banner_green.png"));
+        banners.add(new ImageView("images/banners/player_banner_blue.png"));
+        banners.add(new ImageView("images/banners/player_banner_purple.png"));
+        banners.add(new ImageView("images/banners/player_banner_red.png"));
+        banners.add(new ImageView("images/banners/player_banner_yellow.png"));
         ArrayList<Player> players = playerBanner.getPlayers();
         for (int i = 0; i < players.size(); i++) {
             Text playerName = new Text("Player: " + players.get(i).getName());

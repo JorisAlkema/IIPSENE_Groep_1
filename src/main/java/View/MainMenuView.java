@@ -2,8 +2,6 @@ package View;
 
 import App.MainState;
 import Controller.MainMenuController;
-import Model.MusicPlayer;
-import Observers.MusicObserver;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -14,7 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class MainMenuView extends StackPane {
-    private MainMenuController mainMenuController = new MainMenuController();
+    private final MainMenuController mainMenuController = new MainMenuController();
     private MusicPlayerView musicPlayerView;
 
     public MainMenuView() {
@@ -23,17 +21,17 @@ public class MainMenuView extends StackPane {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(40));
 
-        ImageView title = new ImageView("images/main_menu_logo.png");
+        ImageView title = new ImageView("images/logos/main_menu_logo.png");
         title.setFitWidth(title.getImage().getWidth() * 0.7);
         title.setFitHeight(title.getImage().getHeight() * 0.7);
 
-        grid.add(title, 0,0,2,1);
+        grid.add(title, 0, 0, 2, 1);
 
         // Background
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
 
-        ImageView background = new ImageView("images/main_menu_background.jpg");
+        ImageView background = new ImageView("images/backgrounds/main_menu_background.jpg");
         background.setFitWidth(MainState.WINDOW_WIDTH);
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);

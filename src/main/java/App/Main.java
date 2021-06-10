@@ -1,6 +1,6 @@
 package App;
 
-import View.GameView;
+import View.EndGameView;
 import View.MainMenuView;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -11,7 +11,7 @@ import java.awt.*;
 
 public class Main extends Application {
 
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     private final int WINDOW_X_POSITION = screenSize.width / 2 - MainState.WINDOW_WIDTH / 2;
     private final int WINDOW_Y_POSITION = screenSize.height / 2 - MainState.WINDOW_HEIGHT / 2;
 
@@ -31,11 +31,11 @@ public class Main extends Application {
         MainState.primaryStage = primaryStage;
         MainMenuView mainMenuView = new MainMenuView();
         Scene scene = new Scene(mainMenuView);
-        scene.getStylesheets().add(MainState.MenuCSS);
+        scene.getStylesheets().add(MainState.menuCSS);
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Ticket to Ride");
-        primaryStage.getIcons().add(new Image("images/ttr_icon_main.png"));
+        primaryStage.getIcons().add(new Image("images/icons/ttr_icon_main.png"));
         primaryStage.setResizable(false);
         primaryStage.setX(WINDOW_X_POSITION);
         primaryStage.setY(WINDOW_Y_POSITION);

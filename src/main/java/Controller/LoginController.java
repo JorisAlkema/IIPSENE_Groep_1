@@ -17,10 +17,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoginController {
-    private Login login = new Login();;
+    private final Login login = new Login();
     private final int CHARACTER_MAX = 15;
     private final int CHARACTER_MIN = 2;
     private final int ROOMCODE_CHARACTERS = 6;
+
     public LoginController(LoginView loginView) {
         login.registerObserver(loginView);
     }
@@ -29,7 +30,7 @@ public class LoginController {
     public void returnToMenu() {
         MainMenuView menuView = new MainMenuView();
         Scene scene = new Scene(menuView, MainState.WINDOW_WIDTH, MainState.WINDOW_HEIGHT);
-        scene.getStylesheets().add(MainState.MenuCSS);
+        scene.getStylesheets().add(MainState.menuCSS);
         MainState.primaryStage.setScene(scene);
     }
 
@@ -65,7 +66,7 @@ public class LoginController {
             return;
         }
 
-        if(!this.checkRoomCode(code)) {
+        if (!this.checkRoomCode(code)) {
             login.notifyObservers("Enter a valid roomcode");
             return;
         }
@@ -121,6 +122,7 @@ public class LoginController {
             return;
         }
 
+
         if(this.checkUsername(username)) {
             login.notifyObservers("A valid username is between " + CHARACTER_MIN + " and " + CHARACTER_MAX + " characters long.");
             return;
@@ -169,13 +171,14 @@ public class LoginController {
 
     private void showLobby() {
         Scene scene = new Scene(new LobbyView(), MainState.WINDOW_WIDTH, MainState.WINDOW_HEIGHT);
-        scene.getStylesheets().add(MainState.MenuCSS);
+        scene.getStylesheets().add(MainState.menuCSS);
         MainState.primaryStage.setScene(scene);
     }
 
     private Timer getLoadingAnimation(String message) {
         TimerTask timerTask = new TimerTask() {
             int n = 0;
+
             @Override
             public void run() {
                 n = (n + 1) % 4;

@@ -19,11 +19,11 @@ import java.util.ArrayList;
 
 public class LobbyView extends StackPane implements LobbyObserver {
 
-    private LobbyController controller = new LobbyController(this);;
-    private Text message;
-    private Text partyCode;
-    private VBox players_wrapper;
-    private VBox players;
+    private final LobbyController controller = new LobbyController(this);
+    private final Text message;
+    private final Text partyCode;
+    private final VBox players_wrapper;
+    private final VBox players;
 
     public LobbyView() {
         // Background Effect
@@ -31,7 +31,7 @@ public class LobbyView extends StackPane implements LobbyObserver {
         colorAdjust.setBrightness(-0.5);
 
         // Background for textFields and return to menu button
-        ImageView background = new ImageView("images/main_menu_background.jpg");
+        ImageView background = new ImageView("images/backgrounds/main_menu_background.jpg");
         background.setFitWidth(MainState.WINDOW_WIDTH);
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
@@ -44,14 +44,14 @@ public class LobbyView extends StackPane implements LobbyObserver {
         // Layout
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
-        grid.getColumnConstraints().add(new ColumnConstraints(1130)); // column 0 is 100 wide
+        grid.getColumnConstraints().add(new ColumnConstraints(1080)); // column 0 is 100 wide
         grid.getColumnConstraints().add(new ColumnConstraints(300)); // column 1 is 200 wide
         grid.getRowConstraints().add(new RowConstraints(97));
         grid.getRowConstraints().add(new RowConstraints(680));
         grid.setHgap(10);
         grid.setPadding(new Insets(40));
 
-        ImageView title = new ImageView("images/main_menu_logo.png");
+        ImageView title = new ImageView("images/logos/main_menu_logo.png");
         title.setFitWidth(title.getImage().getWidth() * 0.5);
         title.setFitHeight(title.getImage().getHeight() * 0.5);
 
@@ -70,7 +70,7 @@ public class LobbyView extends StackPane implements LobbyObserver {
         Text titleMap = new Text("The map");
         titleMap.setId("text");
         titleMap.minHeight(100);
-        ImageView imageMap = new ImageView("maps/map_big.jpg");
+        ImageView imageMap = new ImageView("images/maps/map_big.jpg");
         imageMap.setPreserveRatio(true);
         imageMap.setFitWidth(300);
         map.getChildren().add(titleMap);
@@ -118,9 +118,9 @@ public class LobbyView extends StackPane implements LobbyObserver {
 
         players_wrapper.getChildren().add(players);
 
-        grid.add(title, 0,0,1,1);
-        grid.add(players_wrapper, 0,1,1,1);
-        grid.add(info, 1,1,1,1);
+        grid.add(title, 0, 0, 1, 1);
+        grid.add(players_wrapper, 0, 1, 1, 1);
+        grid.add(info, 1, 1, 1, 1);
 
 
         // For now it returns to main menu

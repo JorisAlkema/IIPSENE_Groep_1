@@ -10,7 +10,7 @@ import Observers.PlayerTurnObverser;
 import java.util.ArrayList;
 
 public class PlayerTurnController {
-    private PlayerTurn playerTurn = new PlayerTurn();
+    private final PlayerTurn playerTurn = new PlayerTurn();
     // Just in case if the player with turn leaves and the timer ends
 
     // Give turn to other player, only if you have host
@@ -70,12 +70,9 @@ public class PlayerTurnController {
     }
 
     private Boolean playerWithTurnLeft(GameState gameState) {
-        if (getCurrent(gameState) == null) {
-            return false;
-        }
-        return true;
+        return getCurrent(gameState) != null;
     }
-    
+
     public Player getCurrent(GameState gameState) {
         for (Player player : gameState.getPlayers()) {
             if (player.isTurn()) {
