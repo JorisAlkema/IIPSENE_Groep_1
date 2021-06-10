@@ -24,6 +24,13 @@ public class LoginView extends StackPane implements LoginObserver {
 
         // Unfocus textfield when clicked outside the textfield
         setOnMousePressed(e -> requestFocus());
+        MusicPlayerView musicPlayerView = MusicPlayerView.getInstance();
+        ImageView musicImageView = musicPlayerView.getMusicImageView();
+
+        getChildren().add(musicImageView);
+        musicImageView.setTranslateX(MainState.WINDOW_WIDTH / 2 - musicImageView.getFitWidth() - 45);
+        musicImageView.setTranslateY(MainState.WINDOW_HEIGHT / 2 - musicImageView.getFitHeight() - 55);
+
     }
 
     private void createView(Boolean host) {
