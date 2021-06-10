@@ -78,9 +78,9 @@ public class HandView extends HBox implements HandObserver {
         amount.setTranslateY(-70);
 
         ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setSaturation(-1);
+        colorAdjust.setSaturation(-0.5);
         imageView.setEffect(colorAdjust);
-        imageView.setOpacity(0.6);
+        imageView.setOpacity(0.3);
         stackPane.getChildren().addAll(imageView, outcerCircle, innerCircle, amount);
 
         return stackPane;
@@ -114,8 +114,8 @@ public class HandView extends HBox implements HandObserver {
         for (StackPane stackPane : trainCardPanes) {
             Node node = stackPane.getChildren().get(0);
             ImageView imageView = (ImageView) node;
-            int saturation = -1;
-            double opacity = 0.6;
+            double saturation = -0.5;
+            double opacity = 0.3;
             boolean canHover = false;
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 if (imageView.getImage().getUrl().contains(entry.getKey().toLowerCase())) {

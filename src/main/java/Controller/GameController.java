@@ -2,6 +2,7 @@ package Controller;
 
 import App.MainState;
 import Model.*;
+import Observers.BannerObserver;
 import Observers.CardsObserver;
 import Service.GameSetupService;
 import View.DestinationPopUp;
@@ -23,14 +24,18 @@ public class GameController {
 
     private PlayerTurnController playerTurnController = new PlayerTurnController();
     private CardsController cardsController = new CardsController();
-    private MapController mapController = new MapController();
+    private MapController mapController = MapController.getInstance();
     private TurnTimerController turnTimerController = new TurnTimerController();
+    private PlayerBannerController bannerController = new PlayerBannerController();
 
     private GameSetupService gameSetupService = new GameSetupService();
 
     boolean firstTurn = true;
 
     public GameController() {
+        // Ugly
+        mapController.setCardsController(cardsController);
+
         MainState.primaryStage.setOnCloseRequest(event -> {
             try {
                 turnTimerController.stopTimer();
@@ -82,9 +87,11 @@ public class GameController {
                     // A player has leaved
                     if (incomingGameState.getPlayers().size() < gameState.getPlayers().size()) {
                         removeLeftPlayers(incomingGameState);
+                        bannerController.updatePlayersArray(gameState.getPlayers());
                     } else {
                         gameState = incomingGameState;
                         cardsController.notifyObservers(gameState.getOpenDeck());
+                        bannerController.updatePlayersArray(gameState.getPlayers());
                         // End old timer and Make time init timer
                         turnTimerController.resetTimer(this);
                     }
@@ -175,6 +182,7 @@ public class GameController {
     public void buildRoute(Route route) {
         ArrayList<String> equalAmount = new ArrayList<>();
         String selectedColor;
+        boolean isBuilt = false;
 
         if (playerTurnController.getTurn()) {
             if (route.getColor().equals("GREY")) {
@@ -183,17 +191,36 @@ public class GameController {
                         equalAmount.add(entry.getKey());
                     }
                 }
-                RoutePopUp routePopUp = new RoutePopUp(equalAmount);
-                selectedColor = routePopUp.showRoutePopUp();
-                mapController.claimRoute(route, selectedColor);
+                if (equalAmount.size() != 0) {
+                    RoutePopUp routePopUp = new RoutePopUp(equalAmount);
+                    selectedColor = routePopUp.showRoutePopUp();
+                    isBuilt = mapController.claimRoute(route, selectedColor);
+                } else {
+                    System.out.println("Not enough cards to build GREY route.");
+                }
             }
             else {
-                mapController.claimRoute(route, route.getColor());
+                isBuilt = mapController.claimRoute(route, route.getColor());
             }
-            incrementPlayerActionsTaken();
-            checkIfTurnIsOver();
+            if (isBuilt) {
+                givePointForRouteSize(route.getLength());
+                incrementPlayerActionsTaken();
+                checkIfTurnIsOver();
+            }
         } else {
             System.out.println("IT'S NOT YOUR TURN");
+        }
+    }
+
+    private void givePointForRouteSize(int routeLength) {
+        switch (routeLength) {
+            case 1: getLocalPlayerFromGameState().incrementPoints(1); break;
+            case 2: getLocalPlayerFromGameState().incrementPoints(2); break;
+            case 3: getLocalPlayerFromGameState().incrementPoints(4); break;
+            case 4: getLocalPlayerFromGameState().incrementPoints(7); break;
+            case 6: getLocalPlayerFromGameState().incrementPoints(15); break;
+            case 8: getLocalPlayerFromGameState().incrementPoints(21); break;
+            default: getLocalPlayerFromGameState().incrementPoints(0); break;
         }
     }
 
@@ -234,6 +261,10 @@ public class GameController {
         playerTurnController.registerObserver(playerTurnObverser);
     }
 
+    public void registerBannerObserver(BannerObserver bannerObserver) {
+        bannerController.registerObserver(bannerObserver);
+    }
+
     private void checkIfTurnIsOver() {
         System.out.println("CHECK");
         if (isPlayerActionsTakenEquals2()) {
@@ -262,51 +293,6 @@ public class GameController {
 
     public Player getCurrentPlayer() {
         return playerTurnController.getCurrent(gameState);
-    }
-
-    public ArrayList<StackPane> createOpponentViews() {
-        ArrayList<StackPane> stackPanes = new ArrayList<>();
-        ArrayList<ImageView> banners = new ArrayList<>();
-        banners.add(new ImageView("images/player_banner_green.png"));
-        banners.add(new ImageView("images/player_banner_blue.png"));
-        banners.add(new ImageView("images/player_banner_purple.png"));
-        banners.add(new ImageView("images/player_banner_red.png"));
-        banners.add(new ImageView("images/player_banner_yellow.png"));
-        ArrayList<Player> players = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
-        for (int i = 0; i < players.size(); i++) {
-            Text playerName = new Text("Player: " + players.get(i).getName());
-            //String playerTrainCards = "Traincards: " + player.getTrainCards().size() + "\n";
-            //String playerDestTickets = "Tickets: " + player.getDestinationTickets().size() + "\n";
-            Text playerTrainCards = new Text("Traincards: 15");
-            Text playerDestTickets = new Text("Tickets: 3");
-            Text playerPoints = new Text("Points: " + players.get(i).getPoints());
-            Text playerTrains = new Text("Trains: " + players.get(i).getTrains());
-            playerName.getStyleClass().add("playerinfo");
-            playerTrainCards.getStyleClass().add("playerinfo");
-            playerDestTickets.getStyleClass().add("playerinfo");
-            playerPoints.getStyleClass().add("playerinfo");
-            playerTrains.getStyleClass().add("playerinfo");
-
-            GridPane gridPane = new GridPane();
-            gridPane.add(playerName, 0, 0, 2, 1);
-            gridPane.add(playerTrainCards, 0, 1);
-            gridPane.add(playerDestTickets, 1, 1);
-            gridPane.add(playerPoints, 0, 2);
-            gridPane.add(playerTrains, 1, 2);
-            gridPane.setHgap(10);
-            gridPane.setTranslateX(40);
-            gridPane.setTranslateY(17);
-
-            ImageView playerBanner = banners.get(i);
-            playerBanner.setPreserveRatio(true);
-            playerBanner.setFitHeight(100);
-
-            StackPane stackPane = new StackPane();
-            stackPane.getChildren().addAll(playerBanner, gridPane);
-
-            stackPanes.add(stackPane);
-        }
-        return stackPanes;
     }
 
     /**
