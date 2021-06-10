@@ -24,16 +24,21 @@ public class GameController {
 
     private PlayerTurnController playerTurnController = new PlayerTurnController();
     private CardsController cardsController = new CardsController();
-    private MapController mapController = new MapController();
+    private MapController mapController = MapController.getInstance();
     private TurnTimerController turnTimerController = new TurnTimerController();
     private PlayerBannerController bannerController = new PlayerBannerController();
 
     private GameSetupService gameSetupService = new GameSetupService();
 
     private boolean firstTurn = true;
+
     private boolean lastRound = false;
+    private boolean lastActionTaken = false;
 
     public GameController() {
+        // Ugly
+        mapController.setCardsController(cardsController);
+
         MainState.primaryStage.setOnCloseRequest(event -> {
             try {
                 turnTimerController.stopTimer();
@@ -88,6 +93,8 @@ public class GameController {
                         bannerController.updatePlayersArray(gameState.getPlayers());
                     } else {
                         gameState = incomingGameState;
+                        // Check trains for all players
+                        checkTrains();
                         cardsController.notifyObservers(gameState.getOpenDeck());
                         bannerController.updatePlayersArray(gameState.getPlayers());
                         // End old timer and Make time init timer
@@ -99,6 +106,10 @@ public class GameController {
                             firstTurn = false;
                             DestinationPopUp destinationPopUp = new DestinationPopUp();
                             destinationPopUp.showAtStartOfGame();
+                            endTurn();
+                        }
+                        if (playerTurnController.getTurn()) {
+                            checkEndGame();
                         }
                     } catch (Exception exception) {
                         exception.printStackTrace();
@@ -233,7 +244,14 @@ public class GameController {
     }
 
     public void endGame() {
+        System.out.println("GAME IS ENDED");
+        listenerRegistration.remove();
+    }
 
+    public void checkEndGame() {
+        if (lastRound && lastActionTaken) {
+            endGame();
+        }
     }
 
     // ===============================================================
@@ -275,6 +293,11 @@ public class GameController {
         if (isPlayerActionsTakenEquals2()) {
             // End turn
             System.out.println("NEXT TURN");
+
+            if (lastRound) {
+                lastActionTaken = true;
+            }
+
             getLocalPlayerFromGameState().setActionsTaken(0);
             playerTurnController.nextTurn(gameState);
             updateGameState();
@@ -289,12 +312,15 @@ public class GameController {
 
     // ===============================================================
 
-    // Do you have enough trains to build a route
-    public boolean checkTrains() {
-        if (getCurrentPlayer().getTrains() <= 2) {
-            return false;
-        } else {
-            return true;
+    // Does anyone have 2 or less trains?
+    public void checkTrains() {
+        if (!lastRound) {
+            for (Player player : gameState.getPlayers()) {
+                if (player.getTrains() <= 2) {
+                    lastRound = true;
+                    break;
+                }
+            }
         }
     }
 
