@@ -30,7 +30,7 @@ public class FirebaseService {
                 FirebaseApp.initializeApp(options);
             }
             this.database = FirestoreClient.getFirestore();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

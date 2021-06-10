@@ -7,7 +7,7 @@ import java.util.ArrayList;
 // This class should allow a Player to draw three DestinationTickets and force them to keep at least one of them.
 // Possible methods: drawDestinationTickets(), shuffle(), ...
 public class DestinationTicketDeck {
-    private ArrayList<DestinationTicket> destinationTickets;
+    private final ArrayList<DestinationTicket> destinationTickets;
 
     public DestinationTicketDeck(ArrayList<DestinationTicket> destinationTickets) {
         this.destinationTickets = destinationTickets;

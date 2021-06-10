@@ -6,7 +6,7 @@ import Observers.CardsObserver;
 import java.util.ArrayList;
 
 public class Cards implements CardsObservable {
-    private ArrayList<CardsObserver> cardsObservers = new ArrayList<>();
+    private final ArrayList<CardsObserver> cardsObservers = new ArrayList<>();
 
     @Override
     public void registerObserver(CardsObserver observer) {

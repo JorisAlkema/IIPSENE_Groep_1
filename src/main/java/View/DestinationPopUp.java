@@ -43,7 +43,7 @@ public class DestinationPopUp {
 
     private void showPopUp(ArrayList<DestinationTicket> destinationTickets, GameState gameState, GameController gameController) {
         Stage stage = new Stage();
-        stage.getIcons().add(new Image("traincards/traincard_back_small.png"));
+        stage.getIcons().add(new Image("images/traincards/traincard_back_small.png"));
         stage.setWidth(WINDOW_WIDTH);
         stage.setHeight(WINDOW_HEIGHT);
         stage.setOnCloseRequest(Event::consume);
@@ -62,7 +62,7 @@ public class DestinationPopUp {
             ImageView ticketImageView = new ImageView(new Image(path));
             ticketImageView.setOpacity(UNSELECTED_OPACITY);
             ticketImageView.setOnMouseClicked(e -> {
-                if ( ! selectedTickets.contains(destinationTicket)) {
+                if (!selectedTickets.contains(destinationTicket)) {
                     selectedTickets.add(destinationTicket);
                     ticketImageView.setOpacity(SELECTED_OPACITY);
                 } else {
@@ -76,8 +76,8 @@ public class DestinationPopUp {
         Button closeButton = new Button("Confirm");
         Player player = gameController.getLocalPlayerFromGameState();
         closeButton.setOnAction(e -> {
-            if(selectedTickets.size() >= minimumTickets){
-                for (DestinationTicket destinationTicket: selectedTickets){
+            if (selectedTickets.size() >= minimumTickets) {
+                for (DestinationTicket destinationTicket : selectedTickets) {
                     player.addDestinationTicket(destinationTicket);
 
                     destinationTickets.remove(destinationTicket);
@@ -89,7 +89,7 @@ public class DestinationPopUp {
         vBox.getChildren().add(closeButton);
 
         Scene scene = new Scene(vBox);
-        scene.getStylesheets().add(MainState.MenuCSS);
+        scene.getStylesheets().add(MainState.menuCSS);
         stage.setScene(scene);
         stage.setAlwaysOnTop(true);
         stage.setX(WINDOW_X_POSITION);

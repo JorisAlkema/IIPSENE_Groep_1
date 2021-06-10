@@ -1,16 +1,17 @@
 package Model;
 
-import com.google.cloud.firestore.*;
 import Observers.LobbyObservable;
 import Observers.LobbyObserver;
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.ListenerRegistration;
 
-import java.util.*;
+import java.util.ArrayList;
 
 // Players can join together in a Lobby before they start the game. This means a Lobby is basically a collection of
 // Players and a shared roomCode. Once enough players are ready, the host can start the game.
 // Possible methods: join, leave, start, (changeHost?), ..
 public class Lobby implements LobbyObservable {
-    private ArrayList<LobbyObserver> observers = new ArrayList<>();
+    private final ArrayList<LobbyObserver> observers = new ArrayList<>();
 
     private ListenerRegistration playerEventListener;
 

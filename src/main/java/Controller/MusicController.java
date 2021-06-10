@@ -4,11 +4,9 @@ import Model.MusicPlayer;
 import View.MusicPlayerView;
 
 public class MusicController {
-    private MusicPlayer musicPlayer;
-    private MusicPlayerView musicPlayerView;
+    private final MusicPlayer musicPlayer;
 
     public MusicController(MusicPlayerView musicPlayerView) {
-        this.musicPlayerView = musicPlayerView;
         this.musicPlayer = MusicPlayer.getInstance();
         this.musicPlayer.registerObserver(musicPlayerView);
     }
