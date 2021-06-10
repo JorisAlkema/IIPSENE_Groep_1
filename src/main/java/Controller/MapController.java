@@ -1,5 +1,6 @@
 package Controller;
 
+import App.MainState;
 import Model.*;
 import Observers.MapObserver;
 import Service.GameSetupService;
@@ -15,6 +16,15 @@ public class MapController {
     private final MapModel mapModel;
     private final GameSetupService gameSetupService;
     private GameController gameController;
+    private CardsController cardsController;
+
+    public MapController(CardsController cardsController) {
+        this.cardsController = cardsController;
+        this.gameSetupService = new GameSetupService();
+        this.mapModel = new MapModel(gameSetupService.getRoutes(), gameSetupService.getCities());
+        this.mapModel.setCityOverlays(createCityOverlays());
+        this.mapModel.setRouteCellOverlays(createRouteCellOverlays());
+    }
 
     public MapController() {
         this.gameSetupService = new GameSetupService();
@@ -22,6 +32,7 @@ public class MapController {
         this.mapModel.setCityOverlays(createCityOverlays());
         this.mapModel.setRouteCellOverlays(createRouteCellOverlays());
     }
+
 
     /**
      * Create the overlays for the cities on the map.
@@ -209,6 +220,18 @@ public class MapController {
             circle.setTranslateY(circle.getTranslateY() / 2);
         }
         this.mapModel.notifyObservers();
+    }
+
+    public int generateTunnels(String color){
+        int tunnels = 0;
+        for(int i =0;i<3;i++){
+            TrainCard randomCard = cardsController.pickClosedCard(MainState.firebaseService.getGameStateOfLobby(MainState.roomCode));
+            if(randomCard.getColor().equals(color)){
+                tunnels++;
+            }
+        }
+        System.out.println("you have to build " + tunnels + "tunnels!");
+        return tunnels;
     }
 
     public MapModel getMapModel() {
