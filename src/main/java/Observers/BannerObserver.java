@@ -1,5 +1,7 @@
 package Observers;
 
+import Model.PlayerBanner;
+
 public interface BannerObserver {
-    void update(String playerInfo);
+    void update(PlayerBanner playerBanner);
 }

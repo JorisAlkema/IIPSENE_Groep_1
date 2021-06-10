@@ -1,11 +1,9 @@
 package Observers;
 
-import Model.TrainCard;
-
 public interface BannerObservable {
-    void registerObserver(CardsObserver observer);
+    void registerObserver(BannerObserver observer);
 
-    void unregisterObserver(CardsObserver observer);
+    void unregisterObserver(BannerObserver observer);
 
-    void notifyObservers(String playerInfo);
+    void notifyObservers();
 }
