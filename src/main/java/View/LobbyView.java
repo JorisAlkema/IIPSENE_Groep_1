@@ -39,7 +39,7 @@ public class LobbyView extends StackPane implements LobbyObserver {
         // Layout
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
-        grid.getColumnConstraints().add(new ColumnConstraints(1130)); // column 0 is 100 wide
+        grid.getColumnConstraints().add(new ColumnConstraints(1080)); // column 0 is 100 wide
         grid.getColumnConstraints().add(new ColumnConstraints(300)); // column 1 is 200 wide
         grid.getRowConstraints().add(new RowConstraints(97));
         grid.getRowConstraints().add(new RowConstraints(680));
