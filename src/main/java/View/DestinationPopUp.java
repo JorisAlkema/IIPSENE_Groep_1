@@ -60,6 +60,7 @@ public class DestinationPopUp {
             ImageView ticketImageView = new ImageView(new Image(path));
             ticketImageView.setOpacity(UNSELECTED_OPACITY);
             ticketImageView.setOnMouseClicked(e -> {
+
                 if (!selectedTickets.contains(destinationTicket)) {
                     selectedTickets.add(destinationTicket);
                     ticketImageView.setOpacity(SELECTED_OPACITY);
@@ -80,6 +81,9 @@ public class DestinationPopUp {
 
                     destinationTickets.remove(destinationTicket);
                     MainState.firebaseService.getGameStateOfLobby(MainState.roomCode).setDestinationDeck(destinationTickets);
+                }
+                for (DestinationTicket destinationTicket: destinationTickets){
+                    destinationTicketController.returnCardToDeck(destinationTicket);
                 }
                 stage.close();
             }

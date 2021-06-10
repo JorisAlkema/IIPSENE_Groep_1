@@ -92,7 +92,6 @@ public class GameSetupService {
         return tickets;
     }
 
-
     private ArrayList<City> readCitiesFromFile(String filename) {
         ArrayList<City> cities = new ArrayList<>();
         try {
