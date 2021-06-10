@@ -182,6 +182,7 @@ public class MapController {
 
     /**
      * Zooms in on the mapModel and updates the mapView
+     *
      */
     public void zoomIn() {
         if (this.mapModel.isZoomedIn()) {

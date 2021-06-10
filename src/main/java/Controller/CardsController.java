@@ -70,6 +70,9 @@ public class CardsController {
         ArrayList<TrainCard> closedDeck = gameState.getClosedDeck();
         TrainCard randomCard = closedDeck.get(new Random().nextInt(closedDeck.size()));
         closedDeck.remove(randomCard);
+        if (closedDeck.size() == 0){
+            closedDeck.addAll(reshuffleCards());
+        }
         gameState.setClosedDeck(closedDeck);
         return randomCard;
     }
