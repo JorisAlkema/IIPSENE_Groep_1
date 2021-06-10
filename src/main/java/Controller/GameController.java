@@ -23,7 +23,7 @@ public class GameController {
 
     private PlayerTurnController playerTurnController = new PlayerTurnController();
     private CardsController cardsController = new CardsController();
-    private MapController mapController = new MapController(cardsController);
+    private MapController mapController = MapController.getInstance();
     private TurnTimerController turnTimerController = new TurnTimerController();
 
     private GameSetupService gameSetupService = new GameSetupService();
@@ -31,6 +31,9 @@ public class GameController {
     boolean firstTurn = true;
 
     public GameController() {
+        // Ugly
+        mapController.setCardsController(cardsController);
+
         MainState.primaryStage.setOnCloseRequest(event -> {
             try {
                 turnTimerController.stopTimer();

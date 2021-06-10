@@ -14,7 +14,7 @@ public class MapView extends ScrollPane implements MapObserver {
 
     public MapView() {
         super();
-        this.mapController = new MapController();
+        this.mapController = MapController.getInstance();
         this.mapController.registerObserver(this);
         this.stackPane = new StackPane();
         this.stackPane.getChildren().add(this.mapController.getMapModel().getBackgroundImage());

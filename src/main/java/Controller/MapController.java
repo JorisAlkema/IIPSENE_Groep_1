@@ -17,20 +17,24 @@ public class MapController {
     private final GameSetupService gameSetupService;
     private GameController gameController;
     private CardsController cardsController;
-
-    public MapController(CardsController cardsController) {
-        this.cardsController = cardsController;
-        this.gameSetupService = new GameSetupService();
-        this.mapModel = new MapModel(gameSetupService.getRoutes(), gameSetupService.getCities());
-        this.mapModel.setCityOverlays(createCityOverlays());
-        this.mapModel.setRouteCellOverlays(createRouteCellOverlays());
-    }
+    static MapController mapController;
 
     public MapController() {
         this.gameSetupService = new GameSetupService();
         this.mapModel = new MapModel(gameSetupService.getRoutes(), gameSetupService.getCities());
         this.mapModel.setCityOverlays(createCityOverlays());
         this.mapModel.setRouteCellOverlays(createRouteCellOverlays());
+    }
+
+    public void setCardsController(CardsController cardsController) {
+        this.cardsController = cardsController;
+    }
+
+    public static MapController getInstance() {
+        if (mapController == null) {
+            mapController = new MapController();
+        }
+        return mapController;
     }
 
 
