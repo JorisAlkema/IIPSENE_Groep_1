@@ -3,8 +3,10 @@ package View;
 import App.MainState;
 import Controller.GameController;
 import Model.Player;
+import Model.PlayerBanner;
 import Model.PlayerTurn;
 import Model.TrainCard;
+import Observers.BannerObserver;
 import Observers.CardsObserver;
 import Observers.PlayerTurnObverser;
 import Observers.TurnTimerObserver;
@@ -17,18 +19,17 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 
-public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser {
+public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser, BannerObserver {
     private Label timerLabel;
     private Label currentPlayerLabel;
     private BorderPane borderPane;
     private VBox cardsBox;
+    private VBox playerBanners;
     private MapView mapView;
     private GameController gameController;
 
@@ -38,6 +39,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         gameController.registerTurnTimerObserver(this);
         gameController.registerCardsObserver(this);
         gameController.registerPlayerTurnObserver(this);
+        gameController.registerBannerObserver(this);
 
         borderPane = new BorderPane();
         initLeftPane();
@@ -74,10 +76,9 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
 
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(10));
-        vBox.getChildren().addAll(timerLabel, mapZoomButton, currentPlayerLabel);
-        for (StackPane stackPane : gameController.createOpponentViews()) {
-            vBox.getChildren().add(stackPane);
-        }
+
+        playerBanners = new VBox();
+        vBox.getChildren().addAll(timerLabel, mapZoomButton, currentPlayerLabel, playerBanners);
         borderPane.setLeft(vBox);
     }
 
@@ -95,11 +96,6 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     private void initBottomPane() {
         HandView handView = new HandView();
         borderPane.setBottom(handView);
-    }
-
-    @Override
-    public void update(String timerText) {
-        timerLabel.setText(timerText);
     }
 
     @Override
@@ -137,5 +133,56 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     @Override
     public void update(PlayerTurn playerTurn) {
         currentPlayerLabel.setText("Current player: " + playerTurn.getCurrentPlayerUsername());
+    }
+
+    @Override
+    public void update(String timerText) {
+        timerLabel.setText(timerText);
+    }
+
+    @Override
+    public void update(PlayerBanner playerBanner) {
+        ArrayList<StackPane> stackPanes = new ArrayList<>();
+        ArrayList<ImageView> banners = new ArrayList<>();
+        banners.add(new ImageView("images/player_banner_green.png"));
+        banners.add(new ImageView("images/player_banner_blue.png"));
+        banners.add(new ImageView("images/player_banner_purple.png"));
+        banners.add(new ImageView("images/player_banner_red.png"));
+        banners.add(new ImageView("images/player_banner_yellow.png"));
+        ArrayList<Player> players = playerBanner.getPlayers();
+        for (int i = 0; i < players.size(); i++) {
+            Text playerName = new Text("Player: " + players.get(i).getName());
+            Text playerTrainCards = new Text("Traincards: " + players.get(i).getTrainCards().size());
+            Text playerDestTickets = new Text("Tickets: " + players.get(i).getDestinationTickets().size());
+            Text playerPoints = new Text("Points: " + players.get(i).getPoints());
+            Text playerTrains = new Text("Trains: " + players.get(i).getTrains());
+
+            playerName.getStyleClass().add("playerinfo");
+            playerTrainCards.getStyleClass().add("playerinfo");
+            playerDestTickets.getStyleClass().add("playerinfo");
+            playerPoints.getStyleClass().add("playerinfo");
+            playerTrains.getStyleClass().add("playerinfo");
+
+            GridPane gridPane = new GridPane();
+            gridPane.add(playerName, 0, 0, 2, 1);
+            gridPane.add(playerTrainCards, 0, 1);
+            gridPane.add(playerDestTickets, 1, 1);
+            gridPane.add(playerPoints, 0, 2);
+            gridPane.add(playerTrains, 1, 2);
+            gridPane.setHgap(10);
+            gridPane.setTranslateX(40);
+            gridPane.setTranslateY(17);
+
+            ImageView playerBannerImageView = banners.get(i);
+            playerBannerImageView.setPreserveRatio(true);
+            playerBannerImageView.setFitHeight(100);
+
+            StackPane stackPane = new StackPane();
+            stackPane.getChildren().addAll(playerBannerImageView, gridPane);
+
+            stackPanes.add(stackPane);
+        }
+        playerBanners.getChildren().removeAll(playerBanners.getChildren());
+        playerBanners.getChildren().addAll(stackPanes);
     }
 }
