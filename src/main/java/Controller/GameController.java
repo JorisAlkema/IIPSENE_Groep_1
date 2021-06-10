@@ -106,6 +106,7 @@ public class GameController {
                             firstTurn = false;
                             DestinationPopUp destinationPopUp = new DestinationPopUp();
                             destinationPopUp.showAtStartOfGame();
+                            endTurn();
                         }
                         if (playerTurnController.getTurn()) {
                             checkEndGame();
