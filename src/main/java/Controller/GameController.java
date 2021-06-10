@@ -102,6 +102,7 @@ public class GameController {
                             firstTurn = false;
                             DestinationPopUp destinationPopUp = new DestinationPopUp();
                             destinationPopUp.showAtStartOfGame();
+                            endTurn();
                         }
                     } catch (Exception exception) {
                         exception.printStackTrace();
