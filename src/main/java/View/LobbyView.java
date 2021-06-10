@@ -39,16 +39,16 @@ public class LobbyView extends StackPane implements LobbyObserver {
         // Layout
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
-        grid.getColumnConstraints().add(new ColumnConstraints(1200)); // column 0 is 100 wide
+        grid.getColumnConstraints().add(new ColumnConstraints(1130)); // column 0 is 100 wide
         grid.getColumnConstraints().add(new ColumnConstraints(300)); // column 1 is 200 wide
-        grid.getRowConstraints().add(new RowConstraints(150));
+        grid.getRowConstraints().add(new RowConstraints(97));
         grid.getRowConstraints().add(new RowConstraints(680));
         grid.setHgap(10);
         grid.setPadding(new Insets(40));
 
         ImageView title = new ImageView("images/main_menu_logo.png");
-        title.setFitWidth(title.getImage().getWidth() * 0.7);
-        title.setFitHeight(title.getImage().getHeight() * 0.7);
+        title.setFitWidth(title.getImage().getWidth() * 0.5);
+        title.setFitHeight(title.getImage().getHeight() * 0.5);
 
         players_wrapper = new VBox(10);
         players_wrapper.setId("black_bg");

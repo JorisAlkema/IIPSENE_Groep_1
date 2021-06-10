@@ -13,63 +13,52 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
-public class GameView extends BorderPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser {
-    Label timerLabel;
-    Label currentPlayerLabel;
-  
-    GameController gameController;
-
-    VBox cardsBox = new VBox();
+public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser {
+    private Label timerLabel;
+    private Label currentPlayerLabel;
+    private BorderPane borderPane;
+    private VBox cardsBox;
+    private MapView mapView;
+    private GameController gameController;
 
     public GameView() {
         // Init
         gameController = new GameController();
+        gameController.registerTurnTimerObserver(this);
+        gameController.registerCardsObserver(this);
+        gameController.registerPlayerTurnObserver(this);
 
-        // Top pane
-        timerLabel = new Label("0:00");
-        setAlignment(timerLabel, Pos.CENTER);
-        timerLabel.setId("timerLabel");
-        setTop(timerLabel);
+        borderPane = new BorderPane();
+        initLeftPane();
+        initCenterPane();
+        initRightPane();
+        initBottomPane();
 
-        // Left pane
-        VBox vBox = new VBox();
-        vBox.setPadding(new Insets(30));
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.5);
+        ImageView background = new ImageView("images/bg-splash.jpg");
+        background.setFitWidth(MainState.WINDOW_WIDTH);
+        background.setFitHeight(MainState.WINDOW_HEIGHT);
+        background.setEffect(colorAdjust);
+
+        this.getChildren().addAll(background, borderPane);
+    }
+
+    private void initLeftPane() {
         Image zoomInImage = new Image("icons/button_zoom_in.png");
         Image zoomOutImage = new Image("icons/button_zoom_out.png");
         ImageView mapZoomButton = new ImageView(zoomInImage);
-
-        Button mainmenuButton = new Button("Return to menu");
-        mainmenuButton.setOnAction(e -> {
-            Scene newScene = new Scene(new MainMenuView());
-            String css = "css/mainMenuStyle.css";
-            newScene.getStylesheets().add(css);
-            MainState.primaryStage.setScene(newScene);
-        });
-
-        currentPlayerLabel = new Label();
-
-        vBox.getChildren().addAll(mapZoomButton, mainmenuButton, currentPlayerLabel);
-
-        for (StackPane stackPane : gameController.createOpponentViews()) {
-            vBox.getChildren().add(stackPane);
-        }
-
-        setLeft(vBox);
-
-        // Center pane
-        MapView mapView = new MapView();
-        mapView.getMapController().setGameController(gameController);
-        setCenter(mapView);
-
         mapZoomButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (mapView.getMapController().getMapModel().isZoomedIn()) {
                 mapView.getMapController().zoomOut();
@@ -79,23 +68,33 @@ public class GameView extends BorderPane implements TurnTimerObserver, CardsObse
                 mapZoomButton.setImage(zoomOutImage);
             }
         });
+        timerLabel = new Label("0:00");
+        timerLabel.setId("timerLabel");
+        currentPlayerLabel = new Label();
 
-        // Closed and open Cards View
-        cardsBox.setPadding(new Insets(0, 35, 0, 35));
-        setRight(cardsBox);
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(10));
+        vBox.getChildren().addAll(timerLabel, mapZoomButton, currentPlayerLabel);
+        for (StackPane stackPane : gameController.createOpponentViews()) {
+            vBox.getChildren().add(stackPane);
+        }
+        borderPane.setLeft(vBox);
+    }
 
-        // Bottom pane
-        setBottom(new HandView());
+    private void initCenterPane() {
+        mapView = new MapView();
+        mapView.getMapController().setGameController(gameController);
+        borderPane.setCenter(mapView);
+    }
 
-        //
-        gameController.registerTurnTimerObserver(this);
-        gameController.registerCardsObserver(this);
-        gameController.registerPlayerTurnObserver(this);
+    private void initRightPane() {
+        cardsBox = new VBox();
+        borderPane.setRight(cardsBox);
+    }
 
-        // TODO: find more MVC-like way to pass initial list of tickets that should form the deck
-        DestinationPopUp destinationPopUp = new DestinationPopUp(mapView.getMapController().getGameSetupService().getDestinationTickets());
-        destinationPopUp.showAtStartOfGame();
-//        gameController.setTimerText(gameController.getTimer());
+    private void initBottomPane() {
+        HandView handView = new HandView();
+        borderPane.setBottom(handView);
     }
 
     @Override

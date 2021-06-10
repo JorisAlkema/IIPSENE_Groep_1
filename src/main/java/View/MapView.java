@@ -22,6 +22,7 @@ public class MapView extends ScrollPane implements MapObserver {
         // Hide scrollbars
         this.setHbarPolicy(ScrollBarPolicy.NEVER);
         this.setVbarPolicy(ScrollBarPolicy.NEVER);
+        this.setStyle("-fx-focus-color: transparent;");
     }
 
     private StackPane initStackPane() {
