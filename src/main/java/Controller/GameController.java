@@ -168,6 +168,7 @@ public class GameController implements TimerObservable {
     public void buildRoute(Route route) {
         ArrayList<String> equalAmount = new ArrayList<>();
         String selectedColor;
+        boolean isBuilt = false;
 
         if (playerTurnController.getTurn()) {
             if (route.getColor().equals("GREY")) {
@@ -176,17 +177,36 @@ public class GameController implements TimerObservable {
                         equalAmount.add(entry.getKey());
                     }
                 }
-                RoutePopUp routePopUp = new RoutePopUp(equalAmount);
-                selectedColor = routePopUp.showRoutePopUp();
-                mapController.claimRoute(route, selectedColor);
+                if (equalAmount.size() != 0) {
+                    RoutePopUp routePopUp = new RoutePopUp(equalAmount);
+                    selectedColor = routePopUp.showRoutePopUp();
+                    isBuilt = mapController.claimRoute(route, selectedColor);
+                } else {
+                    System.out.println("Not enough cards to build GREY route.");
+                }
             }
             else {
-                mapController.claimRoute(route, route.getColor());
+                isBuilt = mapController.claimRoute(route, route.getColor());
             }
-            incrementPlayerActionsTaken();
-            checkIfTurnIsOver();
+            if (isBuilt) {
+                givePointForRouteSize(route.getLength());
+                incrementPlayerActionsTaken();
+                checkIfTurnIsOver();
+            }
         } else {
             System.out.println("IT'S NOT YOUR TURN");
+        }
+    }
+
+    private void givePointForRouteSize(int routeLength) {
+        switch (routeLength) {
+            case 1: getLocalPlayerFromGameState().incrementPoints(1); break;
+            case 2: getLocalPlayerFromGameState().incrementPoints(2); break;
+            case 3: getLocalPlayerFromGameState().incrementPoints(4); break;
+            case 4: getLocalPlayerFromGameState().incrementPoints(7); break;
+            case 6: getLocalPlayerFromGameState().incrementPoints(15); break;
+            case 8: getLocalPlayerFromGameState().incrementPoints(21); break;
+            default: getLocalPlayerFromGameState().incrementPoints(0); break;
         }
     }
 
@@ -312,15 +332,14 @@ public class GameController implements TimerObservable {
         banners.add(new ImageView("images/player_banner_purple.png"));
         banners.add(new ImageView("images/player_banner_red.png"));
         banners.add(new ImageView("images/player_banner_yellow.png"));
-        ArrayList<Player> players = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
+        ArrayList<Player> players = gameState.getPlayers();
         for (int i = 0; i < players.size(); i++) {
             Text playerName = new Text("Player: " + players.get(i).getName());
-            //String playerTrainCards = "Traincards: " + player.getTrainCards().size() + "\n";
-            //String playerDestTickets = "Tickets: " + player.getDestinationTickets().size() + "\n";
-            Text playerTrainCards = new Text("Traincards: 15");
-            Text playerDestTickets = new Text("Tickets: 3");
+            Text playerTrainCards = new Text("Traincards: " + players.get(i).getTrainCards().size());
+            Text playerDestTickets = new Text("Tickets: " + players.get(i).getDestinationTickets().size());
             Text playerPoints = new Text("Points: " + players.get(i).getPoints());
             Text playerTrains = new Text("Trains: " + players.get(i).getTrains());
+
             playerName.getStyleClass().add("playerinfo");
             playerTrainCards.getStyleClass().add("playerinfo");
             playerDestTickets.getStyleClass().add("playerinfo");
