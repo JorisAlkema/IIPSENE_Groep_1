@@ -36,11 +36,6 @@ public class LobbyView extends StackPane implements LobbyObserver {
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
 
-        ImageView musicImageView = MusicPlayerView.getInstance().getMusicImageView();
-
-        musicImageView.setTranslateX(background.getFitWidth() / 2 - 1465);
-        musicImageView.setTranslateY(MainState.WINDOW_HEIGHT / 2 - musicImageView.getFitHeight() - 55);
-
         // Layout
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -126,7 +121,8 @@ public class LobbyView extends StackPane implements LobbyObserver {
         // For now it returns to main menu
         leaveRoom.setOnMouseClicked(e -> controller.leaveRoom());
         startRoom.setOnMouseClicked(e -> controller.startRoom());
-        getChildren().addAll(background, grid, musicImageView);
+        getChildren().add(background);
+        getChildren().add(grid);
     }
 
     @Override
