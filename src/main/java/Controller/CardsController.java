@@ -71,16 +71,16 @@ public class CardsController {
         TrainCard randomCard = closedDeck.get(new Random().nextInt(closedDeck.size()));
         closedDeck.remove(randomCard);
         if (closedDeck.size() == 0){
-            closedDeck.addAll(reshuffleCards());
+            closedDeck.addAll(reshuffleCards(gameState));
         }
         gameState.setClosedDeck(closedDeck);
         return randomCard;
     }
 
-    public ArrayList<TrainCard> reshuffleCards(){
+    public ArrayList<TrainCard> reshuffleCards(GameState gameState){
         ArrayList<TrainCard> shuffledCards;
-        ArrayList<Player> players = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
-        ArrayList<TrainCard> currentCards = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode).getOpenDeck();
+        ArrayList<Player> players = gameState.getPlayers();
+        ArrayList<TrainCard> currentCards = gameState.getOpenDeck();
 
         for (Player player:players){
             currentCards.addAll(player.getTrainCards());
