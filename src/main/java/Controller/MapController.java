@@ -169,7 +169,6 @@ public class MapController {
         }
 
         currentPlayer.addClaimedRoute(route);
-        currentPlayer.givePointForRouteSize(routeLength);
         for (RouteCell routeCell : route.getRouteCells()) {
             cellRectangleMap.get(routeCell).setFill(this.mapModel.getImagePattern(gameController.getCurrentPlayer().getPlayerColor()));
         }
