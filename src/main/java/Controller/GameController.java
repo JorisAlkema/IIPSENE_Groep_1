@@ -191,7 +191,7 @@ public class GameController {
     public void buildRoute(Route route) {
         String selectedColor = null;
         boolean isBuilt = false;
-        if (playerTurnController.getTurn()) {
+        if (playerTurnController.getTurn() && getLocalPlayerFromGameState().getActionsTaken() == 0) {
             if (route.routeLength() <= getLocalPlayerFromGameState().getTrains()) {
                 if (route.getColor().equals("GREY")) {
                     selectedColor = pickColorForGreyRoute(route);

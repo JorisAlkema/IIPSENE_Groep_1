@@ -171,7 +171,6 @@ public class MapController {
         HandModel.getInstance().setTrainCardsMap(currentPlayer.trainCardsAsMap());
 
         currentPlayer.addClaimedRoute(route);
-        currentPlayer.givePointForRouteSize(routeLength);
         for (RouteCell routeCell : route.getRouteCells()) {
             cellRectangleMap.get(routeCell).setFill(this.mapModel.getImagePattern(gameController.getCurrentPlayer().getPlayerColor()));
         }
