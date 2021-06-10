@@ -54,8 +54,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
 
-        MusicPlayerView musicPlayerView = MusicPlayerView.getInstance();
-        ImageView musicImageView = musicPlayerView.getMusicImageView();
+        ImageView musicImageView = MusicPlayerView.getInstance().getMusicImageView();
 
         musicImageView.setTranslateX(background.getFitWidth() / 2 - 1465);
         musicImageView.setTranslateY(MainState.WINDOW_HEIGHT / 2 - musicImageView.getFitHeight() - 55);

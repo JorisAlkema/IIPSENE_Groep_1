@@ -13,6 +13,8 @@ import javafx.scene.control.TextField;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LoginController {
     private Login login = new Login();;
@@ -33,13 +35,13 @@ public class LoginController {
 
 
     public boolean checkUsername(String username) {
-        return username.length() >= CHARACTER_MAX || username.length() < CHARACTER_MIN;
+        return ((username.length() >= CHARACTER_MAX || username.length() < CHARACTER_MIN));
     }
 
     public boolean checkRoomCode(String code) {
         int characters = code.length();
         for (int i = 0; i < characters; i ++) {
-            if(Character.isLetter(code.charAt(i))) {
+            if(Character.isLetter(code.charAt(i)) ) {
                 return false;
             }
         }
@@ -49,7 +51,7 @@ public class LoginController {
 
     // Join game
     public void join(TextField inputUsername, TextField inputCode) {
-        String username = inputUsername.getText();
+        String username = inputUsername.getText().replaceAll("[^a-zA-Z0-9_-]", "");
         String code = inputCode.getText();
 
         if (username.isBlank() || code.isBlank()) {
@@ -59,7 +61,7 @@ public class LoginController {
 
 
         if(this.checkUsername(username)) {
-            login.notifyObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
+            login.notifyObservers("A valid username is between " + CHARACTER_MIN + " and " + CHARACTER_MAX + " characters long.");
             return;
         }
 
@@ -112,14 +114,15 @@ public class LoginController {
 
     //Host game
     public void host(TextField inputUsername) {
-        String username = inputUsername.getText();
+        String username = inputUsername.getText().replaceAll("[^a-zA-Z0-9_-]", "");
+
         if (username.isBlank()) {
             login.notifyObservers("Fill in all the required fields");
             return;
         }
 
         if(this.checkUsername(username)) {
-            login.notifyObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
+            login.notifyObservers("A valid username is between " + CHARACTER_MIN + " and " + CHARACTER_MAX + " characters long.");
             return;
         }
 
