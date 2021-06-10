@@ -168,6 +168,8 @@ public class MapController {
             }
         }
 
+        HandModel.getInstance().setTrainCardsMap(currentPlayer.trainCardsAsMap());
+
         currentPlayer.addClaimedRoute(route);
         currentPlayer.givePointForRouteSize(routeLength);
         for (RouteCell routeCell : route.getRouteCells()) {
