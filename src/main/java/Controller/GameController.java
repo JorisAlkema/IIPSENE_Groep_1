@@ -108,8 +108,8 @@ public class GameController {
                         playerTurnController.checkMyTurn(gameState);
                         if (firstTurn && playerTurnController.getTurn()) {
                             firstTurn = false;
-                            DestinationPopUp destinationPopUp = new DestinationPopUp();
-                            destinationPopUp.showAtStartOfGame();
+                            DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
+                            destinationPopUp.showAtStartOfGame(gameState, this);
                             endTurn();
                         }
                         if (playerTurnController.getTurn()) {
@@ -273,7 +273,7 @@ public class GameController {
         getLocalPlayerFromGameState().addTrainCard(trainCard);
     }
 
-    private Player getLocalPlayerFromGameState() {
+    public Player getLocalPlayerFromGameState() {
         return gameState.getPlayer(MainState.player_uuid);
     }
 
