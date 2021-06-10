@@ -10,8 +10,8 @@ public class MusicPlayerView implements MusicObserver {
     private final MusicController musicController;
     public final ImageView musicImageView;
     static MusicPlayerView musicPlayerView;
-    private static final Image musicOnImage = new Image("images/music-on.png");
-    private static final Image musicOffImage = new Image("images/music-off.png");
+    private static final Image musicOnImage = new Image("images/icons/music-on.png");
+    private static final Image musicOffImage = new Image("images/icons/music-off.png");
 
     public MusicPlayerView() {
         this.musicController = new MusicController(this);
