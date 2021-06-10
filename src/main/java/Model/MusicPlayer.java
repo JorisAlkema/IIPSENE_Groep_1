@@ -19,7 +19,8 @@ public class MusicPlayer implements MusicObservable {
     public MusicPlayer() {
         media = new Media(new File("src/main/resources/music/europe.mp3").toURI().toString());
         mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.play();
+//        mediaPlayer.play();
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
     }
 
     public static MusicPlayer getInstance() {

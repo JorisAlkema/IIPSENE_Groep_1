@@ -14,7 +14,7 @@ public class MapView extends ScrollPane implements MapObserver {
 
     public MapView() {
         super();
-        this.mapController = new MapController();
+        this.mapController = MapController.getInstance();
         this.mapController.registerObserver(this);
         this.stackPane = new StackPane();
         this.stackPane.getChildren().add(this.mapController.getMapModel().getBackgroundImage());
@@ -22,6 +22,7 @@ public class MapView extends ScrollPane implements MapObserver {
         // Hide scrollbars
         this.setHbarPolicy(ScrollBarPolicy.NEVER);
         this.setVbarPolicy(ScrollBarPolicy.NEVER);
+        this.setStyle("-fx-focus-color: transparent;");
     }
 
     private StackPane initStackPane() {

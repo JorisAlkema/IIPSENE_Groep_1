@@ -4,6 +4,7 @@
 	-fx-font-weight: bold;
 	-fx-font-size: 20;
 	-fx-padding: 13px 0;
+	-fx-text-fill: white;
 }
 
 .playerinfo {
@@ -13,9 +14,13 @@
 }
 
 #TrainCard:hover {
-    -fx-scale-x: 1.1;
-    -fx-scale-y: 1.1;
-    -fx-scale-z: 1.1;
+    -fx-translate-x: -10;
+    -fx-cursor: hand;
+    -fx-view-order: -1;
+}
+
+#onHoverUp:hover {
+    -fx-translate-y: -10;
     -fx-cursor: hand;
     -fx-view-order: -1;
 }
