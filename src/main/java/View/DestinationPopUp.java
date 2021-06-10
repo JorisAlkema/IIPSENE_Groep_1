@@ -2,7 +2,9 @@ package View;
 
 import App.MainState;
 import Controller.DestinationTicketController;
+import Controller.GameController;
 import Model.DestinationTicket;
+import Model.GameState;
 import Model.Player;
 import javafx.event.Event;
 import javafx.geometry.Pos;
@@ -26,20 +28,20 @@ public class DestinationPopUp {
     private final int WINDOW_WIDTH = 300;
     private final int WINDOW_HEIGHT = 936;
 
-    public DestinationPopUp() {
-        ArrayList<DestinationTicket> destinationTickets = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode).getDestinationDeck();
+    public DestinationPopUp(GameState gameState) {
+        ArrayList<DestinationTicket> destinationTickets = gameState.getDestinationDeck();
         this.destinationTicketController = new DestinationTicketController(destinationTickets);
     }
 
-    public void showAtStartOfGame() {
-        this.showPopUp(this.destinationTicketController.drawTickets(true));
+    public void showAtStartOfGame(GameState gameState, GameController gameController) {
+        this.showPopUp(this.destinationTicketController.drawTickets(true), gameState, gameController);
     }
 
-    public void showDuringGame() {
-        this.showPopUp(this.destinationTicketController.drawTickets(false));
+    public void showDuringGame(GameState gameState, GameController gameController) {
+        this.showPopUp(this.destinationTicketController.drawTickets(false), gameState, gameController);
     }
 
-    private void showPopUp(ArrayList<DestinationTicket> destinationTickets) {
+    private void showPopUp(ArrayList<DestinationTicket> destinationTickets, GameState gameState, GameController gameController) {
         Stage stage = new Stage();
         stage.getIcons().add(new Image("traincards/traincard_back_small.png"));
         stage.setWidth(WINDOW_WIDTH);
@@ -72,14 +74,14 @@ public class DestinationPopUp {
         }
 
         Button closeButton = new Button("Confirm");
-        Player player = MainState.getLocalPlayer();
+        Player player = gameController.getLocalPlayerFromGameState();
         closeButton.setOnAction(e -> {
             if(selectedTickets.size() >= minimumTickets){
                 for (DestinationTicket destinationTicket: selectedTickets){
                     player.addDestinationTicket(destinationTicket);
 
                     destinationTickets.remove(destinationTicket);
-                    MainState.firebaseService.getGameStateOfLobby(MainState.roomCode).setDestinationDeck(destinationTickets);
+                    gameState.setDestinationDeck(destinationTickets);
                 }
                 stage.close();
             }
