@@ -60,7 +60,7 @@ public class DestinationPopUp {
             ImageView ticketImageView = new ImageView(new Image(path));
             ticketImageView.setOpacity(UNSELECTED_OPACITY);
             ticketImageView.setOnMouseClicked(e -> {
-                if ( ! selectedTickets.contains(destinationTicket)) {
+                if (!selectedTickets.contains(destinationTicket)) {
                     selectedTickets.add(destinationTicket);
                     ticketImageView.setOpacity(SELECTED_OPACITY);
                 } else {
@@ -74,8 +74,8 @@ public class DestinationPopUp {
         Button closeButton = new Button("Confirm");
         Player player = MainState.getLocalPlayer();
         closeButton.setOnAction(e -> {
-            if(selectedTickets.size() >= minimumTickets){
-                for (DestinationTicket destinationTicket: selectedTickets){
+            if (selectedTickets.size() >= minimumTickets) {
+                for (DestinationTicket destinationTicket : selectedTickets) {
                     player.addDestinationTicket(destinationTicket);
 
                     destinationTickets.remove(destinationTicket);

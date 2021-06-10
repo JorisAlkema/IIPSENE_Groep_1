@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class HandModel implements HandObservable {
     private HashMap<String, Integer> trainCardMap;
     private ArrayList<DestinationTicket> destinationTicketsInHand;
-    private ArrayList<HandObserver> observers;
+    private final ArrayList<HandObserver> observers;
     static HandModel handModel;
 
     public HandModel() {

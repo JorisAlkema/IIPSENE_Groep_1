@@ -15,8 +15,8 @@ import javafx.scene.text.Text;
 
 
 public class LoginView extends StackPane implements LoginObserver {
-    private LoginController loginController;
-    private Text message;   
+    private final LoginController loginController;
+    private Text message;
 
     public LoginView(Boolean host) {
         loginController = new LoginController(this);
@@ -40,7 +40,7 @@ public class LoginView extends StackPane implements LoginObserver {
         ImageView title = new ImageView("images/main_menu_logo.png");
         title.setFitWidth(title.getImage().getWidth() * 0.7);
         title.setFitHeight(title.getImage().getHeight() * 0.7);
-        grid.add(title, 0,0,2,1);
+        grid.add(title, 0, 0, 2, 1);
 
         // Background Effect
         ColorAdjust colorAdjust = new ColorAdjust();
@@ -117,18 +117,18 @@ public class LoginView extends StackPane implements LoginObserver {
         });
 
         //join either by pressing button or typing enter
-        join.setOnMouseClicked(e ->  {
-                loginController.join(inputUsername, inputCode);
+        join.setOnMouseClicked(e -> {
+            loginController.join(inputUsername, inputCode);
         });
 
         inputUsername.setOnKeyPressed(e -> {
-            if(e.getCode() == KeyCode.ENTER) {
+            if (e.getCode() == KeyCode.ENTER) {
                 loginController.join(inputUsername, inputCode);
             }
         });
 
         inputCode.setOnKeyPressed(e -> {
-            if(e.getCode() == KeyCode.ENTER) {
+            if (e.getCode() == KeyCode.ENTER) {
                 loginController.join(inputUsername, inputCode);
             }
         });
@@ -174,7 +174,7 @@ public class LoginView extends StackPane implements LoginObserver {
         //host
         host.setOnMouseClicked(e -> loginController.host(inputUsername));
         inputUsername.setOnKeyPressed(e -> {
-            if(e.getCode() == KeyCode.ENTER) {
+            if (e.getCode() == KeyCode.ENTER) {
                 loginController.host(inputUsername);
             }
         });

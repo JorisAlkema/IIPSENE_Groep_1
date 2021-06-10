@@ -19,11 +19,11 @@ import java.util.ArrayList;
 
 public class LobbyView extends StackPane implements LobbyObserver {
 
-    private LobbyController controller = new LobbyController(this);
-    private Text message;
-    private Text partyCode;
-    private VBox players_wrapper;
-    private VBox players;
+    private final LobbyController controller = new LobbyController(this);
+    private final Text message;
+    private final Text partyCode;
+    private final VBox players_wrapper;
+    private final VBox players;
 
     public LobbyView() {
         // Background Effect
@@ -113,9 +113,9 @@ public class LobbyView extends StackPane implements LobbyObserver {
 
         players_wrapper.getChildren().add(players);
 
-        grid.add(title, 0,0,1,1);
-        grid.add(players_wrapper, 0,1,1,1);
-        grid.add(info, 1,1,1,1);
+        grid.add(title, 0, 0, 1, 1);
+        grid.add(players_wrapper, 0, 1, 1, 1);
+        grid.add(info, 1, 1, 1, 1);
 
 
         // For now it returns to main menu

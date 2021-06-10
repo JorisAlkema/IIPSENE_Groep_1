@@ -1,29 +1,20 @@
 package View;
 
 import App.MainState;
-import Controller.DestinationTicketController;
-import Model.DestinationTicket;
-import Model.Player;
 import javafx.event.Event;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class RoutePopUp {
-    private ArrayList<String> possibleColors;
+    private final ArrayList<String> possibleColors;
     private String selectedColor;
 
     private final double UNSELECTED_OPACITY = 0.6;
@@ -66,7 +57,7 @@ public class RoutePopUp {
 
         Button closeButton = new Button("Confirm");
         closeButton.setOnAction(e -> {
-            if(selectedColor != null){
+            if (selectedColor != null) {
                 stage.close();
             }
         });

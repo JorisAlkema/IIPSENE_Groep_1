@@ -20,9 +20,9 @@ public class GameSetupService {
     private final static String citiesFile = "src/main/resources/text/cities.txt";
     private final static String routeFile = "src/main/resources/text/routes.txt";
     private final static String destinationTicketsFile = "src/main/resources/text/destination_tickets.txt";
-    private ArrayList<City> cities;
-    private ArrayList<Route> routes;
-    private ArrayList<DestinationTicket> destinationTickets;
+    private final ArrayList<City> cities;
+    private final ArrayList<Route> routes;
+    private final ArrayList<DestinationTicket> destinationTickets;
 
     public GameSetupService() {
         this.cities = readCitiesFromFile(citiesFile);
@@ -114,7 +114,7 @@ public class GameSetupService {
                 double[] doubles = new double[strings.length - 1];
                 for (int i = 0; i < doubles.length; i++) {
                     try {
-                        doubles[i] = Double.parseDouble(strings[i+1]);
+                        doubles[i] = Double.parseDouble(strings[i + 1]);
                     } catch (NumberFormatException numberFormatException) {
                         System.err.println(numberFormatException.getMessage());
                     }

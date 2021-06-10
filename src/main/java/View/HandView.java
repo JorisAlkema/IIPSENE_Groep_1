@@ -2,7 +2,6 @@ package View;
 
 import Controller.HandController;
 import Model.DestinationTicket;
-import Model.TrainCard;
 import Observers.HandObserver;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -16,10 +15,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HandView extends HBox implements HandObserver {
-    private final HandController handController;
 
     private final ImageView blackCard = new ImageView("traincards/traincard_black_small.png");
     private final ImageView blueCard = new ImageView("traincards/traincard_blue_small.png");
@@ -35,7 +35,7 @@ public class HandView extends HBox implements HandObserver {
     private final ScrollPane destinationTicketPane;
 
     public HandView() {
-        this.handController = new HandController();
+        HandController handController = new HandController();
         handController.registerObserver(this);
         setAlignment(Pos.CENTER_RIGHT);
         this.cardImageViews = new ArrayList<>();
@@ -103,7 +103,7 @@ public class HandView extends HBox implements HandObserver {
 
     private void updateDestinationTickets(ArrayList<DestinationTicket> destinationTickets) {
         VBox vBox = new VBox();
-        for (DestinationTicket destinationTicket: destinationTickets){
+        for (DestinationTicket destinationTicket : destinationTickets) {
             String path = destinationTicket.fileNameSmall();
             vBox.getChildren().addAll(new ImageView(path));
         }
