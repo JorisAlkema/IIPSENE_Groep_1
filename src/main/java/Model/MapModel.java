@@ -53,16 +53,11 @@ public class MapModel implements MapObservable {
     public ImagePattern getImagePattern(String color) {
         color = color.toUpperCase();
         switch (color) {
-            case "BLUE":
-                return blueImagePattern;
-            case "GREEN":
-                return greenImagePattern;
-            case "PURPLE":
-                return purpleImagePattern;
-            case "RED":
-                return redImagePattern;
-            case "YELLOW":
-                return yellowImagePattern;
+            case "BLUE": return blueImagePattern;
+            case "GREEN": return greenImagePattern;
+            case "PURPLE": return purpleImagePattern;
+            case "RED": return redImagePattern;
+            case "YELLOW": return yellowImagePattern;
         }
         return null;
     }
