@@ -89,9 +89,9 @@ public class DestinationPopUp {
         Scene scene = new Scene(vBox);
         scene.getStylesheets().add(MainState.MenuCSS);
         stage.setScene(scene);
-        stage.showAndWait();
         stage.setAlwaysOnTop(true);
         stage.setX(WINDOW_X_POSITION);
         stage.setY(WINDOW_Y_POSITION);
+        stage.showAndWait();
     }
 }
