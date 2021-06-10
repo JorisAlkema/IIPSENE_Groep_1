@@ -54,7 +54,13 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
 
-        this.getChildren().addAll(background, borderPane);
+        MusicPlayerView musicPlayerView = MusicPlayerView.getInstance();
+        ImageView musicImageView = musicPlayerView.getMusicImageView();
+
+        musicImageView.setTranslateX(background.getFitWidth() / 2 - 1465);
+        musicImageView.setTranslateY(MainState.WINDOW_HEIGHT / 2 - musicImageView.getFitHeight() - 55);
+
+        this.getChildren().addAll(background, borderPane, musicImageView);
     }
 
     private void initLeftPane() {
@@ -78,6 +84,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         vBox.setPadding(new Insets(10));
 
         playerBanners = new VBox();
+
         vBox.getChildren().addAll(timerLabel, mapZoomButton, currentPlayerLabel, playerBanners);
         borderPane.setLeft(vBox);
     }
