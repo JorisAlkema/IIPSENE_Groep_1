@@ -25,65 +25,40 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 
 public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser {
-    Label timerLabel;
-    Label currentPlayerLabel;
-  
-    GameController gameController;
-
-    VBox cardsBox = new VBox();
+    private Label timerLabel;
+    private Label currentPlayerLabel;
+    private BorderPane borderPane;
+    private VBox cardsBox;
+    private MapView mapView;
+    private GameController gameController;
 
     public GameView() {
         // Init
         gameController = new GameController();
+        gameController.registerTurnTimerObserver(this);
+        gameController.registerCardsObserver(this);
+        gameController.registerPlayerTurnObserver(this);
 
-        // Background Effect
+        borderPane = new BorderPane();
+        initLeftPane();
+        initCenterPane();
+        initRightPane();
+        initBottomPane();
+
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
-
-        // Background for textFields and return to menu button
         ImageView background = new ImageView("images/bg-splash.jpg");
         background.setFitWidth(MainState.WINDOW_WIDTH);
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
 
-        BorderPane borderPane = new BorderPane();
+        this.getChildren().addAll(background, borderPane);
+    }
 
-
-        // Left pane
-        VBox vBox = new VBox();
-        vBox.setPadding(new Insets(30));
+    private void initLeftPane() {
         Image zoomInImage = new Image("icons/button_zoom_in.png");
         Image zoomOutImage = new Image("icons/button_zoom_out.png");
         ImageView mapZoomButton = new ImageView(zoomInImage);
-
-        Button mainmenuButton = new Button("Return to menu");
-        mainmenuButton.setOnAction(e -> {
-            Scene newScene = new Scene(new MainMenuView());
-            String css = "css/mainMenuStyle.css";
-            newScene.getStylesheets().add(css);
-            MainState.primaryStage.setScene(newScene);
-        });
-
-        // Top pane
-        timerLabel = new Label("0:00");
-        borderPane.setAlignment(timerLabel, Pos.CENTER);
-        timerLabel.setId("timerLabel");
-
-        currentPlayerLabel = new Label();
-
-        vBox.getChildren().addAll(timerLabel, mapZoomButton, mainmenuButton, currentPlayerLabel);
-
-        for (StackPane stackPane : gameController.createOpponentViews()) {
-            vBox.getChildren().add(stackPane);
-        }
-
-        borderPane.setLeft(vBox);
-
-        // Center pane
-        MapView mapView = new MapView();
-        mapView.getMapController().setGameController(gameController);
-        borderPane.setCenter(mapView);
-
         mapZoomButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (mapView.getMapController().getMapModel().isZoomedIn()) {
                 mapView.getMapController().zoomOut();
@@ -93,26 +68,37 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
                 mapZoomButton.setImage(zoomOutImage);
             }
         });
+        timerLabel = new Label("0:00");
+        timerLabel.setId("timerLabel");
+        currentPlayerLabel = new Label();
 
-        // Closed and open Cards View
-//        cardsBox.setPadding(new Insets(0, 5, 0, 5));
+        VBox vBox = new VBox();
+        vBox.setPadding(new Insets(10));
+        vBox.getChildren().addAll(timerLabel, mapZoomButton, currentPlayerLabel);
+        for (StackPane stackPane : gameController.createOpponentViews()) {
+            vBox.getChildren().add(stackPane);
+        }
+        borderPane.setLeft(vBox);
+    }
+
+    private void initCenterPane() {
+        mapView = new MapView();
+        mapView.getMapController().setGameController(gameController);
+        borderPane.setCenter(mapView);
+    }
+
+    private void initRightPane() {
+        cardsBox = new VBox();
         borderPane.setRight(cardsBox);
+    }
 
-        // Bottom pane
-        borderPane.setBottom(new HandView());
-
-        getChildren().add(background);
-        getChildren().add(borderPane);
-
-        gameController.registerTurnTimerObserver(this);
-        gameController.registerCardsObserver(this);
-        gameController.registerPlayerTurnObserver(this);
-//        gameController.setTimerText(gameController.getTimer());
+    private void initBottomPane() {
+        HandView handView = new HandView();
+        borderPane.setBottom(handView);
     }
 
     @Override
     public void update(String timerText) {
-        System.out.println(timerLabel.getHeight());
         timerLabel.setText(timerText);
     }
 
