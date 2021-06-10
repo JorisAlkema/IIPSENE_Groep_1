@@ -208,28 +208,36 @@ public class GameController {
                     endTurn();
                 } else {
                     if (selectedColor == null) {
-                        System.out.println("Not enough cards of color " + route.getColor());
+                        System.out.println("Error: Not enough same-color cards for grey route");
                     } else {
-                        System.out.println("Not enough cards of color " + selectedColor);
+                        System.out.println("Error: Not enough cards of chosen color " + selectedColor);
                     }
                 }
             } else {
-                System.out.println("NOT ENOUGH TRAINS");
+                System.out.println("Error: You don't have enough trains left to build this route");
             }
         } else {
-            System.out.println("IT'S NOT YOUR TURN");
+            System.out.println("Error: It's not your turn, or you already drew a TrainCard this turn");
         }
     }
 
     private String pickColorForGreyRoute(Route route) {
+        ArrayList<TrainCard> trainCards = getLocalPlayerFromGameState().getTrainCards();
+        int locosInHand = 0;
+        for (TrainCard trainCard : trainCards) {
+            if (trainCard.getColor().equals("LOCO")) {
+                locosInHand++;
+            }
+        }
         ArrayList<String> possibleColors = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : getLocalPlayerFromGameState().trainCardsAsMap().entrySet()) {
-            if (entry.getValue() >= route.routeLength()) {
+            boolean enoughPureLocos = entry.getKey().equals("LOCO") && entry.getValue() >= route.routeLength();
+            boolean enoughCardsIncludingLocos = !entry.getKey().equals("LOCO") && entry.getValue() + locosInHand >= route.routeLength();
+            if (enoughPureLocos || enoughCardsIncludingLocos) {
                 possibleColors.add(entry.getKey());
             }
         }
         if (possibleColors.size() == 0) {
-            System.out.println("Not enough cards to build GREY route.");
             return null;
         }
         RoutePopUp routePopUp = new RoutePopUp(possibleColors);
