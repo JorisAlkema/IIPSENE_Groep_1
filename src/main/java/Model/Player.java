@@ -171,6 +171,10 @@ public class Player {
         return claimedRoutes;
     }
 
+    public void addClaimedRoute(Route route) {
+        this.claimedRoutes.add(route);
+    }
+
     public void setClaimedRoutes(ArrayList<Route> claimedRoutes) {
         this.claimedRoutes = claimedRoutes;
     }

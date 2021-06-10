@@ -189,32 +189,25 @@ public class GameController {
     }
 
     public void buildRoute(Route route) {
-        ArrayList<String> equalAmount = new ArrayList<>();
-        String selectedColor;
+        String selectedColor = null;
         boolean isBuilt = false;
-
         if (playerTurnController.getTurn()) {
-            if (route.getLength() <= getLocalPlayerFromGameState().getTrains()) {
+            if (route.routeLength() <= getLocalPlayerFromGameState().getTrains()) {
                 if (route.getColor().equals("GREY")) {
-                    for (Map.Entry<String, Integer> entry : getLocalPlayerFromGameState().trainCardsAsMap().entrySet()) {
-                        if (entry.getValue() == route.getLength()) {
-                            equalAmount.add(entry.getKey());
-                        }
-                    }
-                    if (equalAmount.size() != 0) {
-                        RoutePopUp routePopUp = new RoutePopUp(equalAmount);
-                        selectedColor = routePopUp.showRoutePopUp();
-                        isBuilt = mapController.claimRoute(route, selectedColor);
-                    } else {
-                        System.out.println("Not enough cards to build GREY route.");
-                    }
+                    selectedColor = pickColorForGreyRoute(route);
+                    isBuilt = mapController.claimRoute(route, selectedColor);
                 } else {
                     isBuilt = mapController.claimRoute(route, route.getColor());
                 }
                 if (isBuilt) {
-                    givePointForRouteSize(route.getLength());
-                    incrementPlayerActionsTaken();
-                    checkIfTurnIsOver();
+                    givePointForRouteSize(route.routeLength());
+                    endTurn();
+                } else {
+                    if (selectedColor == null) {
+                        System.out.println("Not enough cards of color " + route.getColor());
+                    } else {
+                        System.out.println("Not enough cards of color " + selectedColor);
+                    }
                 }
             } else {
                 System.out.println("NOT ENOUGH TRAINS");
@@ -222,6 +215,21 @@ public class GameController {
         } else {
             System.out.println("IT'S NOT YOUR TURN");
         }
+    }
+
+    private String pickColorForGreyRoute(Route route) {
+        ArrayList<String> possibleColors = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : getLocalPlayerFromGameState().trainCardsAsMap().entrySet()) {
+            if (entry.getValue() >= route.routeLength()) {
+                possibleColors.add(entry.getKey());
+            }
+        }
+        if (possibleColors.size() == 0) {
+            System.out.println("Not enough cards to build GREY route.");
+            return null;
+        }
+        RoutePopUp routePopUp = new RoutePopUp(possibleColors);
+        return routePopUp.showRoutePopUp();
     }
 
     private void givePointForRouteSize(int routeLength) {

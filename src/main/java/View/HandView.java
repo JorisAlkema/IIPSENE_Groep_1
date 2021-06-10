@@ -114,25 +114,25 @@ public class HandView extends HBox implements HandObserver {
         for (StackPane stackPane : trainCardPanes) {
             Node node = stackPane.getChildren().get(0);
             ImageView imageView = (ImageView) node;
+            String amount = "0";
             double saturation = -0.5;
             double opacity = 0.3;
             boolean canHover = false;
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 if (imageView.getImage().getUrl().contains(entry.getKey().toLowerCase())) {
                     if (entry.getValue() != 0) {
-                        setTextOnStackPane(stackPane, Integer.toString(entry.getValue()));
+                        amount = Integer.toString(entry.getValue());
                         saturation = 0;
                         opacity = 1;
                         canHover = true;
                     }
                 }
             }
-
             ColorAdjust colorAdjust = new ColorAdjust();
             colorAdjust.setSaturation(saturation);
             imageView.setOpacity(opacity);
             imageView.setEffect(colorAdjust);
-
+            setTextOnStackPane(stackPane, amount);
             if (canHover) {
                 stackPane.setId("onHoverUp");
             } else {
