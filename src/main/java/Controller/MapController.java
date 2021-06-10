@@ -21,7 +21,7 @@ public class MapController {
     private final GameSetupService gameSetupService;
     private GameController gameController;
     private CardsController cardsController;
-    private HashMap<RouteCell, Rectangle> cellRectangleMap;
+    private final HashMap<RouteCell, Rectangle> cellRectangleMap;
     static MapController mapController;
 
     public MapController() {
@@ -47,6 +47,7 @@ public class MapController {
     /**
      * Create the overlays for the cities on the map.
      * Sets the correct location, size and adds event handler
+     *
      * @return A list of Circle objects which represent the overlays
      */
     private ArrayList<Circle> createCityOverlays() {
@@ -60,7 +61,7 @@ public class MapController {
             circle.addEventHandler(MouseEvent.ANY, new OverlayEventHandler(
                     e -> {
                         if (circle.getFill().equals(Color.TRANSPARENT)) {
-                            circle.setFill( Color.BLACK);
+                            circle.setFill(Color.BLACK);
                         } else {
                             circle.setFill(Color.TRANSPARENT);
                         }
@@ -75,6 +76,7 @@ public class MapController {
     /**
      * Creates the overlays for the individual routecells on the map.
      * Sets the correct location, size, rotation and adds event handler
+     *
      * @return A list of RouteCell object which represent the overlays
      */
     private ArrayList<Rectangle> createRouteCellOverlays() {
@@ -109,7 +111,7 @@ public class MapController {
     // When this method is called, we assume that the player has already selected the color
     // with which they want to build the route, in case it is grey.
     public boolean claimRoute(Route route, String color) {
-        if (cellRectangleMap.get(route.getRouteCells().get(0)).getFill() != Color.TRANSPARENT ) {
+        if (cellRectangleMap.get(route.getRouteCells().get(0)).getFill() != Color.TRANSPARENT) {
             return false;
         }
 
@@ -180,7 +182,6 @@ public class MapController {
 
     /**
      * Zooms in on the mapModel and updates the mapView
-     *
      */
     public void zoomIn() {
         if (this.mapModel.isZoomedIn()) {
@@ -217,7 +218,7 @@ public class MapController {
      * Zooms out on the mapModel and updates the mapView
      */
     public void zoomOut() {
-        if (! this.mapModel.isZoomedIn()) {
+        if (!this.mapModel.isZoomedIn()) {
             return;
         }
         this.mapModel.setZoomedIn(false);
@@ -238,11 +239,11 @@ public class MapController {
         this.mapModel.notifyObservers();
     }
 
-    public int generateTunnels(String color){
+    public int generateTunnels(String color) {
         int tunnels = 0;
-        for(int i =0;i<3;i++){
+        for (int i = 0; i < 3; i++) {
             TrainCard randomCard = cardsController.pickClosedCard(MainState.firebaseService.getGameStateOfLobby(MainState.roomCode));
-            if(randomCard.getColor().equals(color)){
+            if (randomCard.getColor().equals(color)) {
                 tunnels++;
             }
         }

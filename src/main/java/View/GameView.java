@@ -11,15 +11,15 @@ import Observers.CardsObserver;
 import Observers.PlayerTurnObverser;
 import Observers.TurnTimerObserver;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -27,11 +27,11 @@ import java.util.ArrayList;
 public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser, BannerObserver {
     private Label timerLabel;
     private Label currentPlayerLabel;
-    private BorderPane borderPane;
+    private final BorderPane borderPane;
     private VBox cardsBox;
     private VBox playerBanners;
     private MapView mapView;
-    private GameController gameController;
+    private final GameController gameController;
 
     public GameView() {
         // Init

@@ -3,33 +3,32 @@ package Tests;
 import Controller.CardsController;
 import Controller.DestinationTicketController;
 import Model.DestinationTicket;
-import Model.DestinationTicketDeck;
 import Model.TrainCard;
 import Service.GameSetupService;
 import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
 
 public class UnitTests {
 
     @Test
-    public void generateClosedDeckHas110Cards(){
+    public void generateClosedDeckHas110Cards() {
         //arrange
-        int fullDeck =110;
+        int fullDeck = 110;
 
         //act
         CardsController cardsController = new CardsController();
         ArrayList<TrainCard> deck = cardsController.generateClosedDeck();
 
         //assert
-        assertThat(fullDeck,is(deck.size()));
+        assertThat(fullDeck, is(deck.size()));
     }
 
     @Test
-    public void drawTicketsDraws3or4WhenDrawExtraIsTrue(){
+    public void drawTicketsDraws3or4WhenDrawExtraIsTrue() {
         //arrange
         int expOutputBooleanFalse = 3;
         int expOutputBooleanTrue = 4;
@@ -46,7 +45,6 @@ public class UnitTests {
         assertThat(expOutputBooleanFalse, is(actOutputBooleanFalse));
         assertThat(expOutputBooleanTrue, is(actOutputBooleanTrue));
     }
-
 
 
 }

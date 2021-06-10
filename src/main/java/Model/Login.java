@@ -1,11 +1,12 @@
 package Model;
 
-import java.util.*;
 import Observers.LoginObservable;
 import Observers.LoginObserver;
 
+import java.util.ArrayList;
+
 public class Login implements LoginObservable {
-    private ArrayList<LoginObserver> observers = new ArrayList<>();
+    private final ArrayList<LoginObserver> observers = new ArrayList<>();
     private Boolean busy = false;
 
     public Boolean getBusy() {

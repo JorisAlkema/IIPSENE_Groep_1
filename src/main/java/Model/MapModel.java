@@ -2,7 +2,6 @@ package Model;
 
 import Observers.MapObservable;
 import Observers.MapObserver;
-import Observers.MusicObserver;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.ImagePattern;
@@ -54,11 +53,16 @@ public class MapModel implements MapObservable {
     public ImagePattern getImagePattern(String color) {
         color = color.toUpperCase();
         switch (color) {
-            case "BLUE": return blueImagePattern;
-            case "GREEN": return greenImagePattern;
-            case "PURPLE": return purpleImagePattern;
-            case "RED": return redImagePattern;
-            case "YELLOW": return yellowImagePattern;
+            case "BLUE":
+                return blueImagePattern;
+            case "GREEN":
+                return greenImagePattern;
+            case "PURPLE":
+                return purpleImagePattern;
+            case "RED":
+                return redImagePattern;
+            case "YELLOW":
+                return yellowImagePattern;
         }
         return null;
     }
@@ -111,7 +115,7 @@ public class MapModel implements MapObservable {
 
     @Override
     public void notifyObservers() {
-        for(MapObserver observer : this.observers) {
+        for (MapObserver observer : this.observers) {
             observer.update(zoomedIn, getBackgroundImage());
         }
     }

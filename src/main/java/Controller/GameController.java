@@ -4,31 +4,29 @@ import App.MainState;
 import Model.*;
 import Observers.BannerObserver;
 import Observers.CardsObserver;
+import Observers.PlayerTurnObverser;
+import Observers.TurnTimerObserver;
 import Service.GameSetupService;
 import View.DestinationPopUp;
 import View.RoutePopUp;
-import Observers.PlayerTurnObverser;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
-import Observers.TurnTimerObserver;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
 
 public class GameController {
     private GameState gameState;
     private ListenerRegistration listenerRegistration;
 
-    private PlayerTurnController playerTurnController = new PlayerTurnController();
-    private CardsController cardsController = new CardsController();
-    private MapController mapController = MapController.getInstance();
-    private TurnTimerController turnTimerController = new TurnTimerController();
-    private PlayerBannerController bannerController = new PlayerBannerController();
+    private final PlayerTurnController playerTurnController = new PlayerTurnController();
+    private final CardsController cardsController = new CardsController();
+    private final MapController mapController = MapController.getInstance();
+    private final TurnTimerController turnTimerController = new TurnTimerController();
+    private final PlayerBannerController bannerController = new PlayerBannerController();
 
-    private GameSetupService gameSetupService = new GameSetupService();
+    private final GameSetupService gameSetupService = new GameSetupService();
 
     private boolean firstTurn = true;
 
@@ -47,7 +45,8 @@ public class GameController {
                 if (MainState.firebaseService.getPlayersFromLobby(MainState.roomCode).size() == 0) {
                     MainState.firebaseService.getLobbyReference(MainState.roomCode).delete();
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         });
         initGame();
     }
@@ -129,8 +128,8 @@ public class GameController {
     }
 
     // Step 2
-    public void initializePlayerColors(){
-        final ArrayList<String> PLAYER_COLORS = new ArrayList<>(Arrays.asList("GREEN","BLUE","PURPLE","RED","YELLOW"));
+    public void initializePlayerColors() {
+        final ArrayList<String> PLAYER_COLORS = new ArrayList<>(Arrays.asList("GREEN", "BLUE", "PURPLE", "RED", "YELLOW"));
         for (Player player : gameState.getPlayers()) {
             player.setPlayerColor(PLAYER_COLORS.remove(0));
         }
@@ -234,13 +233,27 @@ public class GameController {
 
     private void givePointForRouteSize(int routeLength) {
         switch (routeLength) {
-            case 1: getLocalPlayerFromGameState().incrementPoints(1); break;
-            case 2: getLocalPlayerFromGameState().incrementPoints(2); break;
-            case 3: getLocalPlayerFromGameState().incrementPoints(4); break;
-            case 4: getLocalPlayerFromGameState().incrementPoints(7); break;
-            case 6: getLocalPlayerFromGameState().incrementPoints(15); break;
-            case 8: getLocalPlayerFromGameState().incrementPoints(21); break;
-            default: getLocalPlayerFromGameState().incrementPoints(0); break;
+            case 1:
+                getLocalPlayerFromGameState().incrementPoints(1);
+                break;
+            case 2:
+                getLocalPlayerFromGameState().incrementPoints(2);
+                break;
+            case 3:
+                getLocalPlayerFromGameState().incrementPoints(4);
+                break;
+            case 4:
+                getLocalPlayerFromGameState().incrementPoints(7);
+                break;
+            case 6:
+                getLocalPlayerFromGameState().incrementPoints(15);
+                break;
+            case 8:
+                getLocalPlayerFromGameState().incrementPoints(21);
+                break;
+            default:
+                getLocalPlayerFromGameState().incrementPoints(0);
+                break;
         }
     }
 
@@ -350,9 +363,10 @@ public class GameController {
      * currentCity to the neighbor, this method calls itself again, but now with the
      * neighbor City as the new currentCity. This way all possibilities to connect any two given
      * Cities are tried
-     * @param currentCity City that we are at to check for a connection to destinationCity
+     *
+     * @param currentCity     City that we are at to check for a connection to destinationCity
      * @param destinationCity City that we are looking for a connection to
-     * @param player Player that we are checking for if they have a connection between the two Cities
+     * @param player          Player that we are checking for if they have a connection between the two Cities
      * @return true if there is a connection from the initial currentCity to the destinationCity, false otherwise
      */
     private boolean singleStep(City currentCity, City destinationCity, Player player) {
