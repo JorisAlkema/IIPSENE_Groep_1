@@ -2,20 +2,16 @@ package Controller;
 
 import App.MainState;
 import Model.*;
-import Observers.BannerObserver;
-import Observers.CardsObserver;
-import Observers.PlayerTurnObverser;
-import Observers.TurnTimerObserver;
+import Observers.*;
 import Service.GameSetupService;
 import View.DestinationPopUp;
 import View.EndGameView;
 import View.RoutePopUp;
 import com.google.cloud.firestore.ListenerRegistration;
+import com.google.firebase.messaging.Message;
 import javafx.application.Platform;
 
-import Observers.TurnTimerObserver;
 import javafx.scene.Scene;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +26,7 @@ public class GameController {
     private final MapController mapController = MapController.getInstance();
     private final TurnTimerController turnTimerController = new TurnTimerController();
     private final PlayerBannerController bannerController = new PlayerBannerController();
+    private final SystemMessage systemMessage = new SystemMessage();
 
     private final GameSetupService gameSetupService = GameSetupService.getInstance();
 
@@ -108,14 +105,17 @@ public class GameController {
                     }
                     try {
                         playerTurnController.checkMyTurn(gameState);
+                        if (playerTurnController.getTurn()) {
+                            checkEndGame();
+                            systemMessage.setMessage("It's your turn.");
+                        } else {
+                            systemMessage.setMessage("It's " + getCurrentPlayer().getName() + "'s turn.");
+                        }
                         if (firstTurn && playerTurnController.getTurn()) {
                             firstTurn = false;
                             DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
                             destinationPopUp.showAtStartOfGame(gameState, this);
                             endTurn();
-                        }
-                        if (playerTurnController.getTurn()) {
-                            checkEndGame();
                         }
                     } catch (Exception exception) {
                         exception.printStackTrace();
@@ -169,7 +169,7 @@ public class GameController {
             incrementPlayerActionsTaken();
             checkIfTurnIsOver();
         } else {
-            System.out.println("IT'S NOT YOUR TURN");
+            systemMessage.setMessage("You cannot pick a card at this time.");
         }
     }
 
@@ -187,7 +187,7 @@ public class GameController {
                 }
                 checkIfTurnIsOver();
             } else {
-                System.out.println("IT'S NOT YOUR TURN");
+                systemMessage.setMessage("You cannot pick a card at this time.");
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -209,17 +209,13 @@ public class GameController {
                     givePointForRouteSize(route.routeLength());
                     endTurn();
                 } else {
-                    if (selectedColor == null) {
-                        System.out.println("Error: Not enough same-color cards for grey route");
-                    } else {
-                        System.out.println("Error: Not enough cards of chosen color " + selectedColor);
-                    }
+                    systemMessage.setMessage("Not enough same-color cards for this route.");
                 }
             } else {
-                System.out.println("Error: You don't have enough trains left to build this route");
+                systemMessage.setMessage("You don't have enough trains left to build this route.");
             }
         } else {
-            System.out.println("Error: It's not your turn, or you already drew a TrainCard this turn");
+            systemMessage.setMessage("It's not your turn, or you already drew a TrainCard this turn.");
         }
     }
 
@@ -322,6 +318,10 @@ public class GameController {
 
     public void registerBannerObserver(BannerObserver bannerObserver) {
         bannerController.registerObserver(bannerObserver);
+    }
+
+    public void registerSystemMessageObserver(SystemMessageObserver systemMessageObserver) {
+        systemMessage.registerObserver(systemMessageObserver);
     }
 
     private void checkIfTurnIsOver() {
