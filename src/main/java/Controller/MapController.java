@@ -181,7 +181,7 @@ public class MapController {
         for (RouteCell routeCell : route.getRouteCells()) {
             routeCellRectangleHashMap.get(routeCell).setFill(this.mapModel.getImagePattern(gameController.getCurrentPlayer().getPlayerColor()));
         }
-
+        currentPlayer.decrementTrains(routeLength);
         gameController.checkTrains();
         return true;
     }

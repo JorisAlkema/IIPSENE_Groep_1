@@ -49,9 +49,7 @@ public class LoginController {
     }
 
     // Join game
-    public void join(TextField inputUsername, TextField inputCode) {
-        String username = inputUsername.getText();
-        String code = inputCode.getText();
+    public void join(String username, String code) {
 
         if (username.isBlank() || code.isBlank()) {
             login.notifyObservers("Fill in all the required fields");
@@ -112,8 +110,7 @@ public class LoginController {
     }
 
     //Host game
-    public void host(TextField inputUsername) {
-        String username = inputUsername.getText();
+    public void host(String username) {
         if (username.isBlank()) {
             login.notifyObservers("Fill in all the required fields");
             return;
