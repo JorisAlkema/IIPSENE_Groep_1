@@ -1,13 +1,10 @@
 package View;
 
 import Controller.MapController;
-import Model.Player;
 import Observers.MapObserver;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-
-import java.util.ArrayList;
 
 /**
  * Constructs a scene with a pannable Map background.

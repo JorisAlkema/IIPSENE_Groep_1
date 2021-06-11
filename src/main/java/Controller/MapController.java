@@ -280,10 +280,6 @@ public class MapController {
         this.gameController = gameController;
     }
 
-    public GameSetupService getGameSetupService() {
-        return gameSetupService;
-    }
-
     public void registerObserver(MapObserver observer) {
         this.mapModel.registerObserver(observer);
     }
