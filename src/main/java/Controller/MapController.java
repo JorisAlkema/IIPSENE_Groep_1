@@ -253,6 +253,16 @@ public class MapController {
         return tunnels;
     }
 
+    public void redrawRoutes(ArrayList<Player> players) {
+        for (Player player : players) {
+            for (Route route : player.getClaimedRoutes()) {
+                for (RouteCell routeCell : route.getRouteCells()) {
+                    routeCellRectangleHashMap.get(routeCell).setFill(this.mapModel.getImagePattern(player.getPlayerColor()));
+                }
+            }
+        }
+    }
+
     public MapModel getMapModel() {
         return mapModel;
     }

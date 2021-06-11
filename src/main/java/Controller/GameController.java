@@ -101,6 +101,8 @@ public class GameController {
                         checkTrains();
                         cardsController.notifyObservers(gameState.getOpenDeck());
                         bannerController.updatePlayersArray(gameState.getPlayers());
+                        mapController.redrawRoutes(gameState.getPlayers());
+
                         // End old timer and Make time init timer
                         turnTimerController.resetTimer(this);
                     }
