@@ -1,13 +1,15 @@
 package Model;
 
+import java.util.Objects;
+
 // RouteCell represents a single cell on the map. It is part of a Route.
 // A RouteCell has no color or type of its own, this is determined in the Route class.
 // The location of the RouteCell on the map is determined by its offsetX, offsetY and rotation.
 public class RouteCell {
 
-    double translateX;
-    double translateY;
-    double rotation;
+    private double translateX;
+    private double translateY;
+    private double rotation;
 
     public RouteCell(double translateX, double translateY, double rotation) {
         this.translateX = translateX;
@@ -17,6 +19,28 @@ public class RouteCell {
 
     public RouteCell() {
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        if (o instanceof RouteCell) {
+            RouteCell routeCell = (RouteCell) o;
+            return translateX == routeCell.getTranslateX()
+                    && translateY == routeCell.getTranslateY()
+                    && rotation == routeCell.getRotation();
+        }
+        return false;
+    }
+
+    @Override // Needed for equals method
+    public int hashCode() {
+        return Objects.hash(translateX, translateY, rotation);
     }
 
     public double getTranslateX() {

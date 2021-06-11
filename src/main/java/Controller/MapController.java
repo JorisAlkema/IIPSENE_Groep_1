@@ -253,20 +253,11 @@ public class MapController {
         return tunnels;
     }
 
-    public Rectangle findRectangle(RouteCell routeCell) {
-        for (RouteCell x : routeCellRectangleHashMap.keySet()) {
-            if (x.getTranslateX() == routeCell.getTranslateX() && x.getTranslateY() == routeCell.getTranslateY() && x.getRotation() == routeCell.getRotation()) {
-                return routeCellRectangleHashMap.get(x);
-            }
-        }
-        return null;
-    }
-
     public void redrawRoutes(ArrayList<Player> players) {
         for (Player player : players) {
             for (Route route : player.getClaimedRoutes()) {
                 for (RouteCell routeCell : route.getRouteCells()) {
-                    findRectangle(routeCell).setFill(this.mapModel.getImagePattern(player.getPlayerColor()));
+                    routeCellRectangleHashMap.get(routeCell).setFill(this.mapModel.getImagePattern(player.getPlayerColor()));
                 }
             }
         }
