@@ -26,9 +26,8 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 
-public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, PlayerTurnObverser, BannerObserver {
+public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, BannerObserver {
     private Label timerLabel;
-    private Label currentPlayerLabel;
     private final BorderPane borderPane;
     private VBox cardsBox;
     private VBox playerBanners;
@@ -40,7 +39,6 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         gameController = new GameController();
         gameController.registerTurnTimerObserver(this);
         gameController.registerCardsObserver(this);
-        gameController.registerPlayerTurnObserver(this);
         gameController.registerBannerObserver(this);
 
         borderPane = new BorderPane();
@@ -86,7 +84,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
 
         playerBanners = new VBox();
 
-        vBox.getChildren().addAll(timerLabel, mapZoomButton, currentPlayerLabel, playerBanners);
+        vBox.getChildren().addAll(timerLabel, mapZoomButton, playerBanners);
         borderPane.setLeft(vBox);
     }
 
@@ -139,11 +137,6 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     }
 
     @Override
-    public void update(PlayerTurn playerTurn) {
-        currentPlayerLabel.setText("Current player: " + playerTurn.getCurrentPlayerUsername());
-    }
-
-    @Override
     public void update(String timerText) {
         timerLabel.setText(timerText);
     }
@@ -191,8 +184,8 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
             borderGlow.setOffsetX(0f);
             borderGlow.setOffsetY(0f);
             borderGlow.setColor(Color.YELLOW);
-            borderGlow.setWidth(20);
-            borderGlow.setHeight(20);
+            borderGlow.setWidth(30);
+            borderGlow.setHeight(30);
 
             if (players.get(i).isTurn()) {
                 playerBannerImageView.setEffect(borderGlow);
