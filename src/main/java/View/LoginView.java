@@ -118,18 +118,18 @@ public class LoginView extends StackPane implements LoginObserver {
 
         //join either by pressing button or typing enter
         join.setOnMouseClicked(e -> {
-            loginController.join(inputUsername, inputCode);
+            loginController.join(inputUsername.getText(), inputCode.getText());
         });
 
         inputUsername.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                loginController.join(inputUsername, inputCode);
+                loginController.join(inputUsername.getText(), inputCode.getText());
             }
         });
 
         inputCode.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                loginController.join(inputUsername, inputCode);
+                loginController.join(inputUsername.getText(), inputCode.getText());
             }
         });
 
@@ -172,10 +172,10 @@ public class LoginView extends StackPane implements LoginObserver {
         // Event Handlers
 
         //host
-        host.setOnMouseClicked(e -> loginController.host(inputUsername));
+        host.setOnMouseClicked(e -> loginController.host(inputUsername.getText()));
         inputUsername.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                loginController.host(inputUsername);
+                loginController.host(inputUsername.getText());
             }
         });
         return textFields;

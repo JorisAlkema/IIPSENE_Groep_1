@@ -95,7 +95,7 @@ public class DestinationPopUp {
                     player.addDestinationTicket(destinationTicket);
 
                     destinationTickets.remove(destinationTicket);
-                    gameState.setDestinationDeck(destinationTickets);
+                    gameState.getDestinationDeck().remove(destinationTicket);
                 }
                 stage.close();
             }

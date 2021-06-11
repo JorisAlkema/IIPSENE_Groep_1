@@ -75,6 +75,10 @@ public class Player {
         this.points += points;
     }
 
+    public void decrementTrains(int routeLength) {
+        this.trains -= routeLength;
+    }
+
     public String getName() {
         return name;
     }

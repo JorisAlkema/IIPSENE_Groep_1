@@ -123,7 +123,7 @@ public class MapController {
         String type = route.getType();
         int requiredLocos = route.getRequiredLocomotives();
         int routeLength = route.routeLength();
-        Player currentPlayer = this.gameController.getCurrentPlayer();
+        Player currentPlayer = this.gameController.getLocalPlayerFromGameState();
         ArrayList<TrainCard> playerHand = currentPlayer.getTrainCards();
         ArrayList<TrainCard> correctColorCards = new ArrayList<>();
         ArrayList<TrainCard> locosInHand = new ArrayList<>();
@@ -181,7 +181,7 @@ public class MapController {
         for (RouteCell routeCell : route.getRouteCells()) {
             routeCellRectangleHashMap.get(routeCell).setFill(this.mapModel.getImagePattern(gameController.getCurrentPlayer().getPlayerColor()));
         }
-
+        currentPlayer.decrementTrains(routeLength);
         gameController.checkTrains();
         return true;
     }
@@ -258,16 +258,22 @@ public class MapController {
         return tunnels;
     }
 
+    public void redrawRoutes(ArrayList<Player> players) {
+        for (Player player : players) {
+            for (Route route : player.getClaimedRoutes()) {
+                for (RouteCell routeCell : route.getRouteCells()) {
+                    routeCellRectangleHashMap.get(routeCell).setFill(this.mapModel.getImagePattern(player.getPlayerColor()));
+                }
+            }
+        }
+    }
+
     public MapModel getMapModel() {
         return mapModel;
     }
 
     public void setGameController(GameController gameController) {
         this.gameController = gameController;
-    }
-
-    public GameSetupService getGameSetupService() {
-        return gameSetupService;
     }
 
     public void registerObserver(MapObserver observer) {

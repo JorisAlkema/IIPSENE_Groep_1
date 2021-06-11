@@ -56,4 +56,6 @@ public class MapView extends ScrollPane implements MapObserver {
             setVvalue(getVmin() + (getVmax() - getVmin()) / 2);
         }
     }
+
+
 }
