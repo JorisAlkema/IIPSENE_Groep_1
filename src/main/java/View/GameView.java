@@ -13,6 +13,7 @@ import Observers.TurnTimerObserver;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -20,6 +21,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -78,7 +80,6 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         });
         timerLabel = new Label("0:00");
         timerLabel.setId("timerLabel");
-        currentPlayerLabel = new Label();
 
         VBox vBox = new VBox();
         vBox.setPadding(new Insets(10));
@@ -151,12 +152,14 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     public void update(PlayerBanner playerBanner) {
         ArrayList<StackPane> stackPanes = new ArrayList<>();
         ArrayList<ImageView> banners = new ArrayList<>();
+        ArrayList<Player> players = playerBanner.getPlayers();
+
         banners.add(new ImageView("images/banners/player_banner_green.png"));
         banners.add(new ImageView("images/banners/player_banner_blue.png"));
         banners.add(new ImageView("images/banners/player_banner_purple.png"));
         banners.add(new ImageView("images/banners/player_banner_red.png"));
         banners.add(new ImageView("images/banners/player_banner_yellow.png"));
-        ArrayList<Player> players = playerBanner.getPlayers();
+
         for (int i = 0; i < players.size(); i++) {
             Text playerName = new Text("Player: " + players.get(i).getName());
             Text playerTrainCards = new Text("Traincards: " + players.get(i).getTrainCards().size());
@@ -184,11 +187,23 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
             playerBannerImageView.setPreserveRatio(true);
             playerBannerImageView.setFitHeight(100);
 
+            DropShadow borderGlow = new DropShadow();
+            borderGlow.setOffsetX(0f);
+            borderGlow.setOffsetY(0f);
+            borderGlow.setColor(Color.YELLOW);
+            borderGlow.setWidth(20);
+            borderGlow.setHeight(20);
+
+            if (players.get(i).isTurn()) {
+                playerBannerImageView.setEffect(borderGlow);
+            }
+
             StackPane stackPane = new StackPane();
             stackPane.getChildren().addAll(playerBannerImageView, gridPane);
 
             stackPanes.add(stackPane);
         }
+
         playerBanners.getChildren().removeAll(playerBanners.getChildren());
         playerBanners.getChildren().addAll(stackPanes);
     }
