@@ -144,14 +144,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     @Override
     public void update(PlayerBanner playerBanner) {
         ArrayList<StackPane> stackPanes = new ArrayList<>();
-        ArrayList<ImageView> banners = new ArrayList<>();
         ArrayList<Player> players = playerBanner.getPlayers();
-
-        banners.add(new ImageView("images/banners/player_banner_green.png"));
-        banners.add(new ImageView("images/banners/player_banner_blue.png"));
-        banners.add(new ImageView("images/banners/player_banner_purple.png"));
-        banners.add(new ImageView("images/banners/player_banner_red.png"));
-        banners.add(new ImageView("images/banners/player_banner_yellow.png"));
 
         for (int i = 0; i < players.size(); i++) {
             Text playerName = new Text("Player: " + players.get(i).getName());
@@ -176,7 +169,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
             gridPane.setTranslateX(40);
             gridPane.setTranslateY(17);
 
-            ImageView playerBannerImageView = banners.get(i);
+            ImageView playerBannerImageView = new ImageView("images/banners/player_banner_" + players.get(i).getPlayerColor().toLowerCase() + ".png");
             playerBannerImageView.setPreserveRatio(true);
             playerBannerImageView.setFitHeight(100);
 

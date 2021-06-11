@@ -75,5 +75,12 @@ public class UnitTests {
         assertThat(FIRST_PLAYER_UUID, is(playerTurnController.getPlayerTurn().getNextPlayerUUID()));
     }
 
+    @Test
+    public void areAllDestinationCardsGeneratedByTheGameSetupService() {
+        final int expectedCards = 46;
+        ArrayList<DestinationTicket> destinationTickets =  GameSetupService.getInstance().getDestinationTickets();
+        assertThat(expectedCards, is(destinationTickets.size()));
+    }
+
 
 }
