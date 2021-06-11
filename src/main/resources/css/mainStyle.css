@@ -7,7 +7,7 @@
 	-fx-text-fill: white;
 }
 
-#playerMessage {
+#systemMessage {
 	-fx-background-color: #000000b9;
 	-fx-font-family: Merriweather;
 	-fx-font-weight: bold;
@@ -15,6 +15,7 @@
 	-fx-padding: 13px 0;
 	-fx-text-fill: white;
 	-fx-text-alignment: center;
+	-fx-label-padding: 0 5 0 5;
 }
 
 .playerinfo {
