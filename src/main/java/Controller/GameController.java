@@ -263,7 +263,21 @@ public class GameController {
 
     public void endGame() {
         System.out.println("GAME IS ENDED");
-        MainState.primaryStage.setScene(new Scene(new EndGameView()));
+
+        gameSetupService.addNeighborCities();
+        for (Player player : gameState.getPlayers()) {
+            for (DestinationTicket ticket : player.getDestinationTickets()) {
+                int points = ticket.getPoints();
+                try {
+                    player.incrementPoints(isConnected(ticket, player) ? points : -points);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("Points after tickets: " + player.getName() + " " + player.getPoints());
+        }
+        gameSetupService.removeNeighborCities(); // Remove after so we don't crash firebase when starting a second game
+        MainState.primaryStage.setScene(new Scene(new EndGameView(gameState)));
         listenerRegistration.remove();
     }
 
@@ -382,7 +396,13 @@ public class GameController {
         }
         // Backtracking step
         // Make a note that we visited this City, then try to go to each neighbor city
-        currentCity.setVisited(true);
+        // (Janky hack because Firebase)
+        for (City city : gameSetupService.getCities()) {
+            if (currentCity.equals(city)) {
+                currentCity.setNeighborCities(city.getNeighborCities());
+                currentCity.setVisited(true);
+            }
+        }
         for (City neighbor : currentCity.getNeighborCities()) {
             for (Route route : player.getClaimedRoutes()) {
                 // If the player has built a route from currentCity to neighbor,

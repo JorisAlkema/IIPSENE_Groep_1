@@ -53,6 +53,12 @@ public class GameSetupService {
         }
     }
 
+    public void removeNeighborCities() {
+        for (City city : cities) {
+            city.getNeighborCities().clear();
+        }
+    }
+
     // Read DestinationTickets from file
     public ArrayList<DestinationTicket> readDestinationTicketsFromFile(String filename) {
         ArrayList<DestinationTicket> tickets = new ArrayList<>();

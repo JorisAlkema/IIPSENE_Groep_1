@@ -17,19 +17,6 @@ public class Player {
     private boolean isTurn;
     private int actionsTaken;
 
-    public Player(String name, String UUID, String playerColor, boolean isTurn) {
-        this.name = name;
-        this.UUID = UUID;
-        this.playerColor = playerColor;
-        this.isTurn = isTurn;
-        this.trainCards = new ArrayList<>();
-        this.destinationTickets = new ArrayList<>();
-        this.claimedRoutes = new ArrayList<>();
-        this.points = 0;
-        this.trains = 45; // Default value according to rules
-        this.actionsTaken = 0;
-    }
-
     public Player(String name, String UUID, Boolean host) {
         this.name = name;
         this.UUID = UUID;

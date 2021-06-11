@@ -16,16 +16,12 @@ public class City {
         this.name = name;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
+        this.neighborCities = new ArrayList<>();
         this.visited = false;
     }
 
     public City() {
 
-    }
-
-    @Override
-    public String toString() {
-        return this.name;
     }
 
     @Override
@@ -42,6 +38,11 @@ public class City {
         }
         return false;
     }
+//
+//    @Override
+//    public int hashCode() {
+//        return getName() != null ? getName().hashCode() : 0;
+//    }
 
     public void setNeighborCities(ArrayList<City> neighborCities) {
         this.neighborCities = neighborCities;
