@@ -82,7 +82,7 @@ public class DestinationPopUp {
                     player.addDestinationTicket(destinationTicket);
 
                     destinationTickets.remove(destinationTicket);
-                    gameState.setDestinationDeck(destinationTickets);
+                    gameState.getDestinationDeck().remove(destinationTicket);
                 }
                 for (DestinationTicket destinationTicket: destinationTickets){
                     destinationTicketController.returnCardToDeck(destinationTicket);
