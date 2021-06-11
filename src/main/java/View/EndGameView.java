@@ -2,6 +2,7 @@ package View;
 
 import App.MainState;
 import Controller.EndGameController;
+import Model.GameState;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -12,12 +13,13 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
 public class EndGameView extends StackPane {
-    EndGameController endGameController = new EndGameController();
-
+    private final EndGameController endGameController;
     private VBox players_wrapper;
     private VBox players;
 
-    public EndGameView() {
+    public EndGameView(GameState gameState) {
+        endGameController = new EndGameController(gameState);
+
         // Background Effect
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
