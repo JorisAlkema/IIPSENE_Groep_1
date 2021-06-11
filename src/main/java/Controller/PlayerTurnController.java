@@ -89,4 +89,8 @@ public class PlayerTurnController {
     public void registerObserver(PlayerTurnObverser playerTurnObverser) {
         playerTurn.registerObserver(playerTurnObverser);
     }
+
+    public PlayerTurn getPlayerTurn() {
+        return playerTurn;
+    }
 }
