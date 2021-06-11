@@ -37,8 +37,8 @@ public class Main extends Application {
         primaryStage.setTitle("Ticket to Ride");
         primaryStage.getIcons().add(new Image("images/icons/ttr_icon_main.png"));
         primaryStage.setResizable(false);
-        primaryStage.setX(WINDOW_X_POSITION);
-        primaryStage.setY(WINDOW_Y_POSITION);
+        //primaryStage.setX(WINDOW_X_POSITION);
+        //primaryStage.setY(WINDOW_Y_POSITION);
         primaryStage.setHeight(MainState.WINDOW_HEIGHT);
         primaryStage.setWidth(MainState.WINDOW_WIDTH);
         primaryStage.show();

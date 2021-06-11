@@ -21,8 +21,6 @@ public class RoutePopUp {
 
     private final double UNSELECTED_OPACITY = 0.6;
     private final double SELECTED_OPACITY = 1;
-    private final int WINDOW_X_POSITION = 1;
-    private final int WINDOW_Y_POSITION = 1;
 
     public RoutePopUp(ArrayList<String> possibleColors) {
         this.possibleColors = possibleColors;
@@ -35,10 +33,12 @@ public class RoutePopUp {
         stage.setOnCloseRequest(Event::consume);
 
         HBox hBox = new HBox();
+
         VBox vBox = new VBox();
         vBox.setSpacing(10);
         vBox.setPadding(new Insets(10, 10, 10, 10));
         vBox.setAlignment(Pos.TOP_CENTER);
+
         Label label = new Label("Select your route color.");
         label.setStyle("-fx-font-size:18px");
         vBox.getChildren().add(label);
@@ -76,8 +76,6 @@ public class RoutePopUp {
         stage.setScene(scene);
         stage.showAndWait();
         stage.setAlwaysOnTop(true);
-        stage.setX(WINDOW_X_POSITION);
-        stage.setY(WINDOW_Y_POSITION);
 
         return selectedColor;
     }
