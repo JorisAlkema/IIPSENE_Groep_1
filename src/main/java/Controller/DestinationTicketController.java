@@ -15,6 +15,7 @@ public class DestinationTicketController {
 
     private DestinationTicket drawSingleCard(String type) {
         Random random = new Random();
+        //MUST BE GREATER THAN 0
         int deckSize = destinationTicketDeck.getDestinationTickets().size();
         DestinationTicket randomTicket = destinationTicketDeck.draw(random.nextInt(deckSize));
         while (!randomTicket.getType().equals(type)) {
