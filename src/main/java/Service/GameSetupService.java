@@ -23,12 +23,20 @@ public class GameSetupService {
     private final ArrayList<City> cities;
     private final ArrayList<Route> routes;
     private final ArrayList<DestinationTicket> destinationTickets;
+    static GameSetupService gameSetupService;
 
     public GameSetupService() {
         this.cities = readCitiesFromFile(citiesFile);
         this.routes = readRoutesFromFile(routeFile);
         this.destinationTickets = readDestinationTicketsFromFile(destinationTicketsFile);
 //        addNeighborCities();
+    }
+
+    public static GameSetupService getInstance() {
+        if (gameSetupService == null) {
+            gameSetupService = new GameSetupService();
+        }
+        return gameSetupService;
     }
 
     public void addNeighborCities() {
