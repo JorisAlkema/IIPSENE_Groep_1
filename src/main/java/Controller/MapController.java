@@ -128,10 +128,10 @@ public class MapController {
         ArrayList<TrainCard> correctColorCards = new ArrayList<>();
         ArrayList<TrainCard> locosInHand = new ArrayList<>();
         for (TrainCard trainCard : playerHand) {
-            if (trainCard.getColor().equals(routeColor)) {
-                correctColorCards.add(trainCard);
-            } else if (trainCard.getColor().equals("LOCO")) {
+            if (trainCard.getColor().equals("LOCO")) {
                 locosInHand.add(trainCard);
+            } else if (trainCard.getColor().equals(routeColor)) {
+                correctColorCards.add(trainCard);
             }
             if (correctColorCards.size() >= routeLength && locosInHand.size() >= requiredLocos) {
                 break;
@@ -142,6 +142,7 @@ public class MapController {
             return false;
         }
         int cardsToRemove = routeLength - requiredLocos;
+        int locosToRemove = requiredLocos;
 
         if (type.equals("TUNNEL")) {
             int tunnels = generateTunnels(routeColor);
@@ -151,19 +152,23 @@ public class MapController {
             return false;
         }
 
-        // Remove cards from hand
-        // TODO: probably in handController?
-
-        int locosToRemove = requiredLocos;
+        // Remove locos for ferries
+        for (TrainCard traincard : locosInHand) {
+            if (locosToRemove > 0) {
+                playerHand.remove(traincard);
+                locosToRemove--;
+            }
+        }
+        // Remove colored traincards
         for (TrainCard trainCard : correctColorCards) {
             if (cardsToRemove > 0) {
                 playerHand.remove(trainCard);
                 cardsToRemove--;
             }
         }
-        // Remove locos for ferries, or as extra for standard routes
+        // Remove any extra locos as extra for standard routes
         for (TrainCard trainCard : locosInHand) {
-            if (cardsToRemove > 0 || locosToRemove > 0) {
+            if (cardsToRemove > 0) {
                 playerHand.remove(trainCard);
                 cardsToRemove--;
                 locosToRemove--;

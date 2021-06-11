@@ -2,12 +2,14 @@ package View;
 
 import App.MainState;
 import javafx.event.Event;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -29,9 +31,13 @@ public class RoutePopUp {
     public String showRoutePopUp() {
         Stage stage = new Stage();
         stage.getIcons().add(new Image("images/traincards/traincard_back_small.png"));
+        stage.setTitle("Traincards");
         stage.setOnCloseRequest(Event::consume);
 
+        HBox hBox = new HBox();
         VBox vBox = new VBox();
+        vBox.setSpacing(10);
+        vBox.setPadding(new Insets(10, 10, 10, 10));
         vBox.setAlignment(Pos.TOP_CENTER);
         Label label = new Label("Select your route color.");
         label.setStyle("-fx-font-size:18px");
@@ -52,8 +58,10 @@ public class RoutePopUp {
                 selectedColor = color;
                 trainCard.setOpacity(SELECTED_OPACITY);
             });
-            vBox.getChildren().add(trainCard);
+            hBox.getChildren().add(trainCard);
         }
+        vBox.getChildren().add(hBox);
+        hBox.setAlignment(Pos.CENTER);
 
         Button closeButton = new Button("Confirm");
         closeButton.setOnAction(e -> {
