@@ -123,7 +123,7 @@ public class MapController {
         String type = route.getType();
         int requiredLocos = route.getRequiredLocomotives();
         int routeLength = route.routeLength();
-        Player currentPlayer = this.gameController.getCurrentPlayer();
+        Player currentPlayer = this.gameController.getLocalPlayerFromGameState();
         ArrayList<TrainCard> playerHand = currentPlayer.getTrainCards();
         ArrayList<TrainCard> correctColorCards = new ArrayList<>();
         ArrayList<TrainCard> locosInHand = new ArrayList<>();
