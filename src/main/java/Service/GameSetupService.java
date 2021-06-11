@@ -50,7 +50,6 @@ public class GameSetupService {
                 }
             }
             city.setNeighborCities(neighborCities);
-            System.out.println("GameSetupService.addNeighborCities: " + city + " " + city.getName());
         }
     }
 
