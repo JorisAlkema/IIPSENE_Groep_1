@@ -39,7 +39,7 @@ public class UnitTests {
 
         //act
         String destinationTicketsFile = "src/main/resources/text/destination_tickets.txt";
-        GameSetupService gameSetupService = new GameSetupService();
+        GameSetupService gameSetupService = GameSetupService.getInstance();
         ArrayList<DestinationTicket> destinationTickets = gameSetupService.readDestinationTicketsFromFile(destinationTicketsFile);
 
         DestinationTicketController destinationTicketController = new DestinationTicketController(destinationTickets);
