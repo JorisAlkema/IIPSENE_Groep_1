@@ -31,7 +31,7 @@ public class GameController {
     private final TurnTimerController turnTimerController = new TurnTimerController();
     private final PlayerBannerController bannerController = new PlayerBannerController();
 
-    private final GameSetupService gameSetupService = new GameSetupService();
+    private final GameSetupService gameSetupService = GameSetupService.getInstance();
 
     private boolean firstTurn = true;
 
