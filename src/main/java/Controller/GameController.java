@@ -370,7 +370,9 @@ public class GameController {
      * It calls singleStep(), which uses recursive backtracking to find the path
      */
     public boolean isConnected(DestinationTicket ticket, Player player) {
-        return singleStep(ticket.getFirstCity(), ticket.getSecondCity(), player);
+        boolean connected = singleStep(ticket.getFirstCity(), ticket.getSecondCity(), player);
+        System.out.println(ticket.getFirstCity().getName() + " " + ticket.getSecondCity().getName() + " " + connected);
+        return connected;
     }
 
     /**
