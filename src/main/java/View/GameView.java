@@ -11,16 +11,14 @@ import Observers.CardsObserver;
 import Observers.PlayerTurnObverser;
 import Observers.TurnTimerObserver;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
@@ -78,13 +76,27 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         });
         timerLabel = new Label("0:00");
         timerLabel.setId("timerLabel");
+        timerLabel.setMinWidth(100);
 
         VBox vBox = new VBox();
-        vBox.setPadding(new Insets(10));
+        vBox.setPadding(new Insets(10, 10, 10 ,10));
+        vBox.setSpacing(10);
+
+        Label systemMessage = new Label("Message of the day.");
+        systemMessage.setId("systemMessage");
+        systemMessage.setWrapText(true);
+        systemMessage.setMaxSize(250, 50);
+        systemMessage.setMinSize(250, 50);
+
+        Region emptyRegion = new Region();
+        HBox.setHgrow(emptyRegion, Priority.ALWAYS);
+
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(timerLabel, emptyRegion, mapZoomButton);
 
         playerBanners = new VBox();
-
-        vBox.getChildren().addAll(timerLabel, mapZoomButton, playerBanners);
+        vBox.getChildren().addAll(hBox, systemMessage, playerBanners);
+        vBox.setAlignment(Pos.TOP_CENTER);
         borderPane.setLeft(vBox);
     }
 
