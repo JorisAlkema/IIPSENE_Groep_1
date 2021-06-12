@@ -262,8 +262,6 @@ public class GameController {
     }
 
     public void endGame() {
-        System.out.println("GAME IS ENDED");
-
         for (Player player : gameState.getPlayers()) {
             for (DestinationTicket ticket : player.getDestinationTickets()) {
                 int points = ticket.getPoints();
@@ -271,8 +269,10 @@ public class GameController {
             }
             System.out.println("Points after tickets: " + player.getName() + " " + player.getPoints());
         }
-        MainState.primaryStage.setScene(new Scene(new EndGameView(gameState)));
         listenerRegistration.remove();
+        EndGameView endGameView = new EndGameView(gameState);
+        endGameView.getStylesheets().add(MainState.menuCSS);
+        MainState.primaryStage.setScene(new Scene(endGameView));
     }
 
     public void checkEndGame() {

@@ -14,42 +14,67 @@ import javafx.scene.text.Text;
 
 public class EndGameView extends StackPane {
     private final EndGameController endGameController;
-    private VBox players_wrapper;
-    private VBox players;
 
     public EndGameView(GameState gameState) {
         endGameController = new EndGameController(gameState);
 
-        // Background Effect
+        ImageView background = createBackGround();
+        GridPane gridPane = createGridPane();
+        ImageView title = createTitle();
+        VBox playersWrapper = createPlayersWrapper();
+        VBox infoBox = createInfoBox();
+        StackPane stackPane = createStackPane();
+
+        gridPane.add(title, 0,0);
+        gridPane.add(playersWrapper, 0,1);
+        gridPane.add(infoBox, 1,1);
+        gridPane.add(stackPane, 0, 1);
+
+        this.getChildren().add(background);
+        this.getChildren().add(gridPane);
+    }
+
+    // Background image for the whole scene
+    private ImageView createBackGround() {
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
-
-        // Background for textFields and return to menu button
         ImageView background = new ImageView("images/backgrounds/main_menu_background.jpg");
         background.setFitWidth(MainState.WINDOW_WIDTH);
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
+        return background;
+    }
 
-        // Layout
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.getColumnConstraints().add(new ColumnConstraints(1130)); // column 0 is 100 wide
-        grid.getColumnConstraints().add(new ColumnConstraints(300)); // column 1 is 200 wide
-        grid.getRowConstraints().add(new RowConstraints(97));
-        grid.getRowConstraints().add(new RowConstraints(680));
-        grid.setHgap(10);
-        grid.setPadding(new Insets(40));
+    private GridPane createGridPane() {
+        GridPane gridPane = new GridPane();
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.getColumnConstraints().add(new ColumnConstraints(1130));
+        gridPane.getColumnConstraints().add(new ColumnConstraints(300));
+        gridPane.getRowConstraints().add(new RowConstraints(97));
+        gridPane.getRowConstraints().add(new RowConstraints(680));
+        gridPane.setHgap(10);
+        gridPane.setPadding(new Insets(40));
+        return gridPane;
+    }
 
+    private ImageView createTitle() {
         ImageView title = new ImageView("images/logos/main_menu_logo.png");
         title.setFitWidth(title.getImage().getWidth() * 0.5);
         title.setFitHeight(title.getImage().getHeight() * 0.5);
+        return title;
+    }
 
+    private VBox createPlayersWrapper() {
         ImageView podium = new ImageView("images/endgame/podium.png");
-        players_wrapper = new VBox(10);
-        players_wrapper.setId("black_bg");
-        players_wrapper.getChildren().add(podium);
-        players_wrapper.setAlignment(Pos.BOTTOM_CENTER);
+        VBox playersWrapper = new VBox(10);
+        playersWrapper.setId("black_bg");
+        playersWrapper.getChildren().add(podium);
+        playersWrapper.setAlignment(Pos.BOTTOM_CENTER);
+        return playersWrapper;
+    }
 
+    // StackPane with player positions
+    private StackPane createStackPane() {
         StackPane stackPane = new StackPane();
         int i = 0;
         for (String playerName : endGameController.topThreePlayers()) {
@@ -78,10 +103,12 @@ public class EndGameView extends StackPane {
                     break;
             }
         }
+        return stackPane;
+    }
 
-        // Right side info box
+    // Right side info box
+    private VBox createInfoBox() {
         VBox info = new VBox(10);
-        //info.setId("black_bg");
         info.setAlignment(Pos.TOP_CENTER);
 
         VBox map = new VBox(10);
@@ -91,7 +118,7 @@ public class EndGameView extends StackPane {
         Text titleMap = new Text("The map");
         titleMap.setId("text");
         titleMap.minHeight(100);
-        ImageView imageMap = new ImageView("images/maps/map_big.jpg");
+        ImageView imageMap = new ImageView("images/maps/map_small.jpg");
         imageMap.setPreserveRatio(true);
         imageMap.setFitWidth(300);
         map.getChildren().add(titleMap);
@@ -101,21 +128,11 @@ public class EndGameView extends StackPane {
         buttons.setAlignment(Pos.BOTTOM_CENTER);
         Button mainMenu = new Button("Main Menu");
         mainMenu.setPrefWidth(300);
+        mainMenu.setOnMouseClicked(e -> endGameController.toMenu());
         buttons.getChildren().add(mainMenu);
 
         info.getChildren().add(map);
         info.getChildren().add(buttons);
-
-        players = new VBox(10);
-        players.setPadding(new Insets(10));
-
-        grid.add(title, 0,0,1,1);
-        grid.add(players_wrapper, 0,1,1,1);
-        grid.add(info, 1,1,1,1);
-        grid.add(stackPane, 0, 1, 1, 1);
-
-        mainMenu.setOnMouseClicked(e -> endGameController.toMenu());
-        getChildren().add(background);
-        getChildren().add(grid);
+        return info;
     }
 }
