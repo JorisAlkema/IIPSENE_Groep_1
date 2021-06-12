@@ -356,7 +356,7 @@ public class GameController {
     }
 
     public Player getCurrentPlayer() {
-        return playerTurnController.getCurrent(gameState);
+        return playerTurnController.getCurrentPlayer(gameState);
     }
 
     /**
