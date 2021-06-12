@@ -264,19 +264,13 @@ public class GameController {
     public void endGame() {
         System.out.println("GAME IS ENDED");
 
-        gameSetupService.addNeighborCities();
         for (Player player : gameState.getPlayers()) {
             for (DestinationTicket ticket : player.getDestinationTickets()) {
                 int points = ticket.getPoints();
-                try {
-                    player.incrementPoints(isConnected(ticket, player) ? points : -points);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                player.incrementPoints(isConnected(ticket, player) ? points : -points);
             }
             System.out.println("Points after tickets: " + player.getName() + " " + player.getPoints());
         }
-        gameSetupService.removeNeighborCities(); // Remove after so we don't crash firebase when starting a second game
         MainState.primaryStage.setScene(new Scene(new EndGameView(gameState)));
         listenerRegistration.remove();
     }
@@ -370,7 +364,11 @@ public class GameController {
      * It calls singleStep(), which uses recursive backtracking to find the path
      */
     public boolean isConnected(DestinationTicket ticket, Player player) {
-        return singleStep(ticket.getFirstCity(), ticket.getSecondCity(), player);
+        gameSetupService.addNeighborCities();
+        boolean connected = singleStep(ticket.getFirstCity(), ticket.getSecondCity(), player);
+        System.out.println(ticket.getFirstCity().getName() + " " + ticket.getSecondCity().getName() + " " + connected);
+        gameSetupService.removeNeighborCities();
+        return connected;
     }
 
     /**
@@ -379,7 +377,6 @@ public class GameController {
      * currentCity to the neighbor, this method calls itself again, but now with the
      * neighbor City as the new currentCity. This way all possibilities to connect any two given
      * Cities are tried
-     *
      * @param currentCity     City that we are at to check for a connection to destinationCity
      * @param destinationCity City that we are looking for a connection to
      * @param player          Player that we are checking for if they have a connection between the two Cities
@@ -400,7 +397,9 @@ public class GameController {
         for (City city : gameSetupService.getCities()) {
             if (currentCity.equals(city)) {
                 currentCity.setNeighborCities(city.getNeighborCities());
+                city.setVisited(true);
                 currentCity.setVisited(true);
+                break;
             }
         }
         for (City neighbor : currentCity.getNeighborCities()) {
@@ -418,7 +417,14 @@ public class GameController {
         }
         // Dead end - this location can't be part of the solution
         // Unmark the location and go back to previous step
-        currentCity.setVisited(false);
+        for (City city : gameSetupService.getCities()) {
+            if (currentCity.equals(city)) {
+                city.setVisited(false);
+                currentCity.setVisited(true);
+                break;
+            }
+        }
+//        currentCity.setVisited(false);
         return false;
     }
 }

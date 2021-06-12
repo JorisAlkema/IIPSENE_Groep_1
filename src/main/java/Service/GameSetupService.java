@@ -56,6 +56,7 @@ public class GameSetupService {
     public void removeNeighborCities() {
         for (City city : cities) {
             city.getNeighborCities().clear();
+            city.setVisited(false);
         }
     }
 
