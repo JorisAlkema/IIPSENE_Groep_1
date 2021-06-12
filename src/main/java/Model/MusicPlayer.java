@@ -28,24 +28,19 @@ public class MusicPlayer implements MusicObservable {
         return musicPlayer;
     }
 
-
     public void toggleMusic() {
         isPlaying = !isPlaying;
         playAudio(isPlaying);
         this.notifyObservers();
     }
 
-    public void playAudio(boolean isPlaying) {
+    private void playAudio(boolean isPlaying) {
         if (isPlaying) {
             mediaPlayer.play();
             mediaPlayer.setAutoPlay(true);
         } else {
             mediaPlayer.pause();
         }
-    }
-
-    public boolean isPlaying() {
-        return isPlaying;
     }
 
     @Override
@@ -61,7 +56,7 @@ public class MusicPlayer implements MusicObservable {
     @Override
     public void notifyObservers() {
         for (MusicObserver observer : observers) {
-            observer.update();
+            observer.update(isPlaying);
         }
     }
 }

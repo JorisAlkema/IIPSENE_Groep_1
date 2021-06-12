@@ -121,8 +121,8 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
 
             for (TrainCard openCard : openCards) {
                 String cardColor = openCard.getColor();
-                String path = "images/traincards/traincard_" + cardColor + "_small_rotated.png";
-                openTrainCards.add(new ImageView(new Image(path)));
+                String path = "images/traincards/traincard_" + cardColor.toLowerCase() + "_small_rotated.png";
+                openTrainCards.add(new ImageView(path));
             }
 
             // onClick events and ID
