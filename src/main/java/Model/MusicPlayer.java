@@ -5,7 +5,6 @@ import Observers.MusicObserver;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class MusicPlayer implements MusicObservable {
@@ -15,7 +14,7 @@ public class MusicPlayer implements MusicObservable {
     private final MediaPlayer mediaPlayer;
 
     public MusicPlayer() {
-        Media media = new Media(new File("src/main/resources/music/europe.mp3").toURI().toString());
+        Media media = new Media(String.valueOf(getClass().getClassLoader().getResource("music/europe.mp3")));
         mediaPlayer = new MediaPlayer(media);
 //        mediaPlayer.play();
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
