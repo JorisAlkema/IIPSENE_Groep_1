@@ -7,12 +7,13 @@ import javafx.scene.media.MediaPlayer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Timer;
 
 public class MusicPlayer implements MusicObservable {
     private boolean isPlaying = true;
     private final ArrayList<MusicObserver> observers = new ArrayList<>();
     static MusicPlayer musicPlayer;
-    private final MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer;
 
     public MusicPlayer() {
         Media media = new Media(new File("src/main/resources/music/europe.mp3").toURI().toString());
@@ -28,6 +29,16 @@ public class MusicPlayer implements MusicObservable {
         return musicPlayer;
     }
 
+    public void playEndMusic() {
+        if(isPlaying) {
+            mediaPlayer.pause();
+        }
+
+        Media media = new Media(new File("src/main/resources/music/victoryJingle.mp3").toURI().toString());
+        MediaPlayer music = new MediaPlayer(media);
+        music.play();
+        mediaPlayer.play();
+    }
 
     public void toggleMusic() {
         isPlaying = !isPlaying;

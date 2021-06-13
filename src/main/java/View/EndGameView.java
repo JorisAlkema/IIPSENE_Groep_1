@@ -2,6 +2,7 @@ package View;
 
 import App.MainState;
 import Controller.EndGameController;
+import Model.MusicPlayer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -27,6 +28,8 @@ public class EndGameView extends StackPane {
         background.setFitWidth(MainState.WINDOW_WIDTH);
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
+
+        MusicPlayer.getInstance().playEndMusic();
 
         // Layout
         GridPane grid = new GridPane();
