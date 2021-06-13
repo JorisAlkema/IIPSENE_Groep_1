@@ -40,9 +40,9 @@ public class EndGameController {
         HashMap<String, Integer> map = new HashMap<>();
         ArrayList<Integer> topPoints = new ArrayList<>();
 
-//        map.put("15charactername", 100);
-//        map.put("15characternama", 50);
-//        map.put("15characternami", 0);
+        map.put("15charactername", 100);
+        map.put("15characternama", 50);
+        map.put("15characternami", 0);
 
         for (Player player : gameState.getPlayers()) {
             map.put(player.getName(), player.getPoints());
