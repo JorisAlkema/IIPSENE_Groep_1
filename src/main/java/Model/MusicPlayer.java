@@ -8,15 +8,15 @@ import javafx.scene.media.MediaPlayer;
 import java.util.ArrayList;
 
 public class MusicPlayer implements MusicObservable {
-    private boolean isPlaying = true;
-    private final ArrayList<MusicObserver> observers = new ArrayList<>();
     static MusicPlayer musicPlayer;
     private final MediaPlayer mediaPlayer;
+    private boolean isPlaying = true;
+    private final ArrayList<MusicObserver> observers = new ArrayList<>();
 
     public MusicPlayer() {
         Media media = new Media(String.valueOf(getClass().getClassLoader().getResource("music/europe.mp3")));
         mediaPlayer = new MediaPlayer(media);
-//        mediaPlayer.play();
+        //mediaPlayer.play();
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
     }
 

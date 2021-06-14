@@ -30,6 +30,7 @@ public class FirebaseService {
                         .build();
                 FirebaseApp.initializeApp(options);
             }
+
             this.database = FirestoreClient.getFirestore();
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,6 +86,7 @@ public class FirebaseService {
             List<QueryDocumentSnapshot> allRooms = rooms.get().get().getDocuments();
 
             String code = generateCode();
+
             while (allRooms.contains(code)) {
                 code = generateCode();
             }
@@ -96,7 +98,6 @@ public class FirebaseService {
             rooms.document(code).set(gameState);
 
             return code;
-
 
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();

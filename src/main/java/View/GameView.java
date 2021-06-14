@@ -19,16 +19,16 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 
 public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, BannerObserver, SystemMessageObserver {
-    private Label timerLabel;
+    private MapView mapView;
+
+    private final GameController gameController;
     private final BorderPane borderPane;
     private VBox cardsBox;
     private VBox playerBanners;
-    private MapView mapView;
-    private final GameController gameController;
+    private Label timerLabel;
     private Label systemMessage;
 
     public GameView() {
-        // Init
         gameController = new GameController();
         gameController.registerObservers(this);
 
@@ -67,6 +67,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
                 mapZoomButton.setImage(zoomOutImage);
             }
         });
+
         timerLabel = new Label("0:00");
         timerLabel.setId("timerLabel");
         timerLabel.setMinWidth(100);
@@ -122,7 +123,6 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
                 openTrainCards.add(new ImageView(path));
             }
 
-            // onClick events and ID
             closedTrainCard.setId("TrainCard");
             closedTrainCard.setOnMouseClicked(e -> {
                 this.gameController.pickClosedCard();
