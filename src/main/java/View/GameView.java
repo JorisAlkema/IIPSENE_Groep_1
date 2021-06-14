@@ -95,7 +95,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         HBox.setHgrow(emptyRegion, Priority.ALWAYS);
 
         HBox hBox = new HBox();
-        hBox.getChildren().addAll(timerLabel, emptyRegion, mapZoomButton);
+        hBox.getChildren().addAll(timerLabel, emptyRegion, mapZoomButton, informationButton);
 
         playerBanners = new VBox();
         vBox.getChildren().addAll(hBox, systemMessage, playerBanners);
