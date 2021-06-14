@@ -360,6 +360,11 @@ public class GameController {
         gameState.getPlayers().removeIf(player -> !remainingPlayers.contains(player.getUUID()));
     }
 
+    public void showDestinationCardsPopUp() {
+        DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
+        destinationPopUp.showDuringGame(gameState, this);
+    }
+
     // ===============================================================
 
     public void checkTrains() {
