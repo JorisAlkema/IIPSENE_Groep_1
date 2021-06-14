@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class MainMenuController {
 
-    public void openRules() {
+    public static void openRules() {
         File rulesPDF = new File("src/main/resources/rules/ticket_to_ride_europe_rules.pdf");
         if (Desktop.isDesktopSupported()) {
             new Thread(() -> {

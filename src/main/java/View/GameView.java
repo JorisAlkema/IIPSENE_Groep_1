@@ -18,6 +18,8 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 
+import static Controller.MainMenuController.openRules;
+
 public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, BannerObserver, SystemMessageObserver {
     private Label timerLabel;
     private final BorderPane borderPane;
@@ -60,7 +62,14 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     private void initLeftPane() {
         Image zoomInImage = new Image("images/icons/button_zoom_in.png");
         Image zoomOutImage = new Image("images/icons/button_zoom_out.png");
+        Image information = new Image("images/icons/button_game_info.png");
         ImageView mapZoomButton = new ImageView(zoomInImage);
+        ImageView informationButton = new ImageView(information);
+
+        informationButton.addEventFilter(MouseEvent.MOUSE_CLICKED,e ->{
+            openRules();
+        });
+
         mapZoomButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (mapView.getMapController().getMapModel().isZoomedIn()) {
                 mapView.getMapController().zoomOut();
