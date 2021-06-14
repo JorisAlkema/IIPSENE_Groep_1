@@ -30,6 +30,8 @@ public class HandView extends HBox implements HandObserver {
     private final ImageView yellowCard = new ImageView("images/traincards/traincard_yellow_small.png");
     private final ImageView locoCard = new ImageView("images/traincards/traincard_loco_small.png");
 
+    private final ImageView getCard = new ImageView("eu_TicketBack.png");
+
     private final ArrayList<ImageView> cardImageViews;
     private final ArrayList<StackPane> trainCardPanes;
     private final ScrollPane destinationTicketPane;
@@ -48,6 +50,9 @@ public class HandView extends HBox implements HandObserver {
 
         getChildren().add(destinationTicketPane);
         getChildren().addAll(trainCardPanes);
+
+        setAlignment(Pos.BOTTOM_LEFT);
+        getChildren().add(getCard);
     }
 
     private void initDestinationTicketPane() {
