@@ -57,32 +57,10 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     }
 
     private void initLeftPane() {
-        Image zoomInImage = new Image("images/icons/button_zoom_in.png");
-        Image zoomOutImage = new Image("images/icons/button_zoom_out.png");
-        Image information = new Image("images/icons/button-game-info.png");
-        Image informationHover = new Image("images/icons/button-game-info-Over.png");
-        ImageView mapZoomButton = new ImageView(zoomInImage);
-        ImageView informationButton = new ImageView(information);
 
-        informationButton.setOnMouseEntered(e -> informationButton.setImage(informationHover));
-        informationButton.setOnMouseExited(e -> informationButton.setImage(information));
-        informationButton.addEventFilter(MouseEvent.MOUSE_CLICKED,e ->{
-            try {
-                MainMenuController.openRules();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-        });
 
-        mapZoomButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            if (mapView.getMapController().getMapModel().isZoomedIn()) {
-                mapView.getMapController().zoomOut();
-                mapZoomButton.setImage(zoomInImage);
-            } else {
-                mapView.getMapController().zoomIn();
-                mapZoomButton.setImage(zoomOutImage);
-            }
-        });
+        ImageView mapZoomButton = createMapZoomButton();
+        ImageView infoButton = createInfoButton();
 
         timerLabel = new Label("0:00");
         timerLabel.setId("timerLabel");
@@ -103,13 +81,61 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         HBox.setHgrow(emptyRegion, Priority.ALWAYS);
 
         HBox hBox = new HBox();
-        hBox.getChildren().addAll(timerLabel, emptyRegion, mapZoomButton, informationButton);
+        hBox.getChildren().addAll(timerLabel, emptyRegion, mapZoomButton, infoButton);
 
         playerBanners = new VBox();
         vBox.getChildren().addAll(hBox, systemMessage, playerBanners);
         vBox.setAlignment(Pos.TOP_CENTER);
 
         borderPane.setLeft(vBox);
+    }
+
+    private ImageView createMapZoomButton() {
+        Image zoomInImage = new Image("images/icons/button_zoom_in.png");
+        Image zoomOutImage = new Image("images/icons/button_zoom_out.png");
+        Image zoomInImageHover = new Image("images/icons/button_zoom_in_Over.png");
+        Image zoomOutImageHover = new Image("images/icons/button_zoom_out_Over.png");
+        ImageView mapZoomButton = new ImageView(zoomInImage);
+        mapZoomButton.setOnMouseEntered(e -> {
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapZoomButton.setImage(zoomOutImageHover);
+            } else {
+                mapZoomButton.setImage(zoomInImageHover);
+            }
+        });
+        mapZoomButton.setOnMouseExited(e -> {
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapZoomButton.setImage(zoomOutImage);
+            } else {
+                mapZoomButton.setImage(zoomInImage);
+            }
+        });
+        mapZoomButton.setOnMouseClicked(e -> {
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapView.getMapController().zoomOut();
+                mapZoomButton.setImage(zoomInImage);
+            } else {
+                mapView.getMapController().zoomIn();
+                mapZoomButton.setImage(zoomOutImage);
+            }
+        });
+        return mapZoomButton;
+    }
+
+    private ImageView createInfoButton() {
+        Image information = new Image("images/icons/button-game-info.png");
+        Image informationHover = new Image("images/icons/button-game-info-Over.png");
+        ImageView informationButton = new ImageView(information);
+        informationButton.setOnMouseEntered(e -> informationButton.setImage(informationHover));
+        informationButton.setOnMouseExited(e -> informationButton.setImage(information));
+        informationButton.setOnMouseClicked(e ->{
+            try {
+                MainMenuController.openRules();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
+        return informationButton;
     }
 
     private void initCenterPane() {
