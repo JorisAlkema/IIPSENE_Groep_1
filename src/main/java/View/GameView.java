@@ -6,6 +6,7 @@ import Model.*;
 import Observers.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
@@ -78,6 +79,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
 
         systemMessage = new Label("");
         systemMessage.setId("systemMessage");
+        systemMessage.setAlignment(Pos.CENTER);
         systemMessage.setWrapText(true);
         systemMessage.setMaxSize(250, 100);
         systemMessage.setMinSize(250, 100);
@@ -91,6 +93,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         playerBanners = new VBox();
         vBox.getChildren().addAll(hBox, systemMessage, playerBanners);
         vBox.setAlignment(Pos.TOP_CENTER);
+
         borderPane.setLeft(vBox);
     }
 
