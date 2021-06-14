@@ -2,9 +2,20 @@
 #timerLabel {
 	-fx-font-family: Merriweather;
 	-fx-font-weight: bold;
-	-fx-font-size: 20;
+	-fx-font-size: 30;
 	-fx-padding: 13px 0;
 	-fx-text-fill: white;
+}
+
+#systemMessage {
+	-fx-background-color: #000000b9;
+	-fx-font-family: Merriweather;
+	-fx-font-weight: bold;
+	-fx-font-size: 15;
+	-fx-padding: 13px 0;
+	-fx-text-fill: white;
+	-fx-text-alignment: center;
+	-fx-label-padding: 0 5 0 5;
 }
 
 .playerinfo {

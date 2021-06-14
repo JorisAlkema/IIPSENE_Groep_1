@@ -59,8 +59,8 @@ public class LobbyController {
                         Scene scene = new Scene(new GameView());
                         scene.getStylesheets().add(MainState.gameCSS);
                         MainState.primaryStage.setScene(scene);
-                        MainState.primaryStage.setX(MainState.WINDOW_X_POSITION);
-                        MainState.primaryStage.setY(MainState.WINDOW_Y_POSITION);
+                        //MainState.primaryStage.setX(MainState.WINDOW_X_POSITION);
+                        //MainState.primaryStage.setY(MainState.WINDOW_Y_POSITION);
                     });
                 }
             }
@@ -81,13 +81,13 @@ public class LobbyController {
         ArrayList<Player> allPlayers = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
 
 
-//        if (MainState.player.getHost() && allPlayers.size() >= 3) {
-//            MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "Game will start..\n");
-//            MainState.firebaseService.updateOngoing(MainState.roomCode, true);
-//        } else {
-//            MainState.firebaseService.updateMessageInLobby(MainState.roomCode, "3 - 5 players are needed to start the game");
-//        }
+        if (MainState.getLocalPlayer().getHost() && allPlayers.size() >= 3) {
+            MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, "Game will start..\n");
+            MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, true);
+        } else {
+            MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, "3 - 5 players are needed to start the game");
+        }
 
-        MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, true);
+//        MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, true);
     }
 }

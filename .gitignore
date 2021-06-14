@@ -1,5 +1,5 @@
 .idea
 target
 IIPSENE_Groep_1.iml
-firebase_privatekey.json
+**/firebase_privatekey.json
 **/.DS_Store

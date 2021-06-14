@@ -2,23 +2,24 @@ package Controller;
 
 import App.MainState;
 import Model.*;
-import Observers.BannerObserver;
-import Observers.CardsObserver;
-import Observers.PlayerTurnObverser;
-import Observers.TurnTimerObserver;
+import Observers.*;
 import Service.GameSetupService;
 import View.DestinationPopUp;
 import View.EndGameView;
+import View.GameView;
 import View.RoutePopUp;
 import com.google.cloud.firestore.ListenerRegistration;
+import com.google.firebase.messaging.Message;
 import javafx.application.Platform;
 
-import Observers.TurnTimerObserver;
 import javafx.scene.Scene;
-
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GameController {
@@ -30,16 +31,15 @@ public class GameController {
     private final MapController mapController = MapController.getInstance();
     private final TurnTimerController turnTimerController = new TurnTimerController();
     private final PlayerBannerController bannerController = new PlayerBannerController();
+    private final SystemMessage systemMessage = new SystemMessage();
 
     private final GameSetupService gameSetupService = GameSetupService.getInstance();
 
     private boolean firstTurn = true;
-
     private boolean lastRound = false;
     private boolean lastActionTaken = false;
 
     public GameController() {
-        // Ugly
         mapController.setCardsController(cardsController);
 
         MainState.primaryStage.setOnCloseRequest(event -> {
@@ -57,22 +57,22 @@ public class GameController {
     }
 
     /**
-     * AVOID AS MANY UPDATES AND TRY TO PUSH UPDATES ALL AT ONCE!
      * 0. ATTACH LISTENER FOR GAME INITIALIZATION FROM THE HOST
-     * 1. If host Generate Decks
-     * 2. If host Generate Player colors
-     * 3. Give first turn
+     * 1. If host Generate Decks.
+     * 2. If host Generate Player colors.
+     * 3. Give first turn.
      * // LOOP
-     * 4. Wait for event to check turn / Do action and give turn
-     * 5. ................/ Get 1 instance of GameState en modify it
-     * 6. Show new data / Update data
+     * 4. Wait for event to check turn / Do action and give turn.
+     * 5. ................/ Get 1 instance of GameState en modify it.
+     * 6. Show new data / Update data.
      * 7. Check end game.
      * // END LOOP
-     */
+     **/
 
     public void initGame() {
         gameState = MainState.firebaseService.getGameStateOfLobby(MainState.roomCode);
         attachListener();
+
         // Init for host
         if (gameState.getPlayer(MainState.player_uuid).getHost()) {
             generateDecks();
@@ -91,10 +91,14 @@ public class GameController {
                 System.out.println("INCOMING UPDATE");
                 GameState incomingGameState = documentSnapshot.toObject(GameState.class);
                 if (incomingGameState.isLoadedByHost()) {
+
                     // A player has leaved
                     if (incomingGameState.getPlayers().size() < gameState.getPlayers().size()) {
                         removeLeftPlayers(incomingGameState);
                         bannerController.updatePlayersArray(gameState.getPlayers());
+                        if (gameState.getPlayers().size() == 1) {
+                            endGame();
+                        }
                     } else {
                         gameState = incomingGameState;
                         // Check trains for all players
@@ -106,16 +110,25 @@ public class GameController {
                         // End old timer and Make time init timer
                         turnTimerController.resetTimer(this);
                     }
+
                     try {
                         playerTurnController.checkMyTurn(gameState);
+                        if (playerTurnController.getTurn()) {
+                            checkEndGame();
+                            systemMessage.setMessage("It's your turn.");
+                        } else {
+                            systemMessage.setMessage("It's " + getCurrentPlayer().getName() + "'s turn.");
+                        }
+
                         if (firstTurn && playerTurnController.getTurn()) {
                             firstTurn = false;
+                            for (int i = 0; i < 4; i++) {
+                                TrainCard pickedClosedCard = cardsController.pickClosedCard(gameState);
+                                addTrainCardToPlayerInventoryInGameState(pickedClosedCard);
+                            }
                             DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
                             destinationPopUp.showAtStartOfGame(gameState, this);
                             endTurn();
-                        }
-                        if (playerTurnController.getTurn()) {
-                            checkEndGame();
                         }
                     } catch (Exception exception) {
                         exception.printStackTrace();
@@ -169,7 +182,7 @@ public class GameController {
             incrementPlayerActionsTaken();
             checkIfTurnIsOver();
         } else {
-            System.out.println("IT'S NOT YOUR TURN");
+            systemMessage.setMessage("You cannot pick a card at this time.");
         }
     }
 
@@ -187,7 +200,7 @@ public class GameController {
                 }
                 checkIfTurnIsOver();
             } else {
-                System.out.println("IT'S NOT YOUR TURN");
+                systemMessage.setMessage("You cannot pick a card at this time.");
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -197,6 +210,7 @@ public class GameController {
     public void buildRoute(Route route) {
         String selectedColor = null;
         boolean isBuilt = false;
+
         if (playerTurnController.getTurn() && getLocalPlayerFromGameState().getActionsTaken() == 0) {
             if (route.routeLength() <= getLocalPlayerFromGameState().getTrains()) {
                 if (route.getColor().equals("GREY")) {
@@ -205,21 +219,18 @@ public class GameController {
                 } else {
                     isBuilt = mapController.claimRoute(route, route.getColor());
                 }
+
                 if (isBuilt) {
                     givePointForRouteSize(route.routeLength());
                     endTurn();
                 } else {
-                    if (selectedColor == null) {
-                        System.out.println("Error: Not enough same-color cards for grey route");
-                    } else {
-                        System.out.println("Error: Not enough cards of chosen color " + selectedColor);
-                    }
+                    systemMessage.setMessage("Not enough same-color cards for this route.");
                 }
             } else {
-                System.out.println("Error: You don't have enough trains left to build this route");
+                systemMessage.setMessage("You don't have enough trains left to build this route.");
             }
         } else {
-            System.out.println("Error: It's not your turn, or you already drew a TrainCard this turn");
+            systemMessage.setMessage("It's not your turn, or you already drew a TrainCard this turn.");
         }
     }
 
@@ -231,6 +242,7 @@ public class GameController {
                 locosInHand++;
             }
         }
+
         ArrayList<String> possibleColors = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : getLocalPlayerFromGameState().trainCardsAsMap().entrySet()) {
             boolean enoughPureLocos = entry.getKey().equals("LOCO") && entry.getValue() >= route.routeLength();
@@ -239,9 +251,11 @@ public class GameController {
                 possibleColors.add(entry.getKey());
             }
         }
+
         if (possibleColors.size() == 0) {
             return null;
         }
+
         RoutePopUp routePopUp = new RoutePopUp(possibleColors);
         return routePopUp.showRoutePopUp();
     }
@@ -266,9 +280,31 @@ public class GameController {
     }
 
     public void endGame() {
-        System.out.println("GAME IS ENDED");
-        MainState.primaryStage.setScene(new Scene(new EndGameView()));
+        for (Player player : gameState.getPlayers()) {
+            for (DestinationTicket ticket : player.getDestinationTickets()) {
+                int points = ticket.getPoints();
+                player.incrementPoints(isConnected(ticket, player) ? points : -points);
+            }
+            System.out.println("Points after tickets: " + player.getName() + " " + player.getPoints());
+        }
+
+        for (Rectangle rectangle : mapController.getRouteCellRectangleHashMap().values()) {
+            rectangle.setFill(Color.TRANSPARENT);
+        }
+
+        HandModel handModel = HandModel.getInstance();
+        handModel.setTrainCardsMap(new HashMap<String, Integer>());
+        handModel.setDestinationTicketsInHand(new ArrayList<DestinationTicket>());
+
+        turnTimerController.stopTimer();
+
         listenerRegistration.remove();
+        MainState.firebaseService.getLobbyReference(MainState.roomCode).delete();
+        MainState.player_uuid = null;
+        MainState.roomCode = null;
+        EndGameView endGameView = new EndGameView(gameState);
+        endGameView.getStylesheets().add(MainState.menuCSS);
+        MainState.primaryStage.setScene(new Scene(endGameView));
     }
 
     public void checkEndGame() {
@@ -295,20 +331,11 @@ public class GameController {
         getLocalPlayerFromGameState().setActionsTaken(getLocalPlayerFromGameState().getActionsTaken() + 1);
     }
 
-    public void registerCardsObserver(CardsObserver cardsObserver) {
-        cardsController.registerObserver(cardsObserver);
-    }
-
-    public void registerTurnTimerObserver(TurnTimerObserver turnTimerObserver) {
-        turnTimerController.registerObserver(turnTimerObserver);
-    }
-
-    public void registerPlayerTurnObserver(PlayerTurnObverser playerTurnObverser) {
-        playerTurnController.registerObserver(playerTurnObverser);
-    }
-
-    public void registerBannerObserver(BannerObserver bannerObserver) {
-        bannerController.registerObserver(bannerObserver);
+    public void registerObservers(GameView gameView) {
+        cardsController.registerObserver(gameView);
+        turnTimerController.registerObserver(gameView);
+        bannerController.registerObserver(gameView);
+        systemMessage.registerObserver(gameView);
     }
 
     private void checkIfTurnIsOver() {
@@ -333,9 +360,14 @@ public class GameController {
         gameState.getPlayers().removeIf(player -> !remainingPlayers.contains(player.getUUID()));
     }
 
+    public void showDestinationCardsPopUp() {
+        DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
+        destinationPopUp.showDuringGame(gameState, this);
+        endTurn();
+    }
+
     // ===============================================================
 
-    // Does anyone have 2 or less trains?
     public void checkTrains() {
         if (!lastRound) {
             for (Player player : gameState.getPlayers()) {
@@ -348,7 +380,7 @@ public class GameController {
     }
 
     public Player getCurrentPlayer() {
-        return playerTurnController.getCurrent(gameState);
+        return playerTurnController.getCurrentPlayer(gameState);
     }
 
     /**
@@ -356,7 +388,11 @@ public class GameController {
      * It calls singleStep(), which uses recursive backtracking to find the path
      */
     public boolean isConnected(DestinationTicket ticket, Player player) {
-        return singleStep(ticket.getFirstCity(), ticket.getSecondCity(), player);
+        gameSetupService.addNeighborCities();
+        boolean connected = singleStep(ticket.getFirstCity(), ticket.getSecondCity(), player);
+        System.out.println(ticket.getFirstCity().getName() + " " + ticket.getSecondCity().getName() + " " + connected);
+        gameSetupService.removeNeighborCities();
+        return connected;
     }
 
     /**
@@ -365,28 +401,39 @@ public class GameController {
      * currentCity to the neighbor, this method calls itself again, but now with the
      * neighbor City as the new currentCity. This way all possibilities to connect any two given
      * Cities are tried
-     *
      * @param currentCity     City that we are at to check for a connection to destinationCity
      * @param destinationCity City that we are looking for a connection to
      * @param player          Player that we are checking for if they have a connection between the two Cities
      * @return true if there is a connection from the initial currentCity to the destinationCity, false otherwise
      */
+
     private boolean singleStep(City currentCity, City destinationCity, Player player) {
-        // Accept case - we found the destination city
+        // Accept case: We found the destination city.
         if (currentCity.equals(destinationCity)) {
             return true;
         }
-        // Reject case - we already visited this city
+
+        // Reject case: We already visited this city.
         if (currentCity.isVisited()) {
             return false;
         }
+
         // Backtracking step
-        // Make a note that we visited this City, then try to go to each neighbor city
-        currentCity.setVisited(true);
+        // Make a note that we visited this City, then try to go to each neighboring city.
+        // (Janky hack because Firebase)
+        for (City city : gameSetupService.getCities()) {
+            if (currentCity.equals(city)) {
+                currentCity.setNeighborCities(city.getNeighborCities());
+                city.setVisited(true);
+                currentCity.setVisited(true);
+                break;
+            }
+        }
+
         for (City neighbor : currentCity.getNeighborCities()) {
             for (Route route : player.getClaimedRoutes()) {
                 // If the player has built a route from currentCity to neighbor,
-                // run the function again with neighbor as the new currentCity
+                // run the function again with neighbor as the new currentCity.
                 boolean connectedAToB = route.getFirstCity().equals(currentCity) && route.getSecondCity().equals(neighbor);
                 boolean connectedBToA = route.getFirstCity().equals(neighbor) && route.getSecondCity().equals(currentCity);
                 if (connectedAToB || connectedBToA) {
@@ -396,9 +443,16 @@ public class GameController {
                 }
             }
         }
-        // Dead end - this location can't be part of the solution
-        // Unmark the location and go back to previous step
-        currentCity.setVisited(false);
+
+        // Dead end: This location can't be part of the solution.
+        // Unmark the location and go back to previous step.
+        for (City city : gameSetupService.getCities()) {
+            if (currentCity.equals(city)) {
+                city.setVisited(false);
+                currentCity.setVisited(true);
+                break;
+            }
+        }
         return false;
     }
 }
