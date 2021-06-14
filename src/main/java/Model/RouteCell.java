@@ -2,9 +2,6 @@ package Model;
 
 import java.util.Objects;
 
-// RouteCell represents a single cell on the map. It is part of a Route.
-// A RouteCell has no color or type of its own, this is determined in the Route class.
-// The location of the RouteCell on the map is determined by its offsetX, offsetY and rotation.
 public class RouteCell {
 
     private double translateX;
@@ -17,8 +14,9 @@ public class RouteCell {
         this.rotation = rotation;
     }
 
+    // Allow Firebase to create a new instance of the object with an empty constructor,
+    // which will be filled in using reflection.
     public RouteCell() {
-
     }
 
     @Override
@@ -26,9 +24,11 @@ public class RouteCell {
         if (this == o) {
             return true;
         }
+
         if (o == null) {
             return false;
         }
+
         if (o instanceof RouteCell) {
             RouteCell routeCell = (RouteCell) o;
             return translateX == routeCell.getTranslateX()
@@ -38,7 +38,7 @@ public class RouteCell {
         return false;
     }
 
-    @Override // Needed for equals method
+    @Override
     public int hashCode() {
         return Objects.hash(translateX, translateY, rotation);
     }

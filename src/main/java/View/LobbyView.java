@@ -18,7 +18,6 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 
 public class LobbyView extends StackPane implements LobbyObserver {
-
     private final LobbyController controller;
     private Text message;
     private Text partyCode;
@@ -77,6 +76,7 @@ public class LobbyView extends StackPane implements LobbyObserver {
                 String username = x.getName();
                 String info = x.getHost() ? "Host" : "Player";
                 HBox player_card = createPlayerName(username, info);
+
                 if (x.getHost()) {
                     players.getChildren().add(0, player_card);
                 } else {
@@ -106,14 +106,16 @@ public class LobbyView extends StackPane implements LobbyObserver {
         return player_box;
     }
 
-    // Background image for the whole scene
     private ImageView createBackGround() {
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
+
         ImageView background = new ImageView("images/backgrounds/main_menu_background.jpg");
+
         background.setFitWidth(MainState.WINDOW_WIDTH);
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
+
         return background;
     }
 
@@ -126,6 +128,7 @@ public class LobbyView extends StackPane implements LobbyObserver {
         gridPane.getRowConstraints().add(new RowConstraints(680));
         gridPane.setHgap(10);
         gridPane.setPadding(new Insets(40));
+
         return gridPane;
     }
 
@@ -136,12 +139,12 @@ public class LobbyView extends StackPane implements LobbyObserver {
         return title;
     }
 
-    // Right side map + info
     private VBox createMapInfoBox() {
         VBox map = new VBox(10);
         map.setId("black_bg");
         map.setAlignment(Pos.CENTER);
         map.setPadding(new Insets(10));
+
         Text titleMap = new Text("The map");
         titleMap.setId("text");
         titleMap.minHeight(100);
@@ -150,21 +153,23 @@ public class LobbyView extends StackPane implements LobbyObserver {
         imageMap.setFitWidth(300);
         map.getChildren().add(titleMap);
         map.getChildren().add(imageMap);
+
         return map;
     }
 
-    // Right side party info
     private VBox createPartyInfoBox() {
         VBox party = new VBox(10);
         party.setId("black_bg");
         party.setAlignment(Pos.CENTER);
         party.setPadding(new Insets(10));
+
         Text partyTitle = new Text("Partycode:");
         this.partyCode = new Text();
         partyTitle.setId("text");
         this.partyCode.setId("text");
         party.getChildren().add(partyTitle);
         party.getChildren().add(this.partyCode);
+
         return party;
     }
 
@@ -174,25 +179,30 @@ public class LobbyView extends StackPane implements LobbyObserver {
         messageBox.setId("black_bg");
         messageBox.setAlignment(Pos.TOP_CENTER);
         messageBox.setPadding(new Insets(10));
+
         this.message = new Text("Retrieving data...\n");
         this.message.setWrappingWidth(300);
         this.message.setId("text");
         messageBox.getChildren().add(this.message);
+
         return messageBox;
     }
 
-    // Right side buttons
     private VBox createButtons() {
         VBox buttons = new VBox(20);
         buttons.setAlignment(Pos.BOTTOM_CENTER);
+
         Button leaveRoomButton = new Button("Leave Room");
         Button startRoomButton = new Button("Start Game");
+
         leaveRoomButton.setPrefWidth(300);
         startRoomButton.setPrefWidth(300);
         leaveRoomButton.setOnMouseClicked(e -> controller.leaveRoom());
         startRoomButton.setOnMouseClicked(e -> controller.startRoom());
+
         buttons.getChildren().add(leaveRoomButton);
         buttons.getChildren().add(startRoomButton);
+
         return buttons;
     }
 }
