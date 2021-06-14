@@ -12,9 +12,13 @@ import com.google.firebase.messaging.Message;
 import javafx.application.Platform;
 
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GameController {
@@ -269,7 +273,21 @@ public class GameController {
             }
             System.out.println("Points after tickets: " + player.getName() + " " + player.getPoints());
         }
+
+        // Reset map
+        for (Rectangle rectangle : mapController.getRouteCellRectangleHashMap().values()) {
+            rectangle.setFill(Color.TRANSPARENT);
+        }
+
+        HandModel handModel = HandModel.getInstance();
+        handModel.setTrainCardsMap(new HashMap<String, Integer>());
+        handModel.setDestinationTicketsInHand(new ArrayList<DestinationTicket>());
+
+        turnTimerController.stopTimer();
+
         listenerRegistration.remove();
+        MainState.player_uuid = null;
+        MainState.roomCode = null;
         EndGameView endGameView = new EndGameView(gameState);
         endGameView.getStylesheets().add(MainState.menuCSS);
         MainState.primaryStage.setScene(new Scene(endGameView));
