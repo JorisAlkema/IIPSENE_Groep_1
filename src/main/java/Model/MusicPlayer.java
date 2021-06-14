@@ -2,24 +2,21 @@ package Model;
 
 import Observers.MusicObservable;
 import Observers.MusicObserver;
-import View.MusicPlayerView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class MusicPlayer implements MusicObservable {
-    private boolean isPlaying = true;
-    private ArrayList<MusicObserver> observers = new ArrayList<>();
     static MusicPlayer musicPlayer;
-    private Media media;
-    private MediaPlayer mediaPlayer;
+    private final MediaPlayer mediaPlayer;
+    private boolean isPlaying = true;
+    private final ArrayList<MusicObserver> observers = new ArrayList<>();
 
     public MusicPlayer() {
-        media = new Media(new File("src/main/resources/music/europe.mp3").toURI().toString());
+        Media media = new Media(String.valueOf(getClass().getClassLoader().getResource("music/europe.mp3")));
         mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.play();
+        //mediaPlayer.play();
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
     }
 
@@ -30,24 +27,19 @@ public class MusicPlayer implements MusicObservable {
         return musicPlayer;
     }
 
-
     public void toggleMusic() {
         isPlaying = !isPlaying;
         playAudio(isPlaying);
         this.notifyObservers();
     }
 
-    public void playAudio(boolean isPlaying) {
-        if(isPlaying) {
+    private void playAudio(boolean isPlaying) {
+        if (isPlaying) {
             mediaPlayer.play();
             mediaPlayer.setAutoPlay(true);
         } else {
             mediaPlayer.pause();
         }
-    }
-
-    public boolean isPlaying() {
-        return isPlaying;
     }
 
     @Override
@@ -62,8 +54,8 @@ public class MusicPlayer implements MusicObservable {
 
     @Override
     public void notifyObservers() {
-        for(MusicObserver observer : observers) {
-            observer.update();
+        for (MusicObserver observer : observers) {
+            observer.update(isPlaying);
         }
     }
 }

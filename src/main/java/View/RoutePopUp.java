@@ -1,9 +1,6 @@
 package View;
 
 import App.MainState;
-import Controller.DestinationTicketController;
-import Model.DestinationTicket;
-import Model.Player;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,24 +9,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class RoutePopUp {
-    private ArrayList<String> possibleColors;
+    private final ArrayList<String> possibleColors;
     private String selectedColor;
 
     private final double UNSELECTED_OPACITY = 0.6;
     private final double SELECTED_OPACITY = 1;
-    private final int WINDOW_X_POSITION = 1;
-    private final int WINDOW_Y_POSITION = 1;
 
     public RoutePopUp(ArrayList<String> possibleColors) {
         this.possibleColors = possibleColors;
@@ -37,11 +28,17 @@ public class RoutePopUp {
 
     public String showRoutePopUp() {
         Stage stage = new Stage();
-        stage.getIcons().add(new Image("traincards/traincard_back_small.png"));
+        stage.getIcons().add(new Image("images/traincards/traincard_back_small.png"));
+        stage.setTitle("Traincards");
         stage.setOnCloseRequest(Event::consume);
 
+        HBox hBox = new HBox();
+
         VBox vBox = new VBox();
+        vBox.setSpacing(10);
+        vBox.setPadding(new Insets(10, 10, 10, 10));
         vBox.setAlignment(Pos.TOP_CENTER);
+
         Label label = new Label("Select your route color.");
         label.setStyle("-fx-font-size:18px");
         vBox.getChildren().add(label);
@@ -49,7 +46,7 @@ public class RoutePopUp {
         ArrayList<ImageView> availableColors = new ArrayList<>();
 
         for (String color : possibleColors) {
-            ImageView trainCard = new ImageView(new Image("traincards/traincard_" + color.toLowerCase() + "_small.png"));
+            ImageView trainCard = new ImageView(new Image("images/traincards/traincard_" + color.toLowerCase() + "_small.png"));
             availableColors.add(trainCard);
 
             trainCard.setOpacity(UNSELECTED_OPACITY);
@@ -61,24 +58,27 @@ public class RoutePopUp {
                 selectedColor = color;
                 trainCard.setOpacity(SELECTED_OPACITY);
             });
-            vBox.getChildren().add(trainCard);
+
+            hBox.getChildren().add(trainCard);
         }
+
+        vBox.getChildren().add(hBox);
+        hBox.setAlignment(Pos.CENTER);
 
         Button closeButton = new Button("Confirm");
         closeButton.setOnAction(e -> {
-            if(selectedColor != null){
+            if (selectedColor != null) {
                 stage.close();
             }
         });
+
         vBox.getChildren().add(closeButton);
 
         Scene scene = new Scene(vBox);
-        scene.getStylesheets().add(MainState.MenuCSS);
+        scene.getStylesheets().add(MainState.menuCSS);
         stage.setScene(scene);
         stage.showAndWait();
         stage.setAlwaysOnTop(true);
-        stage.setX(WINDOW_X_POSITION);
-        stage.setY(WINDOW_Y_POSITION);
 
         return selectedColor;
     }

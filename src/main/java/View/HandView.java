@@ -2,7 +2,6 @@ package View;
 
 import Controller.HandController;
 import Model.DestinationTicket;
-import Model.TrainCard;
 import Observers.HandObserver;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -16,30 +15,33 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HandView extends HBox implements HandObserver {
-    private final HandController handController;
+    private final ImageView blackCard = new ImageView("images/traincards/traincard_black_small.png");
+    private final ImageView blueCard = new ImageView("images/traincards/traincard_blue_small.png");
+    private final ImageView greenCard = new ImageView("images/traincards/traincard_green_small.png");
+    private final ImageView orangeCard = new ImageView("images/traincards/traincard_orange_small.png");
+    private final ImageView purpleCard = new ImageView("images/traincards/traincard_purple_small.png");
+    private final ImageView redCard = new ImageView("images/traincards/traincard_red_small.png");
+    private final ImageView whiteCard = new ImageView("images/traincards/traincard_white_small.png");
+    private final ImageView yellowCard = new ImageView("images/traincards/traincard_yellow_small.png");
+    private final ImageView locoCard = new ImageView("images/traincards/traincard_loco_small.png");
 
-    private final ImageView blackCard = new ImageView("traincards/traincard_black_small.png");
-    private final ImageView blueCard = new ImageView("traincards/traincard_blue_small.png");
-    private final ImageView greenCard = new ImageView("traincards/traincard_green_small.png");
-    private final ImageView orangeCard = new ImageView("traincards/traincard_orange_small.png");
-    private final ImageView purpleCard = new ImageView("traincards/traincard_purple_small.png");
-    private final ImageView redCard = new ImageView("traincards/traincard_red_small.png");
-    private final ImageView whiteCard = new ImageView("traincards/traincard_white_small.png");
-    private final ImageView yellowCard = new ImageView("traincards/traincard_yellow_small.png");
-    private final ImageView locoCard = new ImageView("traincards/traincard_loco_small.png");
     private final ArrayList<ImageView> cardImageViews;
     private final ArrayList<StackPane> trainCardPanes;
     private final ScrollPane destinationTicketPane;
 
     public HandView() {
-        this.handController = new HandController();
+        HandController handController = new HandController();
         handController.registerObserver(this);
         setAlignment(Pos.CENTER_RIGHT);
+
         this.cardImageViews = new ArrayList<>();
         fillCardImageViews();
+
         this.trainCardPanes = createStackPaneList();
         this.destinationTicketPane = new ScrollPane();
         initDestinationTicketPane();
@@ -50,12 +52,13 @@ public class HandView extends HBox implements HandObserver {
 
     private void initDestinationTicketPane() {
         destinationTicketPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        destinationTicketPane.setMaxHeight(174); // TrainCard height in hand
-        destinationTicketPane.setMinWidth(203); // Ticket width in hand
+        destinationTicketPane.setMaxHeight(174); // TrainCard height in hand.
+        destinationTicketPane.setMinWidth(203); // Ticket width in hand.
     }
 
     private ArrayList<StackPane> createStackPaneList() {
         ArrayList<StackPane> stackPanes = new ArrayList<>();
+
         for (ImageView cardImageView : cardImageViews) {
             stackPanes.add(createStackPane(cardImageView));
         }
@@ -103,10 +106,12 @@ public class HandView extends HBox implements HandObserver {
 
     private void updateDestinationTickets(ArrayList<DestinationTicket> destinationTickets) {
         VBox vBox = new VBox();
-        for (DestinationTicket destinationTicket: destinationTickets){
+
+        for (DestinationTicket destinationTicket : destinationTickets) {
             String path = destinationTicket.fileNameSmall();
             vBox.getChildren().addAll(new ImageView(path));
         }
+
         destinationTicketPane.setContent(vBox);
     }
 
@@ -118,6 +123,7 @@ public class HandView extends HBox implements HandObserver {
             double saturation = -0.5;
             double opacity = 0.3;
             boolean canHover = false;
+
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 if (imageView.getImage().getUrl().contains(entry.getKey().toLowerCase())) {
                     if (entry.getValue() != 0) {
@@ -128,11 +134,13 @@ public class HandView extends HBox implements HandObserver {
                     }
                 }
             }
+
             ColorAdjust colorAdjust = new ColorAdjust();
             colorAdjust.setSaturation(saturation);
             imageView.setOpacity(opacity);
             imageView.setEffect(colorAdjust);
             setTextOnStackPane(stackPane, amount);
+
             if (canHover) {
                 stackPane.setId("onHoverUp");
             } else {

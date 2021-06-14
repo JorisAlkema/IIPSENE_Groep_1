@@ -1,6 +1,5 @@
 package Observers;
 
-import Model.Player;
 import Model.PlayerTurn;
 
 public interface PlayerTurnObverser {

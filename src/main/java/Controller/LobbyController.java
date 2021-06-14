@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class LobbyController {
 
-    private Lobby lobby = new Lobby();
+    private final Lobby lobby = new Lobby();
 
     public LobbyController(LobbyView lobbyView) {
         lobby.registerObserver(lobbyView);
@@ -57,10 +57,10 @@ public class LobbyController {
                     Platform.runLater(() -> {
                         detachListener();
                         Scene scene = new Scene(new GameView());
-                        scene.getStylesheets().add(MainState.mainCSS);
+                        scene.getStylesheets().add(MainState.gameCSS);
                         MainState.primaryStage.setScene(scene);
-                        MainState.primaryStage.setX(MainState.WINDOW_X_POSITION);
-                        MainState.primaryStage.setY(MainState.WINDOW_Y_POSITION);
+                        //MainState.primaryStage.setX(MainState.WINDOW_X_POSITION);
+                        //MainState.primaryStage.setY(MainState.WINDOW_Y_POSITION);
                     });
                 }
             }
@@ -73,7 +73,7 @@ public class LobbyController {
 
     public void returnToMenu() {
         Scene scene = new Scene(new MainMenuView(), MainState.WINDOW_WIDTH, MainState.WINDOW_HEIGHT);
-        scene.getStylesheets().add(MainState.MenuCSS);
+        scene.getStylesheets().add(MainState.menuCSS);
         MainState.primaryStage.setScene(scene);
     }
 

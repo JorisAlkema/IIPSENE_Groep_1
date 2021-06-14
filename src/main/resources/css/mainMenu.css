@@ -24,6 +24,13 @@
 	-fx-background-color: #660008;
 }
 
+#podiumText {
+	-fx-font-family: Merriweather;
+	-fx-text-fill: white;
+	-fx-font-size: 20;
+	-fx-font-weight: 700;
+}
+
 #text {
     -fx-font-family: Merriweather;
 	-fx-fill: white;
@@ -36,6 +43,12 @@
 	-fx-fill: white;
 	-fx-font-size: 14;
 	-fx-font-weight: 700;
+}
+
+#selectTickets {
+	-fx-font-family: Merriweather;
+	-fx-font-weight: bold;
+	-fx-font-size: 20;
 }
 
 .text-field {
@@ -71,5 +84,4 @@
 
 #musicbutton {
 	-fx-cursor: hand;
-
 }

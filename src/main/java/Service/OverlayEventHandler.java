@@ -7,7 +7,6 @@ import javafx.scene.input.MouseEvent;
  * Custom EventHandler to differentiate between click and drag events on overlaid rectangles on the the MapView
  */
 public class OverlayEventHandler implements EventHandler<MouseEvent> {
-
     private final EventHandler<MouseEvent> clickEventHandler;
     private final EventHandler<MouseEvent> dragEventHandler;
     private boolean dragging = false;

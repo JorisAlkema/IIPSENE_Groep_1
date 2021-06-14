@@ -1,17 +1,14 @@
 package Model;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
-// Route represents a single route on the map, connecting two Cities with a
-// given amount of RouteCells of a given color. It can be claimed by a Player.
 public class Route {
     private City firstCity;
     private City secondCity;
     private ArrayList<RouteCell> routeCells;
     private String color;
-    private String type; // STANDARD, TUNNEL or FERRY
-    private int requiredLocomotives; // 0 if not of type FERRY
+    private String type;
+    private int requiredLocomotives;
 
     public Route(City firstCity, City secondCity, ArrayList<RouteCell> routeCells, String color, String type, int requiredLocomotives) {
         this.firstCity = firstCity;
@@ -22,8 +19,9 @@ public class Route {
         this.requiredLocomotives = requiredLocomotives;
     }
 
+    // Allow Firebase to create a new instance of the player object with an empty constructor,
+    // which will be filled in using reflection.
     public Route() {
-
     }
 
     @Override
@@ -36,9 +34,11 @@ public class Route {
         if (this == o) {
             return true;
         }
+
         if (o == null) {
-            return  false;
+            return false;
         }
+
         if (o instanceof Route) {
             Route route = (Route) o;
             return this.firstCity.equals(route.firstCity) && this.secondCity.equals(route.secondCity);

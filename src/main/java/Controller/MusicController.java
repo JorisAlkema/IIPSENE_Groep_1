@@ -1,24 +1,21 @@
 package Controller;
 
 import Model.MusicPlayer;
-import View.MusicPlayerView;
+import Observers.MusicObserver;
 
 public class MusicController {
-    private MusicPlayer musicPlayer;
-    private MusicPlayerView musicPlayerView;
+    private final MusicPlayer musicPlayer;
 
-    public MusicController(MusicPlayerView musicPlayerView) {
-        this.musicPlayerView = musicPlayerView;
+    public MusicController() {
         this.musicPlayer = MusicPlayer.getInstance();
-        this.musicPlayer.registerObserver(musicPlayerView);
     }
 
     public void toggleMusic() {
         this.musicPlayer.toggleMusic();
     }
 
-    public MusicPlayer getMusicPlayer() {
-        return musicPlayer;
+    public void registerObserver(MusicObserver observer) {
+        this.musicPlayer.registerObserver(observer);
     }
 
 }

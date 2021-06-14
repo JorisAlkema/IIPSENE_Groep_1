@@ -10,6 +10,7 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -22,15 +23,16 @@ public class FirebaseService {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
                 // Initialize Firestore connection
-                FileInputStream serviceAccount = new FileInputStream(PRIVATE_KEY);
+                InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("firebase_privatekey.json");
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                         .setDatabaseUrl("database_url")
                         .build();
                 FirebaseApp.initializeApp(options);
             }
+
             this.database = FirestoreClient.getFirestore();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -84,6 +86,7 @@ public class FirebaseService {
             List<QueryDocumentSnapshot> allRooms = rooms.get().get().getDocuments();
 
             String code = generateCode();
+
             while (allRooms.contains(code)) {
                 code = generateCode();
             }
@@ -95,7 +98,6 @@ public class FirebaseService {
             rooms.document(code).set(gameState);
 
             return code;
-
 
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
