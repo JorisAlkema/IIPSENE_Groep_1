@@ -97,6 +97,9 @@ public class GameController {
                     if (incomingGameState.getPlayers().size() < gameState.getPlayers().size()) {
                         removeLeftPlayers(incomingGameState);
                         bannerController.updatePlayersArray(gameState.getPlayers());
+                        if (gameState.getPlayers().size() == 1) {
+                            endGame();
+                        }
                     } else {
                         gameState = incomingGameState;
                         // Check trains for all players
@@ -291,6 +294,7 @@ public class GameController {
         turnTimerController.stopTimer();
 
         listenerRegistration.remove();
+        MainState.firebaseService.getLobbyReference(MainState.roomCode).delete();
         MainState.player_uuid = null;
         MainState.roomCode = null;
         EndGameView endGameView = new EndGameView(gameState);
