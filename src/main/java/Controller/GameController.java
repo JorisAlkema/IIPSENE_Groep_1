@@ -363,6 +363,7 @@ public class GameController {
     public void showDestinationCardsPopUp() {
         DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
         destinationPopUp.showDuringGame(gameState, this);
+        endTurn();
     }
 
     // ===============================================================
