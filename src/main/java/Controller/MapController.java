@@ -268,6 +268,10 @@ public class MapController {
         }
     }
 
+    public HashMap<RouteCell, Rectangle> getRouteCellRectangleHashMap() {
+        return routeCellRectangleHashMap;
+    }
+
     public MapModel getMapModel() {
         return mapModel;
     }
