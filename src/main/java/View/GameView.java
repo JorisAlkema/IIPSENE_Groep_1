@@ -2,6 +2,7 @@ package View;
 
 import App.MainState;
 import Controller.GameController;
+import Controller.MainMenuController;
 import Model.*;
 import Observers.*;
 import javafx.geometry.Insets;
@@ -19,8 +20,6 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static Controller.MainMenuController.openRules;
-
 public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, BannerObserver, SystemMessageObserver {
     private MapView mapView;
 
@@ -30,7 +29,6 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     private VBox playerBanners;
     private Label timerLabel;
     private Label systemMessage;
-    private int rowIndex;
 
     public GameView() {
         gameController = new GameController();
@@ -49,34 +47,20 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
 
+        MusicPlayerView musicPlayerView = MusicPlayerView.getInstance();
+        ImageView musicImageView = musicPlayerView.getMusicImageView();
 
-        this.getChildren().addAll(background, borderPane);
+        musicImageView.setTranslateX(background.getFitWidth() / 2 - 1465);
+        musicImageView.setTranslateY(MainState.WINDOW_HEIGHT / 2 - musicImageView.getFitHeight() - 55);
+
+        this.getChildren().addAll(background, borderPane, musicImageView);
     }
 
     private void initLeftPane() {
-        Image zoomInImage = new Image("images/icons/button_zoom_in.png");
-        Image zoomOutImage = new Image("images/icons/button_zoom_out.png");
-        Image information = new Image("images/icons/button_game_info.png");
-        ImageView mapZoomButton = new ImageView(zoomInImage);
-        ImageView informationButton = new ImageView(information);
 
-        informationButton.addEventFilter(MouseEvent.MOUSE_CLICKED,e ->{
-            try {
-                openRules();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-        });
 
-        mapZoomButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            if (mapView.getMapController().getMapModel().isZoomedIn()) {
-                mapView.getMapController().zoomOut();
-                mapZoomButton.setImage(zoomInImage);
-            } else {
-                mapView.getMapController().zoomIn();
-                mapZoomButton.setImage(zoomOutImage);
-            }
-        });
+        ImageView mapZoomButton = createMapZoomButton();
+        ImageView infoButton = createInfoButton();
 
         timerLabel = new Label("0:00");
         timerLabel.setId("timerLabel");
@@ -93,25 +77,65 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         systemMessage.setMaxSize(250, 100);
         systemMessage.setMinSize(250, 100);
 
-
-        MusicPlayerView musicPlayerView = MusicPlayerView.getInstance();
-        ImageView musicImageView = musicPlayerView.getMusicImageView();
-
-//        musicImageView.setTranslateX(background.getFitWidth() / 2 - 1465);
-//        musicImageView.setTranslateY(MainState.WINDOW_HEIGHT / 2 - musicImageView.getFitHeight() - 55);
-
-
         Region emptyRegion = new Region();
         HBox.setHgrow(emptyRegion, Priority.ALWAYS);
 
         HBox hBox = new HBox();
-        hBox.getChildren().addAll(timerLabel, emptyRegion,musicImageView, mapZoomButton, informationButton);
+        hBox.getChildren().addAll(timerLabel, emptyRegion, mapZoomButton, infoButton);
 
         playerBanners = new VBox();
         vBox.getChildren().addAll(hBox, systemMessage, playerBanners);
         vBox.setAlignment(Pos.TOP_CENTER);
 
         borderPane.setLeft(vBox);
+    }
+
+    private ImageView createMapZoomButton() {
+        Image zoomInImage = new Image("images/icons/button_zoom_in.png");
+        Image zoomOutImage = new Image("images/icons/button_zoom_out.png");
+        Image zoomInImageHover = new Image("images/icons/button_zoom_in_Over.png");
+        Image zoomOutImageHover = new Image("images/icons/button_zoom_out_Over.png");
+        ImageView mapZoomButton = new ImageView(zoomInImage);
+        mapZoomButton.setOnMouseEntered(e -> {
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapZoomButton.setImage(zoomOutImageHover);
+            } else {
+                mapZoomButton.setImage(zoomInImageHover);
+            }
+        });
+        mapZoomButton.setOnMouseExited(e -> {
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapZoomButton.setImage(zoomOutImage);
+            } else {
+                mapZoomButton.setImage(zoomInImage);
+            }
+        });
+        mapZoomButton.setOnMouseClicked(e -> {
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapView.getMapController().zoomOut();
+                mapZoomButton.setImage(zoomInImage);
+            } else {
+                mapView.getMapController().zoomIn();
+                mapZoomButton.setImage(zoomOutImage);
+            }
+        });
+        return mapZoomButton;
+    }
+
+    private ImageView createInfoButton() {
+        Image information = new Image("images/icons/button-game-info.png");
+        Image informationHover = new Image("images/icons/button-game-info-Over.png");
+        ImageView informationButton = new ImageView(information);
+        informationButton.setOnMouseEntered(e -> informationButton.setImage(informationHover));
+        informationButton.setOnMouseExited(e -> informationButton.setImage(information));
+        informationButton.setOnMouseClicked(e ->{
+            try {
+                MainMenuController.openRules();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
+        return informationButton;
     }
 
     private void initCenterPane() {
@@ -187,7 +211,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
             GridPane gridPane = new GridPane();
             gridPane.add(playerName, 0, 0, 2, 1);
             gridPane.add(playerTrainCards, 0, 1);
-            gridPane.add(playerDestTickets, 1, rowIndex);
+            gridPane.add(playerDestTickets, 1, 1);
             gridPane.add(playerPoints, 0, 2);
             gridPane.add(playerTrains, 1, 2);
             gridPane.setHgap(10);
