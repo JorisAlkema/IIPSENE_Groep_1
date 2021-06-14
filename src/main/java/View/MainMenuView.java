@@ -11,13 +11,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
+
 public class MainMenuView extends StackPane {
     private final MainMenuController mainMenuController = new MainMenuController();
     private MusicPlayerView musicPlayerView;
 
     public MainMenuView() {
-
-        // App.Main layout
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(40));
 
@@ -27,7 +27,6 @@ public class MainMenuView extends StackPane {
 
         grid.add(title, 0, 0, 2, 1);
 
-        // Background
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
 
@@ -36,7 +35,6 @@ public class MainMenuView extends StackPane {
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
 
-        // Button layout
         VBox buttons = new VBox(10);
         buttons.setAlignment(Pos.BOTTOM_LEFT);
         buttons.setPadding(new Insets(40));
@@ -51,9 +49,7 @@ public class MainMenuView extends StackPane {
         buttons.getChildren().add(rules);
         buttons.getChildren().add(quit);
 
-        // Music button
         ImageView musicImageView = MusicPlayerView.getInstance().getMusicImageView();
-        // There's probably a better way to align this, but at least the menu buttons are clickable now
         musicImageView.setTranslateX(background.getFitWidth() / 2 - musicImageView.getFitWidth() - 45);
         musicImageView.setTranslateY(background.getFitHeight() / 2 - musicImageView.getFitHeight() - 55);
 
@@ -62,10 +58,15 @@ public class MainMenuView extends StackPane {
         getChildren().add(buttons);
         getChildren().add(musicImageView);
 
-        //Events
         hostGame.setOnMouseClicked(e -> mainMenuController.host());
         joinGame.setOnMouseClicked(e -> mainMenuController.join());
-        rules.setOnMouseClicked(e -> mainMenuController.openRules());
+        rules.setOnMouseClicked(e -> {
+            try {
+                mainMenuController.openRules();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
         quit.setOnMouseClicked(e -> System.exit(0));
     }
 

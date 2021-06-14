@@ -58,6 +58,7 @@ public class DestinationPopUp {
         Label label = new Label("Select at least " + minimumTickets + " destination tickets");
         label.setId("selectTickets");
         label.setStyle("-fx-font-size:18px");
+
         vBox.getChildren().add(label);
 
         int i = 0;
@@ -66,6 +67,7 @@ public class DestinationPopUp {
             ImageView ticketImageView = new ImageView(new Image(path));
             ticketImageView.setOpacity(UNSELECTED_OPACITY);
             ticketImageView.setOnMouseClicked(e -> {
+
                 if (!selectedTickets.contains(destinationTicket)) {
                     selectedTickets.add(destinationTicket);
                     ticketImageView.setOpacity(SELECTED_OPACITY);
@@ -74,6 +76,7 @@ public class DestinationPopUp {
                     ticketImageView.setOpacity(UNSELECTED_OPACITY);
                 }
             });
+
             if (i < 2) {
                 hBoxTop.getChildren().add(ticketImageView);
             } else {
@@ -100,6 +103,7 @@ public class DestinationPopUp {
                 stage.close();
             }
         });
+
         vBox.getChildren().add(closeButton);
 
         Scene scene = new Scene(vBox);

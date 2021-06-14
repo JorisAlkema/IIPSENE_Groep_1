@@ -3,19 +3,22 @@ package Model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// The Player class represents a player in the game
 public class Player {
     private String name;
     private String UUID;
     private Boolean host;
+
     private String playerColor;
+
     private ArrayList<TrainCard> trainCards;
     private ArrayList<DestinationTicket> destinationTickets;
     private ArrayList<Route> claimedRoutes;
+
     private int points;
     private int trains;
-    private boolean isTurn;
     private int actionsTaken;
+
+    private boolean isTurn;
 
     public Player(String name, String UUID, Boolean host) {
         this.name = name;
@@ -29,8 +32,9 @@ public class Player {
         this.actionsTaken = 0;
     }
 
+    // Allow Firebase to create a new instance of the object with an empty constructor,
+    // which will be filled in using reflection.
     public Player() {
-
     }
 
     public void addTrainCard(TrainCard trainCard) {
