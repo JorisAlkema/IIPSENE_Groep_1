@@ -11,6 +11,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
+
 public class MainMenuView extends StackPane {
     private final MainMenuController mainMenuController = new MainMenuController();
     private MusicPlayerView musicPlayerView;
@@ -58,7 +60,13 @@ public class MainMenuView extends StackPane {
 
         hostGame.setOnMouseClicked(e -> mainMenuController.host());
         joinGame.setOnMouseClicked(e -> mainMenuController.join());
-        rules.setOnMouseClicked(e -> mainMenuController.openRules());
+        rules.setOnMouseClicked(e -> {
+            try {
+                mainMenuController.openRules();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
         quit.setOnMouseClicked(e -> System.exit(0));
     }
 

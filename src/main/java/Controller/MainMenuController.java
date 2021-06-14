@@ -7,21 +7,35 @@ import javafx.scene.Scene;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class MainMenuController {
 
-    public static void openRules() {
-        File rulesPDF = new File("src/main/resources/rules/ticket_to_ride_europe_rules.pdf");
+    public static void openRules() throws IOException {
+        String filepath = "rules/ticket_to_ride_europe_rules.pdf";
+        InputStream inputStream = MainMenuController.class.getClassLoader().getResourceAsStream(filepath);
 
+        Path tempOutput = Files.createTempFile("TempManual", ".pdf");
+        tempOutput.toFile().deleteOnExit();
+
+        Files.copy(inputStream, tempOutput, StandardCopyOption.REPLACE_EXISTING);
+
+        File file = new File(tempOutput.toFile().getPath());
         if (Desktop.isDesktopSupported()) {
+            File finalFile = file;
             new Thread(() -> {
                 try {
-                    Desktop.getDesktop().open(rulesPDF);
+                    Desktop.getDesktop().open(finalFile);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }).start();
         }
+
+
     }
 
     public void host() {

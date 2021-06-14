@@ -16,6 +16,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static Controller.MainMenuController.openRules;
@@ -64,7 +65,11 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         ImageView informationButton = new ImageView(information);
 
         informationButton.addEventFilter(MouseEvent.MOUSE_CLICKED,e ->{
-            openRules();
+            try {
+                openRules();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         });
 
         mapZoomButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
@@ -87,6 +92,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
 
         systemMessage = new Label("");
         systemMessage.setId("systemMessage");
+        systemMessage.setAlignment(Pos.CENTER);
         systemMessage.setWrapText(true);
         systemMessage.setMaxSize(250, 100);
         systemMessage.setMinSize(250, 100);
@@ -100,6 +106,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         playerBanners = new VBox();
         vBox.getChildren().addAll(hBox, systemMessage, playerBanners);
         vBox.setAlignment(Pos.TOP_CENTER);
+
         borderPane.setLeft(vBox);
     }
 
