@@ -88,6 +88,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         hBox.getChildren().addAll(timerLabel, emptyRegion, mapZoomButton);
 
         playerBanners = new VBox();
+
         vBox.getChildren().addAll(hBox, systemMessage, playerBanners);
         vBox.setAlignment(Pos.TOP_CENTER);
         borderPane.setLeft(vBox);
@@ -106,7 +107,18 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
 
     private void initBottomPane() {
         HandView handView = new HandView();
-        borderPane.setBottom(handView);
+        HBox bottom = new HBox(10);
+        bottom.setAlignment(Pos.CENTER_RIGHT);
+        ImageView destinationCards = new ImageView("images/destination_tickets/eu_TicketBack.png");
+        destinationCards.setFitWidth(200);
+        destinationCards.setPreserveRatio(true);
+        destinationCards.setOnMouseClicked(e -> gameController.showDestinationCardsPopUp());
+        Region region1 = new Region();
+        Region region2 = new Region();
+        HBox.setHgrow(region1, Priority.ALWAYS);
+        HBox.setHgrow(region2, Priority.ALWAYS);
+        bottom.getChildren().addAll(destinationCards, handView);
+        borderPane.setBottom(bottom);
     }
 
     @Override

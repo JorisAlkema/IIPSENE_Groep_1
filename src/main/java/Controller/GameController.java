@@ -355,6 +355,11 @@ public class GameController {
         gameState.getPlayers().removeIf(player -> !remainingPlayers.contains(player.getUUID()));
     }
 
+    public void showDestinationCardsPopUp() {
+        DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
+        destinationPopUp.showDuringGame(gameState, this);
+    }
+
     // ===============================================================
 
     // Does anyone have 2 or less trains?
