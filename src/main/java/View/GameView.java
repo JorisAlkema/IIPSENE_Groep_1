@@ -2,37 +2,30 @@ package View;
 
 import App.MainState;
 import Controller.GameController;
-import Model.Player;
-import Model.PlayerBanner;
-import Model.PlayerTurn;
-import Model.TrainCard;
-import Observers.BannerObserver;
-import Observers.CardsObserver;
-import Observers.PlayerTurnObverser;
-import Observers.TurnTimerObserver;
+import Model.*;
+import Observers.*;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 
-public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, BannerObserver {
+public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, BannerObserver, SystemMessageObserver {
     private Label timerLabel;
     private final BorderPane borderPane;
     private VBox cardsBox;
     private VBox playerBanners;
     private MapView mapView;
     private final GameController gameController;
+    private Label systemMessage;
 
     public GameView() {
         // Init
@@ -40,6 +33,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         gameController.registerTurnTimerObserver(this);
         gameController.registerCardsObserver(this);
         gameController.registerBannerObserver(this);
+        gameController.registerSystemMessageObserver(this);
 
         borderPane = new BorderPane();
         initLeftPane();
@@ -78,13 +72,27 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         });
         timerLabel = new Label("0:00");
         timerLabel.setId("timerLabel");
+        timerLabel.setMinWidth(100);
 
         VBox vBox = new VBox();
-        vBox.setPadding(new Insets(10));
+        vBox.setPadding(new Insets(10, 10, 10 ,10));
+        vBox.setSpacing(10);
+
+        systemMessage = new Label("");
+        systemMessage.setId("systemMessage");
+        systemMessage.setWrapText(true);
+        systemMessage.setMaxSize(250, 100);
+        systemMessage.setMinSize(250, 100);
+
+        Region emptyRegion = new Region();
+        HBox.setHgrow(emptyRegion, Priority.ALWAYS);
+
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(timerLabel, emptyRegion, mapZoomButton);
 
         playerBanners = new VBox();
-
-        vBox.getChildren().addAll(timerLabel, mapZoomButton, playerBanners);
+        vBox.getChildren().addAll(hBox, systemMessage, playerBanners);
+        vBox.setAlignment(Pos.TOP_CENTER);
         borderPane.setLeft(vBox);
     }
 
@@ -113,8 +121,8 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
 
             for (TrainCard openCard : openCards) {
                 String cardColor = openCard.getColor();
-                String path = "images/traincards/traincard_" + cardColor + "_small_rotated.png";
-                openTrainCards.add(new ImageView(new Image(path)));
+                String path = "images/traincards/traincard_" + cardColor.toLowerCase() + "_small_rotated.png";
+                openTrainCards.add(new ImageView(path));
             }
 
             // onClick events and ID
@@ -192,5 +200,10 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
 
         playerBanners.getChildren().removeAll(playerBanners.getChildren());
         playerBanners.getChildren().addAll(stackPanes);
+    }
+
+    @Override
+    public void update(SystemMessage systemMessage) {
+        this.systemMessage.setText(systemMessage.getMessage());
     }
 }

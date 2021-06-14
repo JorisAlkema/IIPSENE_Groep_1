@@ -45,6 +45,12 @@
 	-fx-font-weight: 700;
 }
 
+#selectTickets {
+	-fx-font-family: Merriweather;
+	-fx-font-weight: bold;
+	-fx-font-size: 20;
+}
+
 .text-field {
 	-fx-background-color: #000000b9;
 	-fx-font-family: Merriweather;

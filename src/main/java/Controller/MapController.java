@@ -25,7 +25,7 @@ public class MapController {
     static MapController mapController;
 
     public MapController() {
-        this.gameSetupService = new GameSetupService();
+        this.gameSetupService = GameSetupService.getInstance();
         this.routeCellRectangleHashMap = new HashMap<>();
         this.mapModel = new MapModel(gameSetupService.getRoutes(), gameSetupService.getCities());
         this.mapModel.setCityOverlays(createCityOverlays());
@@ -181,7 +181,7 @@ public class MapController {
         for (RouteCell routeCell : route.getRouteCells()) {
             routeCellRectangleHashMap.get(routeCell).setFill(this.mapModel.getImagePattern(gameController.getCurrentPlayer().getPlayerColor()));
         }
-
+        currentPlayer.decrementTrains(routeLength);
         gameController.checkTrains();
         return true;
     }

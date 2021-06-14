@@ -10,6 +10,7 @@ import com.google.firebase.cloud.FirestoreClient;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -22,7 +23,7 @@ public class FirebaseService {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
                 // Initialize Firestore connection
-                FileInputStream serviceAccount = new FileInputStream(PRIVATE_KEY);
+                InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("firebase_privatekey.json");
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                         .setDatabaseUrl("database_url")
