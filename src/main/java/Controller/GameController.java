@@ -117,6 +117,10 @@ public class GameController {
                         }
                         if (firstTurn && playerTurnController.getTurn()) {
                             firstTurn = false;
+                            for (int i = 0; i < 4; i++) {
+                                TrainCard pickedClosedCard = cardsController.pickClosedCard(gameState);
+                                addTrainCardToPlayerInventoryInGameState(pickedClosedCard);
+                            }
                             DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
                             destinationPopUp.showAtStartOfGame(gameState, this);
                             endTurn();
