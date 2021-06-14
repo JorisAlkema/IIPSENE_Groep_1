@@ -30,10 +30,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     public GameView() {
         // Init
         gameController = new GameController();
-        gameController.registerTurnTimerObserver(this);
-        gameController.registerCardsObserver(this);
-        gameController.registerBannerObserver(this);
-        gameController.registerSystemMessageObserver(this);
+        gameController.registerObservers(this);
 
         borderPane = new BorderPane();
         initLeftPane();
@@ -121,8 +118,8 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
 
             for (TrainCard openCard : openCards) {
                 String cardColor = openCard.getColor();
-                String path = "images/traincards/traincard_" + cardColor + "_small_rotated.png";
-                openTrainCards.add(new ImageView(new Image(path)));
+                String path = "images/traincards/traincard_" + cardColor.toLowerCase() + "_small_rotated.png";
+                openTrainCards.add(new ImageView(path));
             }
 
             // onClick events and ID

@@ -6,15 +6,20 @@ import Observers.*;
 import Service.GameSetupService;
 import View.DestinationPopUp;
 import View.EndGameView;
+import View.GameView;
 import View.RoutePopUp;
 import com.google.cloud.firestore.ListenerRegistration;
 import com.google.firebase.messaging.Message;
 import javafx.application.Platform;
 
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GameController {
@@ -113,6 +118,10 @@ public class GameController {
                         }
                         if (firstTurn && playerTurnController.getTurn()) {
                             firstTurn = false;
+                            for (int i = 0; i < 4; i++) {
+                                TrainCard pickedClosedCard = cardsController.pickClosedCard(gameState);
+                                addTrainCardToPlayerInventoryInGameState(pickedClosedCard);
+                            }
                             DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
                             destinationPopUp.showAtStartOfGame(gameState, this);
                             endTurn();
@@ -262,9 +271,31 @@ public class GameController {
     }
 
     public void endGame() {
-        System.out.println("GAME IS ENDED");
-        MainState.primaryStage.setScene(new Scene(new EndGameView()));
+        for (Player player : gameState.getPlayers()) {
+            for (DestinationTicket ticket : player.getDestinationTickets()) {
+                int points = ticket.getPoints();
+                player.incrementPoints(isConnected(ticket, player) ? points : -points);
+            }
+            System.out.println("Points after tickets: " + player.getName() + " " + player.getPoints());
+        }
+
+        // Reset map
+        for (Rectangle rectangle : mapController.getRouteCellRectangleHashMap().values()) {
+            rectangle.setFill(Color.TRANSPARENT);
+        }
+
+        HandModel handModel = HandModel.getInstance();
+        handModel.setTrainCardsMap(new HashMap<String, Integer>());
+        handModel.setDestinationTicketsInHand(new ArrayList<DestinationTicket>());
+
+        turnTimerController.stopTimer();
+
         listenerRegistration.remove();
+        MainState.player_uuid = null;
+        MainState.roomCode = null;
+        EndGameView endGameView = new EndGameView(gameState);
+        endGameView.getStylesheets().add(MainState.menuCSS);
+        MainState.primaryStage.setScene(new Scene(endGameView));
     }
 
     public void checkEndGame() {
@@ -291,24 +322,11 @@ public class GameController {
         getLocalPlayerFromGameState().setActionsTaken(getLocalPlayerFromGameState().getActionsTaken() + 1);
     }
 
-    public void registerCardsObserver(CardsObserver cardsObserver) {
-        cardsController.registerObserver(cardsObserver);
-    }
-
-    public void registerTurnTimerObserver(TurnTimerObserver turnTimerObserver) {
-        turnTimerController.registerObserver(turnTimerObserver);
-    }
-
-    public void registerPlayerTurnObserver(PlayerTurnObverser playerTurnObverser) {
-        playerTurnController.registerObserver(playerTurnObverser);
-    }
-
-    public void registerBannerObserver(BannerObserver bannerObserver) {
-        bannerController.registerObserver(bannerObserver);
-    }
-
-    public void registerSystemMessageObserver(SystemMessageObserver systemMessageObserver) {
-        systemMessage.registerObserver(systemMessageObserver);
+    public void registerObservers(GameView gameView) {
+        cardsController.registerObserver(gameView);
+        turnTimerController.registerObserver(gameView);
+        bannerController.registerObserver(gameView);
+        systemMessage.registerObserver(gameView);
     }
 
     private void checkIfTurnIsOver() {
@@ -348,7 +366,7 @@ public class GameController {
     }
 
     public Player getCurrentPlayer() {
-        return playerTurnController.getCurrent(gameState);
+        return playerTurnController.getCurrentPlayer(gameState);
     }
 
     /**
@@ -356,7 +374,11 @@ public class GameController {
      * It calls singleStep(), which uses recursive backtracking to find the path
      */
     public boolean isConnected(DestinationTicket ticket, Player player) {
-        return singleStep(ticket.getFirstCity(), ticket.getSecondCity(), player);
+        gameSetupService.addNeighborCities();
+        boolean connected = singleStep(ticket.getFirstCity(), ticket.getSecondCity(), player);
+        System.out.println(ticket.getFirstCity().getName() + " " + ticket.getSecondCity().getName() + " " + connected);
+        gameSetupService.removeNeighborCities();
+        return connected;
     }
 
     /**
@@ -365,7 +387,6 @@ public class GameController {
      * currentCity to the neighbor, this method calls itself again, but now with the
      * neighbor City as the new currentCity. This way all possibilities to connect any two given
      * Cities are tried
-     *
      * @param currentCity     City that we are at to check for a connection to destinationCity
      * @param destinationCity City that we are looking for a connection to
      * @param player          Player that we are checking for if they have a connection between the two Cities
@@ -382,7 +403,15 @@ public class GameController {
         }
         // Backtracking step
         // Make a note that we visited this City, then try to go to each neighbor city
-        currentCity.setVisited(true);
+        // (Janky hack because Firebase)
+        for (City city : gameSetupService.getCities()) {
+            if (currentCity.equals(city)) {
+                currentCity.setNeighborCities(city.getNeighborCities());
+                city.setVisited(true);
+                currentCity.setVisited(true);
+                break;
+            }
+        }
         for (City neighbor : currentCity.getNeighborCities()) {
             for (Route route : player.getClaimedRoutes()) {
                 // If the player has built a route from currentCity to neighbor,
@@ -398,7 +427,14 @@ public class GameController {
         }
         // Dead end - this location can't be part of the solution
         // Unmark the location and go back to previous step
-        currentCity.setVisited(false);
+        for (City city : gameSetupService.getCities()) {
+            if (currentCity.equals(city)) {
+                city.setVisited(false);
+                currentCity.setVisited(true);
+                break;
+            }
+        }
+//        currentCity.setVisited(false);
         return false;
     }
 }

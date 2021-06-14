@@ -1,6 +1,5 @@
 package Controller;
 
-
 import App.MainState;
 import Model.GameState;
 import Model.Player;
@@ -10,8 +9,12 @@ import Observers.PlayerTurnObverser;
 import java.util.ArrayList;
 
 public class PlayerTurnController {
-    private final PlayerTurn playerTurn = new PlayerTurn();
+    private final PlayerTurn playerTurn;
     // Just in case if the player with turn leaves and the timer ends
+
+    public PlayerTurnController() {
+        playerTurn = new PlayerTurn();
+    }
 
     // Give turn to other player, only if you have host
     public void nextTurn(GameState gameState) {
@@ -37,7 +40,7 @@ public class PlayerTurnController {
     }
 
     public void checkMyTurn(GameState gameState) throws Exception {
-        System.out.println("CHECKED");
+        System.out.println("PlayerTurnController.checkMyTurn() called");
 
         if (!playerWithTurnLeft(gameState)) {
             if (playerTurn.getNextPlayerUUID().equals(MainState.player_uuid)) {
@@ -46,15 +49,10 @@ public class PlayerTurnController {
             }
         }
 
-        if (gameState.getPlayer(MainState.player_uuid).isTurn()) {
-            playerTurn.setTurn(true);
-            System.out.println("It's your turn");
-        } else {
-            playerTurn.setTurn(false);
-            System.out.println(getCurrent(gameState).getName() + " has the turn.");
-        }
+        playerTurn.setTurn(gameState.getPlayer(MainState.player_uuid).isTurn());
+        System.out.println("It's " + getCurrentPlayer(gameState).getName() + "s turn.");
 
-        playerTurn.setCurrentPlayerUsername(getCurrent(gameState).getName());
+        playerTurn.setCurrentPlayerUsername(getCurrentPlayer(gameState).getName());
         calculateNextPlayer(gameState);
     }
 
@@ -70,10 +68,10 @@ public class PlayerTurnController {
     }
 
     private Boolean playerWithTurnLeft(GameState gameState) {
-        return getCurrent(gameState) != null;
+        return getCurrentPlayer(gameState) != null;
     }
 
-    public Player getCurrent(GameState gameState) {
+    public Player getCurrentPlayer(GameState gameState) {
         for (Player player : gameState.getPlayers()) {
             if (player.isTurn()) {
                 return player;

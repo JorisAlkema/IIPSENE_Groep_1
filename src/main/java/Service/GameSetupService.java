@@ -6,9 +6,8 @@ import Model.Route;
 import Model.RouteCell;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -17,9 +16,9 @@ import java.util.Arrays;
 // Could also be used to deal cards at the start of the game if no other class is made for this
 public class GameSetupService {
 
-    private final static String citiesFile = "src/main/resources/text/cities.txt";
-    private final static String routeFile = "src/main/resources/text/routes.txt";
-    private final static String destinationTicketsFile = "src/main/resources/text/destination_tickets.txt";
+    private final static String citiesFile = "text/cities.txt";
+    private final static String routeFile = "text/routes.txt";
+    private final static String destinationTicketsFile = "text/destination_tickets.txt";
     private final ArrayList<City> cities;
     private final ArrayList<Route> routes;
     private final ArrayList<DestinationTicket> destinationTickets;
@@ -53,13 +52,19 @@ public class GameSetupService {
         }
     }
 
+    public void removeNeighborCities() {
+        for (City city : cities) {
+            city.getNeighborCities().clear();
+            city.setVisited(false);
+        }
+    }
+
     // Read DestinationTickets from file
     public ArrayList<DestinationTicket> readDestinationTicketsFromFile(String filename) {
         ArrayList<DestinationTicket> tickets = new ArrayList<>();
         try {
-            File file = new File(filename);
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            InputStreamReader inputStreamReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(filename));
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line = bufferedReader.readLine();
             while (line != null) {
                 // Skip over comments
@@ -104,9 +109,8 @@ public class GameSetupService {
     private ArrayList<City> readCitiesFromFile(String filename) {
         ArrayList<City> cities = new ArrayList<>();
         try {
-            File file = new File(filename);
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            InputStreamReader inputStreamReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(filename));
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line = bufferedReader.readLine();
             while (line != null) {
                 // Skip over comments
@@ -141,9 +145,8 @@ public class GameSetupService {
     private ArrayList<Route> readRoutesFromFile(String filename) {
         ArrayList<Route> routes = new ArrayList<>();
         try {
-            File file = new File(filename);
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            InputStreamReader inputStreamReader = new InputStreamReader(getClass().getClassLoader().getResourceAsStream(filename));
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line = bufferedReader.readLine();
             while (line != null) {
                 // Skip over comments
@@ -154,8 +157,6 @@ public class GameSetupService {
                 // Initialize variables
                 City firstCity = null;
                 City secondCity = null;
-                String color = null;
-                String type = null;
                 int locomotives = 0;
                 ArrayList<RouteCell> routeCells = new ArrayList<>();
                 String[] splitLine = line.split(" ");
@@ -171,8 +172,8 @@ public class GameSetupService {
                 if (firstCity == null || secondCity == null) {
                     System.err.println(line + " has incorrectly formatted or unexisting cities");
                 }
-                color = splitLine[2];
-                type = splitLine[3];
+                String color = splitLine[2];
+                String type = splitLine[3];
                 if (type.equals("FERRY")) {
                     locomotives = Integer.parseInt(splitLine[4]);
                 }

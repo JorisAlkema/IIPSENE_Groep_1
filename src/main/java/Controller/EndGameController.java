@@ -12,8 +12,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EndGameController {
-    private GameState gameState;
+    private final GameState gameState;
     ArrayList<String> top3 = new ArrayList<>();
+
+    public EndGameController(GameState gameState) {
+        this.gameState = gameState;
+    }
 
     public void toMenu() {
         MainState.player_uuid = null;
@@ -23,7 +27,7 @@ public class EndGameController {
         MainState.primaryStage.setScene(scene);
     }
 
-    public <K, V> K getKey(Map<K, V> map, V value) {
+    private <K, V> K getKey(Map<K, V> map, V value) {
         for (Map.Entry<K, V> entry : map.entrySet()) {
             if (entry.getValue().equals(value)) {
                 return entry.getKey();
@@ -50,7 +54,8 @@ public class EndGameController {
 
         Collections.sort(topPoints);
 
-        for (int i = 0; i < 3; i++) {
+        int playerAmount = gameState.getPlayers().size();
+        for (int i = 0; i < playerAmount; i++) {
             top3.add(getKey(map, topPoints.get(i)));
         }
 

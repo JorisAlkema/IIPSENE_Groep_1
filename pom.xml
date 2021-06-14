@@ -28,12 +28,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-media</artifactId>
-            <version>15</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.firebase</groupId>
             <artifactId>firebase-admin</artifactId>
             <version>7.3.0</version>
@@ -44,6 +38,7 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.25</version>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -72,7 +67,7 @@
                         </descriptorRefs>
                         <archive>
                             <manifest>
-                                <mainClass>App.Main</mainClass>
+                                <mainClass>App.Launcher</mainClass>
                             </manifest>
                         </archive>
                     </configuration>

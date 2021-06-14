@@ -25,7 +25,7 @@ public class MapController {
     static MapController mapController;
 
     public MapController() {
-        this.gameSetupService = new GameSetupService();
+        this.gameSetupService = GameSetupService.getInstance();
         this.routeCellRectangleHashMap = new HashMap<>();
         this.mapModel = new MapModel(gameSetupService.getRoutes(), gameSetupService.getCities());
         this.mapModel.setCityOverlays(createCityOverlays());
@@ -266,6 +266,10 @@ public class MapController {
                 }
             }
         }
+    }
+
+    public HashMap<RouteCell, Rectangle> getRouteCellRectangleHashMap() {
+        return routeCellRectangleHashMap;
     }
 
     public MapModel getMapModel() {
