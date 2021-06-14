@@ -6,6 +6,7 @@ import Observers.*;
 import Service.GameSetupService;
 import View.DestinationPopUp;
 import View.EndGameView;
+import View.GameView;
 import View.RoutePopUp;
 import com.google.cloud.firestore.ListenerRegistration;
 import com.google.firebase.messaging.Message;
@@ -317,24 +318,11 @@ public class GameController {
         getLocalPlayerFromGameState().setActionsTaken(getLocalPlayerFromGameState().getActionsTaken() + 1);
     }
 
-    public void registerCardsObserver(CardsObserver cardsObserver) {
-        cardsController.registerObserver(cardsObserver);
-    }
-
-    public void registerTurnTimerObserver(TurnTimerObserver turnTimerObserver) {
-        turnTimerController.registerObserver(turnTimerObserver);
-    }
-
-    public void registerPlayerTurnObserver(PlayerTurnObverser playerTurnObverser) {
-        playerTurnController.registerObserver(playerTurnObverser);
-    }
-
-    public void registerBannerObserver(BannerObserver bannerObserver) {
-        bannerController.registerObserver(bannerObserver);
-    }
-
-    public void registerSystemMessageObserver(SystemMessageObserver systemMessageObserver) {
-        systemMessage.registerObserver(systemMessageObserver);
+    public void registerObservers(GameView gameView) {
+        cardsController.registerObserver(gameView);
+        turnTimerController.registerObserver(gameView);
+        bannerController.registerObserver(gameView);
+        systemMessage.registerObserver(gameView);
     }
 
     private void checkIfTurnIsOver() {

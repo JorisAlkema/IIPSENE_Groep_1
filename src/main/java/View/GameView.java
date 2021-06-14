@@ -30,10 +30,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     public GameView() {
         // Init
         gameController = new GameController();
-        gameController.registerTurnTimerObserver(this);
-        gameController.registerCardsObserver(this);
-        gameController.registerBannerObserver(this);
-        gameController.registerSystemMessageObserver(this);
+        gameController.registerObservers(this);
 
         borderPane = new BorderPane();
         initLeftPane();
