@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 public class PlayerBanner implements BannerObservable {
     private ArrayList<Player> players;
-
     private final ArrayList<BannerObserver> bannerObservers = new ArrayList<>();
 
     public void setPlayers(ArrayList<Player> players) {

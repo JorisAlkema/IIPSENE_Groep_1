@@ -20,18 +20,15 @@ public class MapView extends ScrollPane implements MapObserver {
         this.stackPane = new StackPane();
         this.stackPane.getChildren().add(this.mapController.getMapModel().getBackgroundImage());
         this.setContent(initStackPane());
-        // Hide scrollbars
+
         this.setHbarPolicy(ScrollBarPolicy.NEVER);
         this.setVbarPolicy(ScrollBarPolicy.NEVER);
         this.setStyle("-fx-focus-color: transparent;");
     }
 
     private StackPane initStackPane() {
-        // Stack overlays on top of the background image
         stackPane = new StackPane();
         stackPane.getChildren().add(mapController.getMapModel().getBackgroundImage());
-
-        // Add city and routeCell overlays
         stackPane.getChildren().addAll(mapController.getMapModel().getCityOverlays());
         stackPane.getChildren().addAll(mapController.getMapModel().getRouteCellOverlays());
 
@@ -50,6 +47,7 @@ public class MapView extends ScrollPane implements MapObserver {
     public void update(boolean zoomedIn, ImageView backgroundImage) {
         setPannable(zoomedIn);
         setBackgroundImage(backgroundImage);
+
         if (zoomedIn) {
             layout();
             setHvalue(getHmin() + (getHmax() - getHmin()) / 2);

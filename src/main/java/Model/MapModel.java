@@ -16,7 +16,9 @@ public class MapModel implements MapObservable {
     private final ArrayList<City> cities;
     private ArrayList<Rectangle> routeCellOverlays;
     private ArrayList<Circle> cityOverlays;
+
     private boolean zoomedIn;
+
     private static final ImageView bigBackgroundImage = new ImageView("images/maps/map_big.jpg");
     private static final ImageView smallBackgroundImage = new ImageView("images/maps/map_small.jpg");
     private static final ImagePattern blueImagePattern = new ImagePattern(new Image("images/icons/train_blue.png"));
@@ -24,6 +26,7 @@ public class MapModel implements MapObservable {
     private static final ImagePattern purpleImagePattern = new ImagePattern(new Image("images/icons/train_purple.png"));
     private static final ImagePattern redImagePattern = new ImagePattern(new Image("images/icons/train_red.png"));
     private static final ImagePattern yellowImagePattern = new ImagePattern(new Image("images/icons/train_yellow.png"));
+
     private static final double smallCellWidth = 35;
     private static final double smallCellHeight = 12;
     private static final double bigCellWidth = 70;
@@ -52,6 +55,7 @@ public class MapModel implements MapObservable {
 
     public ImagePattern getImagePattern(String color) {
         color = color.toUpperCase();
+
         switch (color) {
             case "BLUE": return blueImagePattern;
             case "GREEN": return greenImagePattern;

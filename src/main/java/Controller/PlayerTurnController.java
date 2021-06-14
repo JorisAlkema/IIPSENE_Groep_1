@@ -10,15 +10,16 @@ import java.util.ArrayList;
 
 public class PlayerTurnController {
     private final PlayerTurn playerTurn;
-    // Just in case if the player with turn leaves and the timer ends
 
+    // In case if the player with the current turn leaves and the timer ends.
     public PlayerTurnController() {
         playerTurn = new PlayerTurn();
     }
 
-    // Give turn to other player, only if you have host
+    // Give turn to other player, only if you are the host.
     public void nextTurn(GameState gameState) {
         ArrayList<Player> players = gameState.getPlayers();
+
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).isTurn()) {
                 players.get(i).setTurn(false);
@@ -56,9 +57,9 @@ public class PlayerTurnController {
         calculateNextPlayer(gameState);
     }
 
-    //TODO: Calculate the next player when the player that has the turn leaves.
     private void calculateNextPlayer(GameState gameState) {
         ArrayList<Player> players = gameState.getPlayers();
+
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).isTurn()) {
                 int nextPlayerIndex = (i + 1) % players.size();
