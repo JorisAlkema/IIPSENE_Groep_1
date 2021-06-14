@@ -11,21 +11,22 @@ import java.util.TimerTask;
 
 public class TurnTimer implements TurnTimerObservable {
     private final ArrayList<TurnTimerObserver> turnTimerObservers = new ArrayList<>();
+
     private Timer timer = new Timer();
 
     private String timerText;
-
     private int seconds;
+
     private final int DELAY = 1000;
     private final int PERIOD = 1000;
 
     public void newCountDownTimer(GameController gameController) {
         timer = new Timer();
 
-        // Increase time by 1, since 0:00 is counted as the final second
+        // Increase time by 1, since 0:00 is counted as the final second.
         seconds = 90 + 1;
 
-        // Schedules the timer for repeated fixed-rate execution, beginning after the specified delay
+        // Schedules the timer for repeated fixed-rate execution, beginning after the specified delay.
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 if (seconds > 0) {

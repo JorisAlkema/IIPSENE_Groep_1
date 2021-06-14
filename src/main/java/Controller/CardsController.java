@@ -19,7 +19,7 @@ public class CardsController {
         return pickedClosedCard;
     }
 
-    // Return clicked open card and generate new open card to take its place
+    // Return clicked open card and generate new open card to take it's place.
     public TrainCard pickOpenCard(GameState gameState, int index) throws Exception {
         ArrayList<TrainCard> openCards = gameState.getOpenDeck();
         TrainCard pickedCard = openCards.get(index);
@@ -29,7 +29,7 @@ public class CardsController {
             throw new Exception("you cannot draw a LOCO");
         }
 
-        // Replace open card
+        // Replace open card.
         openCards.remove(index);
         openCards.add(getRandomCard(gameState));
 

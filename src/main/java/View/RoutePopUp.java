@@ -58,8 +58,10 @@ public class RoutePopUp {
                 selectedColor = color;
                 trainCard.setOpacity(SELECTED_OPACITY);
             });
+
             hBox.getChildren().add(trainCard);
         }
+
         vBox.getChildren().add(hBox);
         hBox.setAlignment(Pos.CENTER);
 
@@ -69,6 +71,7 @@ public class RoutePopUp {
                 stage.close();
             }
         });
+
         vBox.getChildren().add(closeButton);
 
         Scene scene = new Scene(vBox);
