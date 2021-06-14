@@ -30,6 +30,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     private VBox playerBanners;
     private Label timerLabel;
     private Label systemMessage;
+    private int rowIndex;
 
     public GameView() {
         gameController = new GameController();
@@ -48,13 +49,8 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
 
-        MusicPlayerView musicPlayerView = MusicPlayerView.getInstance();
-        ImageView musicImageView = musicPlayerView.getMusicImageView();
 
-        musicImageView.setTranslateX(background.getFitWidth() / 2 - 1465);
-        musicImageView.setTranslateY(MainState.WINDOW_HEIGHT / 2 - musicImageView.getFitHeight() - 55);
-
-        this.getChildren().addAll(background, borderPane, musicImageView);
+        this.getChildren().addAll(background, borderPane);
     }
 
     private void initLeftPane() {
@@ -97,11 +93,19 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         systemMessage.setMaxSize(250, 100);
         systemMessage.setMinSize(250, 100);
 
+
+        MusicPlayerView musicPlayerView = MusicPlayerView.getInstance();
+        ImageView musicImageView = musicPlayerView.getMusicImageView();
+
+//        musicImageView.setTranslateX(background.getFitWidth() / 2 - 1465);
+//        musicImageView.setTranslateY(MainState.WINDOW_HEIGHT / 2 - musicImageView.getFitHeight() - 55);
+
+
         Region emptyRegion = new Region();
         HBox.setHgrow(emptyRegion, Priority.ALWAYS);
 
         HBox hBox = new HBox();
-        hBox.getChildren().addAll(timerLabel, emptyRegion, mapZoomButton, informationButton);
+        hBox.getChildren().addAll(timerLabel, emptyRegion,musicImageView, mapZoomButton, informationButton);
 
         playerBanners = new VBox();
         vBox.getChildren().addAll(hBox, systemMessage, playerBanners);
@@ -183,7 +187,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
             GridPane gridPane = new GridPane();
             gridPane.add(playerName, 0, 0, 2, 1);
             gridPane.add(playerTrainCards, 0, 1);
-            gridPane.add(playerDestTickets, 1, 1);
+            gridPane.add(playerDestTickets, 1, rowIndex);
             gridPane.add(playerPoints, 0, 2);
             gridPane.add(playerTrains, 1, 2);
             gridPane.setHgap(10);
