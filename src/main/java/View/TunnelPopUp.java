@@ -7,7 +7,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class TunnelPopUp {
-    public static void TunnelPopUp(int tunnels, boolean failed){
+
+    public static void showPopUp(int tunnels, boolean success){
         Stage stage = new Stage();
         stage.setWidth(250);
         stage.setHeight(250);
@@ -19,17 +20,16 @@ public class TunnelPopUp {
 
         VBox vBox = new VBox();
 
-        if (failed){
-            Label label2 = new Label("You do not have enough extra cards!");
-            vBox.getChildren().addAll(label,label2, closeButton);
-        } else{
+        if (success) {
             vBox.getChildren().addAll(label, closeButton);
+        } else {
+            Label label2 = new Label("You do not have enough extra cards!");
+            vBox.getChildren().addAll(label, label2, closeButton);
         }
 
         Scene scene = new Scene(vBox);
         stage.setScene(scene);
-        stage.show(); // or showAndWait
-//      stage.showAndWait();
+        stage.showAndWait();
     }
 
 }

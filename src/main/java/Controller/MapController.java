@@ -158,9 +158,9 @@ public class MapController {
             int tunnels = generateTunnels(routeColor);
 
             if (correctColorCards.size() + locosInHand.size() >= routeLength + tunnels){
-                TunnelPopUp.TunnelPopUp(tunnels,false);
+                TunnelPopUp.showPopUp(tunnels,true);
             }else{
-                TunnelPopUp.TunnelPopUp(tunnels,true);
+                TunnelPopUp.showPopUp(tunnels, false);
                 return "not enough cards for tunnels";
             }
             cardsToRemove = cardsToRemove + tunnels;

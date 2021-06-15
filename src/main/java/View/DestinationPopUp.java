@@ -50,63 +50,27 @@ public class DestinationPopUp {
         ArrayList<DestinationTicket> selectedTickets = new ArrayList<>();
         int minimumTickets = destinationTickets.size() / 2;
 
-        HBox hBoxTop = new HBox();
-        HBox hBoxBottom = new HBox();
-
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.TOP_CENTER);
-        vBox.setPadding(new Insets(20, 20, 20, 20));
+        vBox.setPadding(new Insets(20));
         vBox.setSpacing(20);
 
         Label label;
 
-        if(destinationTickets.size() == 0){
+        if (destinationTickets.size() == 0) {
             label = new Label("No more cards available ");
-            label.setId("selectTickets");
-            label.setStyle("-fx-font-size:18px");
-        } else{
+            vBox.getChildren().add(label);
+        } else {
             label = new Label("Select at least " + minimumTickets + " destination tickets");
-            label.setId("selectTickets");
-            label.setStyle("-fx-font-size:18px");
-
-            int i = 0;
-            for (DestinationTicket destinationTicket : destinationTickets) {
-                String path = destinationTicket.fileName();
-                ImageView ticketImageView = new ImageView(new Image(path));
-                ticketImageView.setOpacity(UNSELECTED_OPACITY);
-                ticketImageView.setOnMouseClicked(e -> {
-
-                    if (!selectedTickets.contains(destinationTicket)) {
-                        selectedTickets.add(destinationTicket);
-                        ticketImageView.setOpacity(SELECTED_OPACITY);
-                    } else {
-                        selectedTickets.remove(destinationTicket);
-                        ticketImageView.setOpacity(UNSELECTED_OPACITY);
-                    }
-                });
-
-                if (i < 2) {
-                    hBoxTop.getChildren().add(ticketImageView);
-                } else {
-                    hBoxBottom.getChildren().add(ticketImageView);
-                }
-                i++;
-            }
-            vBox.getChildren().addAll(hBoxTop, hBoxBottom);
-            hBoxTop.setAlignment(Pos.CENTER);
-            hBoxTop.setSpacing(20);
-            hBoxBottom.setAlignment(Pos.CENTER);
-            hBoxBottom.setSpacing(20);
+            vBox.getChildren().add(label);
+            createTicketGrid(vBox, destinationTickets, selectedTickets);
         }
-
-        vBox.getChildren().add(label);
-
-
+        label.setId("selectTickets");
 
         Button closeButton = new Button("Confirm");
         Player player = gameController.getLocalPlayerFromGameState();
         closeButton.setOnAction(e -> {
-            if(destinationTickets.size() ==0){
+            if (destinationTickets.size() == 0) {
                 stage.close();
             }
             if (selectedTickets.size() >= minimumTickets) {
@@ -133,7 +97,43 @@ public class DestinationPopUp {
         stage.showAndWait();
     }
 
+
+    public void createTicketGrid(VBox vBox, ArrayList<DestinationTicket> destinationTickets, ArrayList<DestinationTicket> selectedTickets) {
+        HBox hBoxTop = new HBox();
+        HBox hBoxBottom = new HBox();
+
+        int i = 0;
+        for (DestinationTicket destinationTicket : destinationTickets) {
+            String path = destinationTicket.fileName();
+            ImageView ticketImageView = new ImageView(new Image(path));
+            ticketImageView.setOpacity(UNSELECTED_OPACITY);
+            ticketImageView.setOnMouseClicked(e -> {
+
+                if (!selectedTickets.contains(destinationTicket)) {
+                    selectedTickets.add(destinationTicket);
+                    ticketImageView.setOpacity(SELECTED_OPACITY);
+                } else {
+                    selectedTickets.remove(destinationTicket);
+                    ticketImageView.setOpacity(UNSELECTED_OPACITY);
+                }
+            });
+
+            if (i < 2) {
+                hBoxTop.getChildren().add(ticketImageView);
+            } else {
+                hBoxBottom.getChildren().add(ticketImageView);
+            }
+            i++;
+        }
+        hBoxTop.setAlignment(Pos.CENTER);
+        hBoxTop.setSpacing(20);
+        hBoxBottom.setAlignment(Pos.CENTER);
+        hBoxBottom.setSpacing(20);
+        vBox.getChildren().addAll(hBoxTop, hBoxBottom);
+    }
+
     public Stage getStage() {
         return stage;
+
     }
 }
