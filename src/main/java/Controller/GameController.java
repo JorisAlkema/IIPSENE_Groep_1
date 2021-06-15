@@ -308,8 +308,10 @@ public class GameController {
 
         if (routePopUp != null) {
             Platform.runLater(() -> {
-                routePopUp.getStage().close();
-                routePopUp = null;
+                if (routePopUp != null) {
+                    routePopUp.getStage().close();
+                    routePopUp = null;
+                }
             });
         }
 
