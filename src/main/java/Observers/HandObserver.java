@@ -6,5 +6,5 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface HandObserver {
-    void update(HashMap<String, Integer> trainCardMap, ArrayList<DestinationTicket> destinationTickets);
+    void update(HashMap<String, Integer> trainCardMap, ArrayList<String> ticketFileNamesSmall);
 }

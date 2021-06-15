@@ -49,8 +49,12 @@ public class HandModel implements HandObservable {
 
     @Override
     public void notifyObservers() {
+        ArrayList<String> ticketFileNamesSmall = new ArrayList<>();
+        for (DestinationTicket destinationTicket : destinationTicketsInHand) {
+            ticketFileNamesSmall.add(destinationTicket.fileNameSmall());
+        }
         for (HandObserver observer : observers) {
-            observer.update(trainCardMap, destinationTicketsInHand);
+            observer.update(trainCardMap, ticketFileNamesSmall);
         }
     }
 }
