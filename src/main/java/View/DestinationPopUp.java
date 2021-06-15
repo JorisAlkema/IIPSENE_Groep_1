@@ -55,44 +55,57 @@ public class DestinationPopUp {
         vBox.setPadding(new Insets(20, 20, 20, 20));
         vBox.setSpacing(20);
 
-        Label label = new Label("Select at least " + minimumTickets + " destination tickets");
-        label.setId("selectTickets");
-        label.setStyle("-fx-font-size:18px");
+        Label label;
+
+        if(destinationTickets.size() == 0){
+            label = new Label("No more cards available ");
+            label.setId("selectTickets");
+            label.setStyle("-fx-font-size:18px");
+        } else{
+            label = new Label("Select at least " + minimumTickets + " destination tickets");
+            label.setId("selectTickets");
+            label.setStyle("-fx-font-size:18px");
+
+            int i = 0;
+            for (DestinationTicket destinationTicket : destinationTickets) {
+                String path = destinationTicket.fileName();
+                ImageView ticketImageView = new ImageView(new Image(path));
+                ticketImageView.setOpacity(UNSELECTED_OPACITY);
+                ticketImageView.setOnMouseClicked(e -> {
+
+                    if (!selectedTickets.contains(destinationTicket)) {
+                        selectedTickets.add(destinationTicket);
+                        ticketImageView.setOpacity(SELECTED_OPACITY);
+                    } else {
+                        selectedTickets.remove(destinationTicket);
+                        ticketImageView.setOpacity(UNSELECTED_OPACITY);
+                    }
+                });
+
+                if (i < 2) {
+                    hBoxTop.getChildren().add(ticketImageView);
+                } else {
+                    hBoxBottom.getChildren().add(ticketImageView);
+                }
+                i++;
+            }
+            vBox.getChildren().addAll(hBoxTop, hBoxBottom);
+            hBoxTop.setAlignment(Pos.CENTER);
+            hBoxTop.setSpacing(20);
+            hBoxBottom.setAlignment(Pos.CENTER);
+            hBoxBottom.setSpacing(20);
+        }
 
         vBox.getChildren().add(label);
 
-        int i = 0;
-        for (DestinationTicket destinationTicket : destinationTickets) {
-            String path = destinationTicket.fileName();
-            ImageView ticketImageView = new ImageView(new Image(path));
-            ticketImageView.setOpacity(UNSELECTED_OPACITY);
-            ticketImageView.setOnMouseClicked(e -> {
 
-                if (!selectedTickets.contains(destinationTicket)) {
-                    selectedTickets.add(destinationTicket);
-                    ticketImageView.setOpacity(SELECTED_OPACITY);
-                } else {
-                    selectedTickets.remove(destinationTicket);
-                    ticketImageView.setOpacity(UNSELECTED_OPACITY);
-                }
-            });
-
-            if (i < 2) {
-                hBoxTop.getChildren().add(ticketImageView);
-            } else {
-                hBoxBottom.getChildren().add(ticketImageView);
-            }
-            i++;
-        }
-        vBox.getChildren().addAll(hBoxTop, hBoxBottom);
-        hBoxTop.setAlignment(Pos.CENTER);
-        hBoxTop.setSpacing(20);
-        hBoxBottom.setAlignment(Pos.CENTER);
-        hBoxBottom.setSpacing(20);
 
         Button closeButton = new Button("Confirm");
         Player player = gameController.getLocalPlayerFromGameState();
         closeButton.setOnAction(e -> {
+            if(destinationTickets.size() ==0){
+                stage.close();
+            }
             if (selectedTickets.size() >= minimumTickets) {
                 for (DestinationTicket destinationTicket : selectedTickets) {
                     player.addDestinationTicket(destinationTicket);

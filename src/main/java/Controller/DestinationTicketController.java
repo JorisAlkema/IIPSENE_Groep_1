@@ -15,8 +15,13 @@ public class DestinationTicketController {
 
     private DestinationTicket drawSingleCard(String type) {
         Random random = new Random();
-        //MUST BE GREATER THAN 0
         int deckSize = destinationTicketDeck.getDestinationTickets().size();
+        int shortDeckSize = destinationTicketDeck.getShortDestinationTickets().size();
+
+        if (shortDeckSize == 0) {
+            return null;
+        }
+
         DestinationTicket randomTicket = destinationTicketDeck.draw(random.nextInt(deckSize));
         while (!randomTicket.getType().equals(type)) {
             returnCardToDeck(randomTicket);
@@ -31,8 +36,13 @@ public class DestinationTicketController {
 
     public ArrayList<DestinationTicket> drawTickets(boolean drawExtra) {
         ArrayList<DestinationTicket> randomDestinationTickets = new ArrayList<>();
-        while (randomDestinationTickets.size() < 3) {
-            randomDestinationTickets.add(drawSingleCard("short"));
+        for (int i =0;i<3;i++){
+            DestinationTicket newCard;
+            newCard = drawSingleCard("short");
+            if (newCard == null){
+                break;
+            }
+            randomDestinationTickets.add(newCard);
         }
         if (drawExtra) {
             randomDestinationTickets.add(drawSingleCard("long"));
