@@ -12,6 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
 
@@ -31,6 +32,9 @@ public class RoutePopUp {
         stage = new Stage();
         stage.getIcons().add(new Image("images/traincards/traincard_back_small.png"));
         stage.setTitle("Traincards");
+        stage.initStyle(StageStyle.UTILITY);
+        stage.setResizable(false);
+        stage.setAlwaysOnTop(true);
         stage.setOnCloseRequest(Event::consume);
 
         HBox hBox = new HBox();
