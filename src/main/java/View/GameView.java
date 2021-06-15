@@ -72,8 +72,8 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         systemMessage.setId("systemMessage");
         systemMessage.setAlignment(Pos.CENTER);
         systemMessage.setWrapText(true);
-        systemMessage.setMaxSize(250, 75);
-        systemMessage.setMinSize(250, 75);
+        systemMessage.setMaxSize(262, 75);
+        systemMessage.setMinSize(262, 75);
 
         Region emptyRegion = new Region();
         HBox.setHgrow(emptyRegion, Priority.ALWAYS);
@@ -153,6 +153,7 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         HBox bottom = new HBox(10);
         bottom.setAlignment(Pos.CENTER_RIGHT);
         ImageView destinationCards = new ImageView("images/destination_tickets/eu_TicketBack.png");
+        destinationCards.setId("destinationCards");
         destinationCards.setFitWidth(200);
         destinationCards.setPreserveRatio(true);
         destinationCards.setOnMouseClicked(e -> gameController.showDestinationCardsPopUp());

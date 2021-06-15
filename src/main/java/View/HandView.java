@@ -53,7 +53,7 @@ public class HandView extends HBox implements HandObserver {
     private void initDestinationTicketPane() {
         destinationTicketPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         destinationTicketPane.setMaxHeight(174); // TrainCard height in hand.
-        destinationTicketPane.setMinWidth(203); // Ticket width in hand.
+        destinationTicketPane.setMinWidth(204); // Ticket width in hand.
     }
 
     private ArrayList<StackPane> createStackPaneList() {
