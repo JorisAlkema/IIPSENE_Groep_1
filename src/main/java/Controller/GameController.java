@@ -236,6 +236,7 @@ public class GameController {
                         endTurn();
                     }
                     systemMessage.setMessage(isBuilt);
+                    routePopUp = null;
                 } else {
                     systemMessage.setMessage("Not enough trains to build this route.");
                 }
