@@ -38,6 +38,18 @@
 	-fx-font-weight: 700;
 }
 
+#partyCode {
+    -fx-font-family: Merriweather;
+	-fx-fill: white;
+	-fx-font-size: 20;
+	-fx-font-weight: 700;
+	-fx-cursor: hand;
+}
+
+#partyCode:hover {
+    -fx-underline: true;
+}
+
 #message {
     -fx-font-family: Merriweather;
 	-fx-fill: white;
