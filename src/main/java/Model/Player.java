@@ -28,7 +28,7 @@ public class Player {
         this.destinationTickets = new ArrayList<>();
         this.claimedRoutes = new ArrayList<>();
         this.points = 0;
-        this.trains = 5; // Default value according to rules
+        this.trains = 45; // Default value according to rules
         this.actionsTaken = 0;
     }
 

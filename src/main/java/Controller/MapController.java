@@ -197,7 +197,6 @@ public class MapController {
         }
 
         currentPlayer.decrementTrains(routeLength);
-        gameController.checkTrains();
         return "Successfully built the route!";
     }
 

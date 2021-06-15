@@ -39,6 +39,7 @@ public class GameController {
     private RoutePopUp routePopUp;
 
     private boolean firstTurn = true;
+
     private boolean lastRound = false;
     private boolean lastActionTaken = false;
 
@@ -96,6 +97,7 @@ public class GameController {
                 if (incomingGameState != null && incomingGameState.isLoadedByHost()) {
                     if (!incomingGameState.getOngoing()) {
                         endGame();
+                        return;
                     }
                     // A player has leaved
                     if (incomingGameState.getPlayers().size() < gameState.getPlayers().size()) {
