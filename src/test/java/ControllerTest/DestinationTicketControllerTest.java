@@ -19,11 +19,11 @@ public class DestinationTicketControllerTest {
         int expOutputBooleanTrue = 4;
 
         //act
-        String destinationTicketsFile = "src/main/resources/text/destination_tickets.txt";
         GameSetupService gameSetupService = GameSetupService.getInstance();
-        ArrayList<DestinationTicket> destinationTickets = gameSetupService.readDestinationTicketsFromFile(destinationTicketsFile);
+        ArrayList<DestinationTicket> destinationTickets = gameSetupService.getDestinationTickets();
+        ArrayList<DestinationTicket> destinationTicketsClone = new ArrayList<>(destinationTickets);
 
-        DestinationTicketController destinationTicketController = new DestinationTicketController(destinationTickets);
+        DestinationTicketController destinationTicketController = new DestinationTicketController(destinationTicketsClone);
         int actOutputBooleanFalse = destinationTicketController.drawTickets(false).size();
         int actOutputBooleanTrue = destinationTicketController.drawTickets(true).size();
         //assert

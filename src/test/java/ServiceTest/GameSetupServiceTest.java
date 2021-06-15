@@ -13,8 +13,11 @@ public class GameSetupServiceTest {
 
     @Test
     public void areAllDestinationCardsGeneratedByTheGameSetupService() {
+        // arrange
         final int expectedCards = 46;
-        ArrayList<DestinationTicket> destinationTickets =  GameSetupService.getInstance().getDestinationTickets();
+        // act
+        ArrayList<DestinationTicket> destinationTickets = GameSetupService.getInstance().getDestinationTickets();
+        // assert
         assertThat(expectedCards, is(destinationTickets.size()));
     }
 }
