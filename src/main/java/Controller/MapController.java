@@ -5,6 +5,7 @@ import Model.*;
 import Observers.MapObserver;
 import Service.GameSetupService;
 import Service.OverlayEventHandler;
+import View.TunnelPopUp;
 import javafx.event.Event;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -114,9 +115,9 @@ public class MapController {
 
     // When this method is called, we assume that the player has already selected the color
     // with which they want to build the route, in case it is grey.
-    public boolean claimRoute(Route route, String color) {
+    public String claimRoute(Route route, String color) {
         if (routeCellRectangleHashMap.get(route.getRouteCells().get(0)).getFill() != Color.TRANSPARENT) {
-            return false;
+            return "Route has already been built!";
         }
 
         String routeColor = route.getColor();
@@ -139,26 +140,30 @@ public class MapController {
             } else if (trainCard.getColor().equals(routeColor)) {
                 correctColorCards.add(trainCard);
             }
-            if (correctColorCards.size() >= routeLength && locosInHand.size() >= requiredLocos) {
-                break;
-            }
         }
 
         // Not enough cards of the right color
         if (correctColorCards.size() + locosInHand.size() < routeLength) {
-            return false;
+            return "Not enough cards of the right color!";
         }
 
         int cardsToRemove = routeLength - requiredLocos;
         int locosToRemove = requiredLocos;
 
-        if (type.equals("TUNNEL")) {
-            int tunnels = generateTunnels(routeColor);
-            cardsToRemove = cardsToRemove + tunnels;
+        if (type.equals("FERRY") && locosInHand.size() < requiredLocos) {
+            return "You need don't have anough locomotives!";
         }
 
-        if (type.equals("FERRY") && locosInHand.size() < requiredLocos) {
-            return false;
+        if (type.equals("TUNNEL")) {
+            int tunnels = generateTunnels(routeColor);
+
+            if (correctColorCards.size() + locosInHand.size() >= routeLength + tunnels) {
+                TunnelPopUp.showPopUp(tunnels,true);
+            } else {
+                TunnelPopUp.showPopUp(tunnels, false);
+                return "You don't have enough extra cards";
+            }
+            cardsToRemove = cardsToRemove + tunnels;
         }
 
         // Remove locos from player inventory for ferries.
@@ -168,7 +173,6 @@ public class MapController {
                 locosToRemove--;
             }
         }
-
         // Remove colored traincards from player inventory.
         for (TrainCard trainCard : correctColorCards) {
             if (cardsToRemove > 0) {
@@ -176,7 +180,6 @@ public class MapController {
                 cardsToRemove--;
             }
         }
-
         // Remove any extra locos from player inventory as extra for standard routes.
         for (TrainCard trainCard : locosInHand) {
             if (cardsToRemove > 0) {
@@ -194,8 +197,7 @@ public class MapController {
         }
 
         currentPlayer.decrementTrains(routeLength);
-        gameController.checkTrains();
-        return true;
+        return "Successfully built the route!";
     }
 
     /**
