@@ -39,6 +39,7 @@ public class GameController {
     private RoutePopUp routePopUp;
 
     private boolean firstTurn = true;
+
     private boolean lastRound = false;
     private boolean lastActionTaken = false;
 
@@ -96,6 +97,7 @@ public class GameController {
                 if (incomingGameState != null && incomingGameState.isLoadedByHost()) {
                     if (!incomingGameState.getOngoing()) {
                         endGame();
+                        return;
                     }
                     // A player has leaved
                     if (incomingGameState.getPlayers().size() < gameState.getPlayers().size()) {
@@ -232,6 +234,7 @@ public class GameController {
                     systemMessage.setMessage(isBuilt);
                     if (isBuilt.equals("route has been built!")) {
                         givePointForRouteSize(route.routeLength());
+                        endTurn();
                     } else if (isBuilt.equals("not enough cards for tunnels")) {
                         endTurn();
                     }
