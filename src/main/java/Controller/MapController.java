@@ -151,17 +151,17 @@ public class MapController {
         int locosToRemove = requiredLocos;
 
         if (type.equals("FERRY") && locosInHand.size() < requiredLocos) {
-            return "You need a locomotive!";
+            return "You need don't have anough locomotives!";
         }
 
         if (type.equals("TUNNEL")) {
             int tunnels = generateTunnels(routeColor);
 
-            if (correctColorCards.size() + locosInHand.size() >= routeLength + tunnels){
+            if (correctColorCards.size() + locosInHand.size() >= routeLength + tunnels) {
                 TunnelPopUp.showPopUp(tunnels,true);
-            }else{
+            } else {
                 TunnelPopUp.showPopUp(tunnels, false);
-                return "not enough cards for tunnels";
+                return "You don't have enough extra cards";
             }
             cardsToRemove = cardsToRemove + tunnels;
         }
@@ -173,7 +173,6 @@ public class MapController {
                 locosToRemove--;
             }
         }
-
         // Remove colored traincards from player inventory.
         for (TrainCard trainCard : correctColorCards) {
             if (cardsToRemove > 0) {
@@ -181,7 +180,6 @@ public class MapController {
                 cardsToRemove--;
             }
         }
-
         // Remove any extra locos from player inventory as extra for standard routes.
         for (TrainCard trainCard : locosInHand) {
             if (cardsToRemove > 0) {
@@ -199,7 +197,7 @@ public class MapController {
         }
 
         currentPlayer.decrementTrains(routeLength);
-        return "route has been built!";
+        return "Successfully built the route!";
     }
 
     /**
