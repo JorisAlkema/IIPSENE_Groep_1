@@ -35,6 +35,9 @@ public class GameController {
 
     private final GameSetupService gameSetupService = GameSetupService.getInstance();
 
+    private DestinationPopUp destinationPopUp;
+    private RoutePopUp routePopUp;
+
     private boolean firstTurn = true;
     private boolean lastRound = false;
     private boolean lastActionTaken = false;
@@ -126,9 +129,12 @@ public class GameController {
                                 TrainCard pickedClosedCard = cardsController.pickClosedCard(gameState);
                                 addTrainCardToPlayerInventoryInGameState(pickedClosedCard);
                             }
-                            DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
-                            destinationPopUp.showAtStartOfGame(gameState, this);
-                            endTurn();
+
+                            if (destinationPopUp == null) {
+                                destinationPopUp = new DestinationPopUp(gameState);
+                                destinationPopUp.showAtStartOfGame(gameState, this);
+                                endTurn();
+                            }
                         }
                     } catch (Exception exception) {
                         exception.printStackTrace();
@@ -211,26 +217,32 @@ public class GameController {
         String selectedColor = null;
         boolean isBuilt = false;
 
-        if (playerTurnController.getTurn() && getLocalPlayerFromGameState().getActionsTaken() == 0) {
-            if (route.routeLength() <= getLocalPlayerFromGameState().getTrains()) {
-                if (route.getColor().equals("GREY")) {
-                    selectedColor = pickColorForGreyRoute(route);
-                    isBuilt = mapController.claimRoute(route, selectedColor);
-                } else {
-                    isBuilt = mapController.claimRoute(route, route.getColor());
-                }
+        if (routePopUp == null) {
+            if (playerTurnController.getTurn() && getLocalPlayerFromGameState().getActionsTaken() == 0) {
+                if (route.routeLength() <= getLocalPlayerFromGameState().getTrains()) {
+                    if (route.getColor().equals("GREY")) {
+                        selectedColor = pickColorForGreyRoute(route);
+                        if (selectedColor != null) {
+                            isBuilt = mapController.claimRoute(route, selectedColor);
+                        }
+                    } else {
+                        isBuilt = mapController.claimRoute(route, route.getColor());
+                    }
 
-                if (isBuilt) {
-                    givePointForRouteSize(route.routeLength());
-                    endTurn();
+                    if (isBuilt) {
+                        givePointForRouteSize(route.routeLength());
+                        endTurn();
+                    } else {
+                        systemMessage.setMessage("Not enough same-color cards for this route.");
+                    }
                 } else {
-                    systemMessage.setMessage("Not enough same-color cards for this route.");
+                    systemMessage.setMessage("You don't have enough trains left to build this route.");
                 }
             } else {
-                systemMessage.setMessage("You don't have enough trains left to build this route.");
+                systemMessage.setMessage("It's not your turn, or you already drew a TrainCard this turn.");
             }
         } else {
-            systemMessage.setMessage("It's not your turn, or you already drew a TrainCard this turn.");
+            systemMessage.setMessage("Choose a card to build grey route first before taking another action");
         }
     }
 
@@ -256,7 +268,7 @@ public class GameController {
             return null;
         }
 
-        RoutePopUp routePopUp = new RoutePopUp(possibleColors);
+        routePopUp = new RoutePopUp(possibleColors);
         return routePopUp.showRoutePopUp();
     }
 
@@ -272,7 +284,33 @@ public class GameController {
         }
     }
 
+    public void showDestinationCardsPopUp() {
+        if (playerTurnController.getTurn() && getLocalPlayerFromGameState().getActionsTaken() == 0) {
+            if (destinationPopUp == null) {
+                destinationPopUp = new DestinationPopUp(gameState);
+                destinationPopUp.showDuringGame(gameState, this);
+                endTurn();
+            }
+        } else {
+            systemMessage.setMessage("You cannot pick a card at this time.");
+        }
+    }
+
     public void endTurn() {
+        if (destinationPopUp != null) {
+            Platform.runLater(() -> {
+                destinationPopUp.getStage().close();
+                destinationPopUp = null;
+            });
+        }
+
+        if (routePopUp != null) {
+            Platform.runLater(() -> {
+                routePopUp.getStage().close();
+                routePopUp = null;
+            });
+        }
+
         if (playerTurnController.getTurn()) {
             getLocalPlayerFromGameState().setActionsTaken(2);
             checkIfTurnIsOver();
@@ -358,12 +396,6 @@ public class GameController {
         ArrayList<String> remainingPlayers = new ArrayList<>();
         incomingGameState.getPlayers().forEach((n) -> remainingPlayers.add(n.getUUID()));
         gameState.getPlayers().removeIf(player -> !remainingPlayers.contains(player.getUUID()));
-    }
-
-    public void showDestinationCardsPopUp() {
-        DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
-        destinationPopUp.showDuringGame(gameState, this);
-        endTurn();
     }
 
     // ===============================================================
