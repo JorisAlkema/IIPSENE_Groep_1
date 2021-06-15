@@ -157,9 +157,9 @@ public class MapController {
         if (type.equals("TUNNEL")) {
             int tunnels = generateTunnels(routeColor);
 
-            if (correctColorCards.size() + locosInHand.size() >= routeLength + tunnels){
+            if (correctColorCards.size() + locosInHand.size() >= routeLength + tunnels) {
                 TunnelPopUp.showPopUp(tunnels,true);
-            }else{
+            } else {
                 TunnelPopUp.showPopUp(tunnels, false);
                 return "You don't have enough extra cards";
             }
