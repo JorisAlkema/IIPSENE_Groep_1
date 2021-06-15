@@ -9,6 +9,9 @@ import View.MainMenuView;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 
 public class LobbyController {
@@ -93,5 +96,11 @@ public class LobbyController {
 
         // Remove from production
         MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, true);
+    }
+
+    public void copyRoomCode() {
+        StringSelection stringSelection = new StringSelection(MainState.roomCode);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
     }
 }
