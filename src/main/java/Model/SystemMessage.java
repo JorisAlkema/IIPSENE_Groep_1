@@ -7,9 +7,7 @@ import java.util.ArrayList;
 
 public class SystemMessage implements SystemMessageObservable {
     private ArrayList<SystemMessageObserver> observers = new ArrayList<>();
-
     private String message;
-
     public String getMessage() {
         return message;
     }

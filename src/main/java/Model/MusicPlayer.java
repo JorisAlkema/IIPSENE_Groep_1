@@ -10,15 +10,15 @@ import java.util.ArrayList;
 import java.util.Timer;
 
 public class MusicPlayer implements MusicObservable {
-    private boolean isPlaying = true;
-    private final ArrayList<MusicObserver> observers = new ArrayList<>();
     static MusicPlayer musicPlayer;
     private MediaPlayer mediaPlayer;
+    private boolean isPlaying = true;
+    private final ArrayList<MusicObserver> observers = new ArrayList<>();
 
     public MusicPlayer() {
-        Media media = new Media(new File("src/main/resources/music/europe.mp3").toURI().toString());
+        Media media = new Media(String.valueOf(getClass().getClassLoader().getResource("music/europe.mp3")));
         mediaPlayer = new MediaPlayer(media);
-//        mediaPlayer.play();
+        //mediaPlayer.play();
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
     }
 

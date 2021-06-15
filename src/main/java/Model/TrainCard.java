@@ -2,13 +2,11 @@ package Model;
 
 import java.util.Objects;
 
-// TrainCard represents a train card in the game and is used to claim routes. TrainCards are found in the Players
-// hand, in the TrainCardDeck or as one of the five open TrainCards next to the game board.
-// TrainCard only has a color.
 public class TrainCard {
-    // Color can be PURPLE, WHITE, BLUE, YELLOW, ORANGE, BLACK, RED, GREEN or LOCO
     private String color;
 
+    // Allow Firebase to create a new instance of the object with an empty constructor,
+    // which will be filled in using reflection.
     public TrainCard() {
     }
 

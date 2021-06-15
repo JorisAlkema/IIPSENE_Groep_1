@@ -32,33 +32,30 @@ public class LoginController {
         MainState.primaryStage.setScene(scene);
     }
 
-
     public boolean checkUsername(String username) {
         return username.length() >= CHARACTER_MAX || username.length() < CHARACTER_MIN;
     }
 
     public boolean checkRoomCode(String code) {
         int characters = code.length();
-        for (int i = 0; i < characters; i ++) {
-            if(Character.isLetter(code.charAt(i))) {
+
+        for (int i = 0; i < characters; i++) {
+            if (Character.isLetter(code.charAt(i))) {
                 return false;
             }
         }
-
         return characters == ROOMCODE_CHARACTERS;
     }
 
     // Join game
     public void join(String username, String code) {
-
         if (username.isBlank() || code.isBlank()) {
             login.notifyObservers("Fill in all the required fields");
             return;
         }
 
-
-        if(this.checkUsername(username)) {
-            login.notifyObservers("Your username must be between " + Integer.toString(CHARACTER_MIN) + " and " + Integer.toString(CHARACTER_MAX) + " characters long");
+        if (this.checkUsername(username)) {
+            login.notifyObservers("Your username must be between " + CHARACTER_MIN + " and " + CHARACTER_MAX + " characters long");
             return;
         }
 
@@ -71,7 +68,7 @@ public class LoginController {
             // Spam protection
             login.setBusy(true);
 
-            // Joining lobby... loading animation
+            // Joining lobby... Loading animation
             Timer joiningLobbyAnimation = getLoadingAnimation("Joining lobby");
             TimerTask task = new TimerTask() {
 
@@ -81,7 +78,7 @@ public class LoginController {
                     Player player = new Player(username, player_uuid, false);
                     Exception exception = null;
 
-                    // Tries to add player to the lobby
+                    // Tries to add player to the lobby.
                     try {
                         MainState.firebaseService.addPlayerToLobby(code, player);
                     } catch (Exception e) {
@@ -104,6 +101,7 @@ public class LoginController {
                     Platform.runLater(() -> showLobby());
                 }
             };
+
             // Run function after 1sec, give space for the fetching animation to run.
             new Timer().schedule(task, 1000);
         }
@@ -126,7 +124,7 @@ public class LoginController {
             // Spam protection
             login.setBusy(true);
 
-            // Creating lobby... loading animation
+            // Creating lobby... Loading animation
             Timer creatingLobbyAnimation = getLoadingAnimation("Creating lobby");
             TimerTask task = new TimerTask() {
 
@@ -161,8 +159,6 @@ public class LoginController {
         }
     }
 
-    // Private
-
     private void showLobby() {
         Scene scene = new Scene(new LobbyView(), MainState.WINDOW_WIDTH, MainState.WINDOW_HEIGHT);
         scene.getStylesheets().add(MainState.menuCSS);
@@ -180,13 +176,10 @@ public class LoginController {
                 login.notifyObservers(message + dots);
             }
         };
+
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(timerTask, 0, 200);
         return timer;
-    }
-
-    private String generateCode() {
-        return Integer.toString((int) Math.floor(Math.random() * (999999 - 100000 + 1) + 100000));
     }
 
     private String generateUUID() {

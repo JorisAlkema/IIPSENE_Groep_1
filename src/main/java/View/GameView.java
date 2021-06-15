@@ -2,6 +2,7 @@ package View;
 
 import App.MainState;
 import Controller.GameController;
+import Controller.MainMenuController;
 import Model.*;
 import Observers.*;
 import javafx.geometry.Insets;
@@ -16,24 +17,22 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class GameView extends StackPane implements TurnTimerObserver, CardsObserver, BannerObserver, SystemMessageObserver {
-    private Label timerLabel;
+    private MapView mapView;
+
+    private final GameController gameController;
     private final BorderPane borderPane;
     private VBox cardsBox;
     private VBox playerBanners;
-    private MapView mapView;
-    private final GameController gameController;
+    private Label timerLabel;
     private Label systemMessage;
 
     public GameView() {
-        // Init
         gameController = new GameController();
-        gameController.registerTurnTimerObserver(this);
-        gameController.registerCardsObserver(this);
-        gameController.registerBannerObserver(this);
-        gameController.registerSystemMessageObserver(this);
+        gameController.registerObservers(this);
 
         borderPane = new BorderPane();
         initLeftPane();
@@ -58,18 +57,9 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     }
 
     private void initLeftPane() {
-        Image zoomInImage = new Image("images/icons/button_zoom_in.png");
-        Image zoomOutImage = new Image("images/icons/button_zoom_out.png");
-        ImageView mapZoomButton = new ImageView(zoomInImage);
-        mapZoomButton.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            if (mapView.getMapController().getMapModel().isZoomedIn()) {
-                mapView.getMapController().zoomOut();
-                mapZoomButton.setImage(zoomInImage);
-            } else {
-                mapView.getMapController().zoomIn();
-                mapZoomButton.setImage(zoomOutImage);
-            }
-        });
+        ImageView mapZoomButton = createMapZoomButton();
+        ImageView infoButton = createInfoButton();
+
         timerLabel = new Label("0:00");
         timerLabel.setId("timerLabel");
         timerLabel.setMinWidth(100);
@@ -80,20 +70,71 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
 
         systemMessage = new Label("");
         systemMessage.setId("systemMessage");
+        systemMessage.setAlignment(Pos.CENTER);
         systemMessage.setWrapText(true);
-        systemMessage.setMaxSize(250, 100);
-        systemMessage.setMinSize(250, 100);
+        systemMessage.setMaxSize(250, 75);
+        systemMessage.setMinSize(250, 75);
 
         Region emptyRegion = new Region();
         HBox.setHgrow(emptyRegion, Priority.ALWAYS);
 
         HBox hBox = new HBox();
-        hBox.getChildren().addAll(timerLabel, emptyRegion, mapZoomButton);
+        hBox.getChildren().addAll(timerLabel, emptyRegion, mapZoomButton, infoButton);
 
         playerBanners = new VBox();
+
         vBox.getChildren().addAll(hBox, systemMessage, playerBanners);
         vBox.setAlignment(Pos.TOP_CENTER);
+
         borderPane.setLeft(vBox);
+    }
+
+    private ImageView createMapZoomButton() {
+        Image zoomInImage = new Image("images/icons/button_zoom_in.png");
+        Image zoomOutImage = new Image("images/icons/button_zoom_out.png");
+        Image zoomInImageHover = new Image("images/icons/button_zoom_in_Over.png");
+        Image zoomOutImageHover = new Image("images/icons/button_zoom_out_Over.png");
+        ImageView mapZoomButton = new ImageView(zoomInImage);
+        mapZoomButton.setOnMouseEntered(e -> {
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapZoomButton.setImage(zoomOutImageHover);
+            } else {
+                mapZoomButton.setImage(zoomInImageHover);
+            }
+        });
+        mapZoomButton.setOnMouseExited(e -> {
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapZoomButton.setImage(zoomOutImage);
+            } else {
+                mapZoomButton.setImage(zoomInImage);
+            }
+        });
+        mapZoomButton.setOnMouseClicked(e -> {
+            if (mapView.getMapController().getMapModel().isZoomedIn()) {
+                mapView.getMapController().zoomOut();
+                mapZoomButton.setImage(zoomInImage);
+            } else {
+                mapView.getMapController().zoomIn();
+                mapZoomButton.setImage(zoomOutImage);
+            }
+        });
+        return mapZoomButton;
+    }
+
+    private ImageView createInfoButton() {
+        Image information = new Image("images/icons/button-game-info.png");
+        Image informationHover = new Image("images/icons/button-game-info-Over.png");
+        ImageView informationButton = new ImageView(information);
+        informationButton.setOnMouseEntered(e -> informationButton.setImage(informationHover));
+        informationButton.setOnMouseExited(e -> informationButton.setImage(information));
+        informationButton.setOnMouseClicked(e ->{
+            try {
+                MainMenuController.openRules();
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        });
+        return informationButton;
     }
 
     private void initCenterPane() {
@@ -109,7 +150,18 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
 
     private void initBottomPane() {
         HandView handView = new HandView();
-        borderPane.setBottom(handView);
+        HBox bottom = new HBox(10);
+        bottom.setAlignment(Pos.CENTER_RIGHT);
+        ImageView destinationCards = new ImageView("images/destination_tickets/eu_TicketBack.png");
+        destinationCards.setFitWidth(200);
+        destinationCards.setPreserveRatio(true);
+        destinationCards.setOnMouseClicked(e -> gameController.showDestinationCardsPopUp());
+        Region region1 = new Region();
+        Region region2 = new Region();
+        HBox.setHgrow(region1, Priority.ALWAYS);
+        HBox.setHgrow(region2, Priority.ALWAYS);
+        bottom.getChildren().addAll(destinationCards, handView);
+        borderPane.setBottom(bottom);
     }
 
     @Override
@@ -125,7 +177,6 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
                 openTrainCards.add(new ImageView(path));
             }
 
-            // onClick events and ID
             closedTrainCard.setId("TrainCard");
             closedTrainCard.setOnMouseClicked(e -> {
                 this.gameController.pickClosedCard();
@@ -175,11 +226,11 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
             gridPane.add(playerTrains, 1, 2);
             gridPane.setHgap(10);
             gridPane.setTranslateX(40);
-            gridPane.setTranslateY(17);
+            gridPane.setTranslateY(13);
 
             ImageView playerBannerImageView = new ImageView("images/banners/player_banner_" + players.get(i).getPlayerColor().toLowerCase() + ".png");
             playerBannerImageView.setPreserveRatio(true);
-            playerBannerImageView.setFitHeight(100);
+            playerBannerImageView.setFitHeight(90);
 
             DropShadow borderGlow = new DropShadow();
             borderGlow.setOffsetX(0f);
