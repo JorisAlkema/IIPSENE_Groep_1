@@ -57,8 +57,6 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
     }
 
     private void initLeftPane() {
-
-
         ImageView mapZoomButton = createMapZoomButton();
         ImageView infoButton = createInfoButton();
 
@@ -74,8 +72,8 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
         systemMessage.setId("systemMessage");
         systemMessage.setAlignment(Pos.CENTER);
         systemMessage.setWrapText(true);
-        systemMessage.setMaxSize(250, 100);
-        systemMessage.setMinSize(250, 100);
+        systemMessage.setMaxSize(250, 75);
+        systemMessage.setMinSize(250, 75);
 
         Region emptyRegion = new Region();
         HBox.setHgrow(emptyRegion, Priority.ALWAYS);
@@ -228,11 +226,11 @@ public class GameView extends StackPane implements TurnTimerObserver, CardsObser
             gridPane.add(playerTrains, 1, 2);
             gridPane.setHgap(10);
             gridPane.setTranslateX(40);
-            gridPane.setTranslateY(17);
+            gridPane.setTranslateY(13);
 
             ImageView playerBannerImageView = new ImageView("images/banners/player_banner_" + players.get(i).getPlayerColor().toLowerCase() + ".png");
             playerBannerImageView.setPreserveRatio(true);
-            playerBannerImageView.setFitHeight(100);
+            playerBannerImageView.setFitHeight(90);
 
             DropShadow borderGlow = new DropShadow();
             borderGlow.setOffsetX(0f);
