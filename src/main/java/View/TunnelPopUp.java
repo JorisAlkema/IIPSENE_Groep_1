@@ -7,7 +7,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class TunnelPopUp {
-    public void showPopUp(int tunnels,boolean failed){
+    public static void TunnelPopUp(int tunnels, boolean failed){
         Stage stage = new Stage();
         stage.setWidth(250);
         stage.setHeight(250);

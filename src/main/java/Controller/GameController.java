@@ -215,31 +215,27 @@ public class GameController {
 
     public void buildRoute(Route route) {
         String selectedColor = null;
-        boolean isBuilt = false;
+        String isBuilt;
+
 
         if (routePopUp == null) {
             if (playerTurnController.getTurn() && getLocalPlayerFromGameState().getActionsTaken() == 0) {
                 if (route.routeLength() <= getLocalPlayerFromGameState().getTrains()) {
                     if (route.getColor().equals("GREY")) {
                         selectedColor = pickColorForGreyRoute(route);
-                        if (selectedColor != null) {
-                            isBuilt = mapController.claimRoute(route, selectedColor);
-                        }
+                        isBuilt = mapController.claimRoute(route, selectedColor);
                     } else {
                         isBuilt = mapController.claimRoute(route, route.getColor());
                     }
-
-                    if (isBuilt) {
+                    systemMessage.setMessage(isBuilt);
+                    if (isBuilt.equals("route has been built!")) {
                         givePointForRouteSize(route.routeLength());
+                    } else if (isBuilt.equals("not enough cards for tunnels")) {
                         endTurn();
-                    } else {
-                        systemMessage.setMessage("Not enough same-color cards for this route.");
                     }
                 } else {
-                    systemMessage.setMessage("You don't have enough trains left to build this route.");
+                    systemMessage.setMessage("It's not your turn, or you already drew a TrainCard this turn.");
                 }
-            } else {
-                systemMessage.setMessage("It's not your turn, or you already drew a TrainCard this turn.");
             }
         } else {
             systemMessage.setMessage("Choose a card to build grey route first before taking another action");
