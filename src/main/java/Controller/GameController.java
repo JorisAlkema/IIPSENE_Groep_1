@@ -10,7 +10,10 @@ import View.RoutePopUp;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
 
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -103,6 +106,7 @@ public class GameController {
                         if (gameState.getPlayers().size() == 1) {
                             endGame();
                         }
+                        return;
                     } else {
                         gameState = incomingGameState;
                         // Check trains for all players
@@ -337,6 +341,7 @@ public class GameController {
         MainState.firebaseService.getLobbyReference(MainState.roomCode).delete();
         MainState.player_uuid = null;
         MainState.roomCode = null;
+
         EndGameView endGameView = new EndGameView(gameState);
         endGameView.getStylesheets().add(MainState.menuCSS);
         MainState.primaryStage.setScene(new Scene(endGameView));
