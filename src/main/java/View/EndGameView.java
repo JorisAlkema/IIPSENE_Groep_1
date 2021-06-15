@@ -3,6 +3,7 @@ package View;
 import App.MainState;
 import Controller.EndGameController;
 import Model.GameState;
+import Model.Player;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -88,32 +89,27 @@ public class EndGameView extends StackPane {
         StackPane stackPane = new StackPane();
 
         int i = 0;
-        for (String playerName : endGameController.topThreePlayers()) {
-            Label playerNameLabel = new Label(playerName);
+        for (Player player : endGameController.getSortedPlayersByPoints()) {
+            Label playerNameLabel = new Label(player.getName() + "\nPoints: " + player.getPoints());
             playerNameLabel.setId("podiumText");
 
             switch (i) {
-                case 2:
-                    stackPane.getChildren().add(playerNameLabel);
-                    playerNameLabel.setAlignment(Pos.CENTER);
+                case 0:
                     playerNameLabel.setTranslateX(-5);
-                    i++;
                     break;
                 case 1:
-                    stackPane.getChildren().add(playerNameLabel);
-                    playerNameLabel.setAlignment(Pos.CENTER);
                     playerNameLabel.setTranslateX(-270);
                     playerNameLabel.setTranslateY(40);
-                    i++;
                     break;
-                case 0:
-                    stackPane.getChildren().add(playerNameLabel);
-                    playerNameLabel.setAlignment(Pos.CENTER);
+                case 2:
                     playerNameLabel.setTranslateX(270);
                     playerNameLabel.setTranslateY(70);
-                    i++;
                     break;
             }
+
+            playerNameLabel.setAlignment(Pos.CENTER);
+            stackPane.getChildren().add(playerNameLabel);
+            i++;
         }
         return stackPane;
     }

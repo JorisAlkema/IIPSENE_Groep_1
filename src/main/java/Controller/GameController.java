@@ -2,19 +2,16 @@ package Controller;
 
 import App.MainState;
 import Model.*;
-import Observers.*;
 import Service.GameSetupService;
 import View.DestinationPopUp;
 import View.EndGameView;
 import View.GameView;
 import View.RoutePopUp;
 import com.google.cloud.firestore.ListenerRegistration;
-import com.google.firebase.messaging.Message;
 import javafx.application.Platform;
 
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
