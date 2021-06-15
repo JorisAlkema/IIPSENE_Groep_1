@@ -219,7 +219,6 @@ public class GameController {
         String selectedColor = null;
         String isBuilt;
 
-
         if (routePopUp == null) {
             if (playerTurnController.getTurn() && getLocalPlayerFromGameState().getActionsTaken() == 0) {
                 if (route.routeLength() <= getLocalPlayerFromGameState().getTrains()) {
@@ -229,12 +228,11 @@ public class GameController {
                     } else {
                         isBuilt = mapController.claimRoute(route, route.getColor());
                     }
-                    systemMessage.setMessage(isBuilt);
-                    if (isBuilt.equals("route has been built!")) {
+                    if (isBuilt.equals("Successfully built the route!")) {
                         givePointForRouteSize(route.routeLength());
-                    } else if (isBuilt.equals("not enough cards for tunnels")) {
-                        endTurn();
                     }
+                    systemMessage.setMessage(isBuilt);
+                    endTurn();
                 } else {
                     systemMessage.setMessage("It's not your turn, or you already drew a TrainCard this turn.");
                 }
