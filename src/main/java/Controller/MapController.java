@@ -140,9 +140,6 @@ public class MapController {
             } else if (trainCard.getColor().equals(routeColor)) {
                 correctColorCards.add(trainCard);
             }
-            if (correctColorCards.size() >= routeLength && locosInHand.size() >= requiredLocos) {
-                break;
-            }
         }
 
         // Not enough cards of the right color
@@ -160,12 +157,11 @@ public class MapController {
         if (type.equals("TUNNEL")) {
             int tunnels = generateTunnels(routeColor);
 
-            if (correctColorCards.size() + locosInHand.size() < routeLength + tunnels){
+            if (correctColorCards.size() + locosInHand.size() >= routeLength + tunnels){
                 TunnelPopUp.TunnelPopUp(tunnels,false);
             }else{
                 TunnelPopUp.TunnelPopUp(tunnels,true);
-                //TODO: end turn?
-
+                return "not enough cards for tunnels";
             }
             cardsToRemove = cardsToRemove + tunnels;
         }

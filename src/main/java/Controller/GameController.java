@@ -222,6 +222,8 @@ public class GameController {
                 systemMessage.setMessage(isBuilt);
                 if(isBuilt.equals("route has been built!")){
                     givePointForRouteSize(route.routeLength());
+                }else if(isBuilt.equals("not enough cards for tunnels")) {
+                    endTurn();
                 }
             } else {
                 systemMessage.setMessage("You don't have enough trains left to build this route.");
