@@ -99,16 +99,15 @@ public class HandView extends HBox implements HandObserver {
      * Calculates the amount of each card color, then updates the text for the corresponding stackpane
      */
     @Override
-    public void update(HashMap<String, Integer> trainCardMap, ArrayList<DestinationTicket> destinationTickets) {
-        updateDestinationTickets(destinationTickets);
+    public void update(HashMap<String, Integer> trainCardMap, ArrayList<String> ticketFileNamesSmall) {
+        updateDestinationTickets(ticketFileNamesSmall);
         updateTrainCards(trainCardMap);
     }
 
-    private void updateDestinationTickets(ArrayList<DestinationTicket> destinationTickets) {
+    private void updateDestinationTickets(ArrayList<String> ticketFileNamesSmall) {
         VBox vBox = new VBox();
 
-        for (DestinationTicket destinationTicket : destinationTickets) {
-            String path = destinationTicket.fileNameSmall();
+        for (String path : ticketFileNamesSmall) {
             vBox.getChildren().addAll(new ImageView(path));
         }
 
