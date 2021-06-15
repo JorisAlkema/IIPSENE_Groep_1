@@ -166,7 +166,8 @@ public class LobbyView extends StackPane implements LobbyObserver {
         Text partyTitle = new Text("Partycode:");
         this.partyCode = new Text();
         partyTitle.setId("text");
-        this.partyCode.setId("text");
+        this.partyCode.setId("partyCode");
+        this.partyCode.setOnMouseClicked(e -> controller.copyRoomCode());
         party.getChildren().add(partyTitle);
         party.getChildren().add(this.partyCode);
 
