@@ -17,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,8 @@ public class DestinationPopUp {
     private final DestinationTicketController destinationTicketController;
     private final double UNSELECTED_OPACITY = 0.6;
     private final double SELECTED_OPACITY = 1;
+
+    private Stage stage;
 
     public DestinationPopUp(GameState gameState) {
         ArrayList<DestinationTicket> destinationTickets = gameState.getDestinationDeck();
@@ -39,7 +42,7 @@ public class DestinationPopUp {
     }
 
     private void showPopUp(ArrayList<DestinationTicket> destinationTickets, GameState gameState, GameController gameController) {
-        Stage stage = new Stage();
+        stage = new Stage();
         stage.setTitle("Destination Tickets");
         stage.getIcons().add(new Image("images/traincards/traincard_back_small.png"));
         stage.setOnCloseRequest(Event::consume);
@@ -85,13 +88,15 @@ public class DestinationPopUp {
         });
 
         vBox.getChildren().add(closeButton);
-
         Scene scene = new Scene(vBox);
         scene.getStylesheets().add(MainState.menuCSS);
         stage.setScene(scene);
+        stage.initStyle(StageStyle.UTILITY);
+        stage.setResizable(false);
         stage.setAlwaysOnTop(true);
         stage.showAndWait();
     }
+
 
     public void createTicketGrid(VBox vBox, ArrayList<DestinationTicket> destinationTickets, ArrayList<DestinationTicket> selectedTickets) {
         HBox hBoxTop = new HBox();
@@ -125,5 +130,10 @@ public class DestinationPopUp {
         hBoxBottom.setAlignment(Pos.CENTER);
         hBoxBottom.setSpacing(20);
         vBox.getChildren().addAll(hBoxTop, hBoxBottom);
+    }
+
+    public Stage getStage() {
+        return stage;
+
     }
 }
