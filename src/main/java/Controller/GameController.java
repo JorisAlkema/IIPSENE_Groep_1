@@ -229,12 +229,14 @@ public class GameController {
                     }
                     if (isBuilt.equals("Successfully built the route!")) {
                         givePointForRouteSize(route.routeLength());
+                        endTurn();
                     }
                     systemMessage.setMessage(isBuilt);
-                    endTurn();
                 } else {
-                    systemMessage.setMessage("It's not your turn, or you already drew a TrainCard this turn.");
+                    systemMessage.setMessage("Not enough trains to build this route.");
                 }
+            } else {
+                systemMessage.setMessage("It's not your turn, or you already drew a TrainCard this turn.");
             }
         } else {
             systemMessage.setMessage("Choose a card to build grey route first before taking another action");
