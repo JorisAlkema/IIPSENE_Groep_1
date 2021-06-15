@@ -93,8 +93,10 @@ public class GameController {
             Platform.runLater(() -> {
                 System.out.println("INCOMING UPDATE");
                 GameState incomingGameState = documentSnapshot.toObject(GameState.class);
-                if (incomingGameState.isLoadedByHost()) {
-
+                if (incomingGameState != null && incomingGameState.isLoadedByHost()) {
+                    if (!incomingGameState.getOngoing()) {
+                        endGame();
+                    }
                     // A player has leaved
                     if (incomingGameState.getPlayers().size() < gameState.getPlayers().size()) {
                         removeLeftPlayers(incomingGameState);
@@ -343,7 +345,7 @@ public class GameController {
 
     public void checkEndGame() {
         if (lastRound && lastActionTaken) {
-            endGame();
+            MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, false);
         }
     }
 
