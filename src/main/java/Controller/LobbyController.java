@@ -95,7 +95,7 @@ public class LobbyController {
         }
 
         // Remove from production
-        MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, true);
+//        MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, true);
     }
 
     public void copyRoomCode() {
