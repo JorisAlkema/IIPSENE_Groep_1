@@ -100,6 +100,9 @@ public class DestinationPopUp {
                     destinationTickets.remove(destinationTicket);
                     gameState.getDestinationDeck().remove(destinationTicket);
                 }
+                for (DestinationTicket destinationTicket: destinationTickets){
+                    destinationTicketController.returnCardToDeck(destinationTicket);
+                }
                 stage.close();
             }
         });
