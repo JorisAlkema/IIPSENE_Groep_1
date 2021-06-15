@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class RoutePopUp {
+    private Stage stage;
     private final ArrayList<String> possibleColors;
     private String selectedColor;
 
@@ -27,7 +28,7 @@ public class RoutePopUp {
     }
 
     public String showRoutePopUp() {
-        Stage stage = new Stage();
+        stage = new Stage();
         stage.getIcons().add(new Image("images/traincards/traincard_back_small.png"));
         stage.setTitle("Traincards");
         stage.setOnCloseRequest(Event::consume);
@@ -81,5 +82,9 @@ public class RoutePopUp {
         stage.setAlwaysOnTop(true);
 
         return selectedColor;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }
