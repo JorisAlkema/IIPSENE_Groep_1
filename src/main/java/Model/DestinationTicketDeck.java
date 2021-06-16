@@ -12,6 +12,16 @@ public class DestinationTicketDeck {
     public DestinationTicketDeck(ArrayList<DestinationTicket> destinationTickets) {
         this.destinationTickets = destinationTickets;
     }
+    public ArrayList<DestinationTicket> getShortDestinationTickets(){
+        ArrayList<DestinationTicket> shortTickets= new ArrayList<>();
+        for (DestinationTicket destinationTicket: destinationTickets){
+            if(destinationTicket.getType().equals("short")){
+                shortTickets.add(destinationTicket);
+            }
+        }
+        return shortTickets;
+    }
+
 
     public ArrayList<DestinationTicket> getDestinationTickets() {
         return destinationTickets;

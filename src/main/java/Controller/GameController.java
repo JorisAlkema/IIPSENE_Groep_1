@@ -2,19 +2,19 @@ package Controller;
 
 import App.MainState;
 import Model.*;
-import Observers.*;
 import Service.GameSetupService;
 import View.DestinationPopUp;
 import View.EndGameView;
 import View.GameView;
 import View.RoutePopUp;
 import com.google.cloud.firestore.ListenerRegistration;
-import com.google.firebase.messaging.Message;
 import javafx.application.Platform;
 
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
@@ -35,7 +35,11 @@ public class GameController {
 
     private final GameSetupService gameSetupService = GameSetupService.getInstance();
 
+    private DestinationPopUp destinationPopUp;
+    private RoutePopUp routePopUp;
+
     private boolean firstTurn = true;
+
     private boolean lastRound = false;
     private boolean lastActionTaken = false;
 
@@ -90,8 +94,11 @@ public class GameController {
             Platform.runLater(() -> {
                 System.out.println("INCOMING UPDATE");
                 GameState incomingGameState = documentSnapshot.toObject(GameState.class);
-                if (incomingGameState.isLoadedByHost()) {
-
+                if (incomingGameState != null && incomingGameState.isLoadedByHost()) {
+                    if (!incomingGameState.getOngoing()) {
+                        endGame();
+                        return;
+                    }
                     // A player has leaved
                     if (incomingGameState.getPlayers().size() < gameState.getPlayers().size()) {
                         removeLeftPlayers(incomingGameState);
@@ -99,6 +106,7 @@ public class GameController {
                         if (gameState.getPlayers().size() == 1) {
                             endGame();
                         }
+                        return;
                     } else {
                         gameState = incomingGameState;
                         // Check trains for all players
@@ -126,9 +134,12 @@ public class GameController {
                                 TrainCard pickedClosedCard = cardsController.pickClosedCard(gameState);
                                 addTrainCardToPlayerInventoryInGameState(pickedClosedCard);
                             }
-                            DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
-                            destinationPopUp.showAtStartOfGame(gameState, this);
-                            endTurn();
+
+                            if (destinationPopUp == null) {
+                                destinationPopUp = new DestinationPopUp(gameState);
+                                destinationPopUp.showAtStartOfGame(gameState, this);
+                                endTurn();
+                            }
                         }
                     } catch (Exception exception) {
                         exception.printStackTrace();
@@ -209,28 +220,31 @@ public class GameController {
 
     public void buildRoute(Route route) {
         String selectedColor = null;
-        boolean isBuilt = false;
+        String isBuilt;
 
-        if (playerTurnController.getTurn() && getLocalPlayerFromGameState().getActionsTaken() == 0) {
-            if (route.routeLength() <= getLocalPlayerFromGameState().getTrains()) {
-                if (route.getColor().equals("GREY")) {
-                    selectedColor = pickColorForGreyRoute(route);
-                    isBuilt = mapController.claimRoute(route, selectedColor);
+        if (routePopUp == null) {
+            if (playerTurnController.getTurn() && getLocalPlayerFromGameState().getActionsTaken() == 0) {
+                if (route.routeLength() <= getLocalPlayerFromGameState().getTrains()) {
+                    if (route.getColor().equals("GREY")) {
+                        selectedColor = pickColorForGreyRoute(route);
+                        isBuilt = mapController.claimRoute(route, selectedColor);
+                    } else {
+                        isBuilt = mapController.claimRoute(route, route.getColor());
+                    }
+                    if (isBuilt.equals("Successfully built the route!")) {
+                        givePointForRouteSize(route.routeLength());
+                        endTurn();
+                    }
+                    systemMessage.setMessage(isBuilt);
+                    routePopUp = null;
                 } else {
-                    isBuilt = mapController.claimRoute(route, route.getColor());
-                }
-
-                if (isBuilt) {
-                    givePointForRouteSize(route.routeLength());
-                    endTurn();
-                } else {
-                    systemMessage.setMessage("Not enough same-color cards for this route.");
+                    systemMessage.setMessage("Not enough trains to build this route.");
                 }
             } else {
-                systemMessage.setMessage("You don't have enough trains left to build this route.");
+                systemMessage.setMessage("It's not your turn, or you already drew a TrainCard this turn.");
             }
         } else {
-            systemMessage.setMessage("It's not your turn, or you already drew a TrainCard this turn.");
+            systemMessage.setMessage("Choose a card to build grey route first before taking another action");
         }
     }
 
@@ -256,7 +270,7 @@ public class GameController {
             return null;
         }
 
-        RoutePopUp routePopUp = new RoutePopUp(possibleColors);
+        routePopUp = new RoutePopUp(possibleColors);
         return routePopUp.showRoutePopUp();
     }
 
@@ -272,7 +286,35 @@ public class GameController {
         }
     }
 
+    public void showDestinationCardsPopUp() {
+        if (playerTurnController.getTurn() && getLocalPlayerFromGameState().getActionsTaken() == 0) {
+            if (destinationPopUp == null) {
+                destinationPopUp = new DestinationPopUp(gameState);
+                destinationPopUp.showDuringGame(gameState, this);
+                endTurn();
+            }
+        } else {
+            systemMessage.setMessage("You cannot pick a card at this time.");
+        }
+    }
+
     public void endTurn() {
+        if (destinationPopUp != null) {
+            Platform.runLater(() -> {
+                destinationPopUp.getStage().close();
+                destinationPopUp = null;
+            });
+        }
+
+        if (routePopUp != null) {
+            Platform.runLater(() -> {
+                if (routePopUp != null) {
+                    routePopUp.getStage().close();
+                    routePopUp = null;
+                }
+            });
+        }
+
         if (playerTurnController.getTurn()) {
             getLocalPlayerFromGameState().setActionsTaken(2);
             checkIfTurnIsOver();
@@ -302,6 +344,7 @@ public class GameController {
         MainState.firebaseService.getLobbyReference(MainState.roomCode).delete();
         MainState.player_uuid = null;
         MainState.roomCode = null;
+
         EndGameView endGameView = new EndGameView(gameState);
         endGameView.getStylesheets().add(MainState.menuCSS);
         MainState.primaryStage.setScene(new Scene(endGameView));
@@ -309,7 +352,7 @@ public class GameController {
 
     public void checkEndGame() {
         if (lastRound && lastActionTaken) {
-            endGame();
+            MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, false);
         }
     }
 
@@ -358,12 +401,6 @@ public class GameController {
         ArrayList<String> remainingPlayers = new ArrayList<>();
         incomingGameState.getPlayers().forEach((n) -> remainingPlayers.add(n.getUUID()));
         gameState.getPlayers().removeIf(player -> !remainingPlayers.contains(player.getUUID()));
-    }
-
-    public void showDestinationCardsPopUp() {
-        DestinationPopUp destinationPopUp = new DestinationPopUp(gameState);
-        destinationPopUp.showDuringGame(gameState, this);
-        endTurn();
     }
 
     // ===============================================================

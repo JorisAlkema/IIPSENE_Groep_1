@@ -38,9 +38,8 @@ public class LoginController {
 
     public boolean checkRoomCode(String code) {
         int characters = code.length();
-
-        for (int i = 0; i < characters; i++) {
-            if (Character.isLetter(code.charAt(i))) {
+        for (int i = 0; i < characters; i ++) {
+            if(Character.isLetter(code.charAt(i))) {
                 return false;
             }
         }

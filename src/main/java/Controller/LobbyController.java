@@ -9,6 +9,9 @@ import View.MainMenuView;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 
 public class LobbyController {
@@ -80,14 +83,24 @@ public class LobbyController {
     public void startRoom() {
         ArrayList<Player> allPlayers = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
 
-
-        if (MainState.getLocalPlayer().getHost() && allPlayers.size() >= 3) {
-            MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, "Game will start..\n");
-            MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, true);
+        if (MainState.getLocalPlayer().getHost()) {
+            if (allPlayers.size() >= 3) {
+                MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, "Game will start..\n");
+                MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, true);
+            } else {
+                MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, "3 or more players are needed to start the game");
+            }
         } else {
-            MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, "3 - 5 players are needed to start the game");
+            MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, MainState.getLocalPlayer().getName() + " wants to start the game");
         }
 
+        // Remove from production
 //        MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, true);
+    }
+
+    public void copyRoomCode() {
+        StringSelection stringSelection = new StringSelection(MainState.roomCode);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
     }
 }
