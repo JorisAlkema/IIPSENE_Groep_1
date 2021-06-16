@@ -3,11 +3,8 @@ package View;
 import App.MainState;
 import Controller.EndGameController;
 import Model.GameState;
-<<<<<<< HEAD
 import Model.MusicPlayer;
-=======
 import Model.Player;
->>>>>>> f354b08b96987724d437893dc502bee4e471dbc1
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
