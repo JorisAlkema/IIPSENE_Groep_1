@@ -7,15 +7,9 @@ import java.util.ArrayList;
 
 public class PlayerTurn implements PlayerTurnObservable {
     private final ArrayList<PlayerTurnObverser> playerTurnObversers = new ArrayList<>();
-
     private String currentPlayerUsername;
-
     private Boolean isTurn = false;
     private String nextPlayerUUID;
-
-    public String getCurrentPlayerUsername() {
-        return currentPlayerUsername;
-    }
 
     public void setCurrentPlayerUsername(String currentPlayerUsername) {
         this.currentPlayerUsername = currentPlayerUsername;

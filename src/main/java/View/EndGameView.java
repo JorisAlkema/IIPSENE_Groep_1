@@ -3,7 +3,11 @@ package View;
 import App.MainState;
 import Controller.EndGameController;
 import Model.GameState;
+<<<<<<< HEAD
 import Model.MusicPlayer;
+=======
+import Model.Player;
+>>>>>>> f354b08b96987724d437893dc502bee4e471dbc1
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -36,26 +40,31 @@ public class EndGameView extends StackPane {
         MusicPlayer.getInstance().playEndMusic();
     }
 
-    // Background image for the whole scene
     private ImageView createBackGround() {
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
+
         ImageView background = new ImageView("images/backgrounds/main_menu_background.jpg");
+
         background.setFitWidth(MainState.WINDOW_WIDTH);
         background.setFitHeight(MainState.WINDOW_HEIGHT);
         background.setEffect(colorAdjust);
+
         return background;
     }
 
     private GridPane createGridPane() {
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
+
         gridPane.getColumnConstraints().add(new ColumnConstraints(1130));
         gridPane.getColumnConstraints().add(new ColumnConstraints(300));
         gridPane.getRowConstraints().add(new RowConstraints(97));
         gridPane.getRowConstraints().add(new RowConstraints(680));
+
         gridPane.setHgap(10);
         gridPane.setPadding(new Insets(40));
+
         return gridPane;
     }
 
@@ -64,54 +73,55 @@ public class EndGameView extends StackPane {
 
     private ImageView createTitle() {
         ImageView title = new ImageView("images/logos/main_menu_logo.png");
+
         title.setFitWidth(title.getImage().getWidth() * 0.5);
         title.setFitHeight(title.getImage().getHeight() * 0.5);
+
         return title;
     }
 
     private VBox createPlayersWrapper() {
         ImageView podium = new ImageView("images/endgame/podium.png");
+
         VBox playersWrapper = new VBox(10);
+
         playersWrapper.setId("black_bg");
         playersWrapper.getChildren().add(podium);
         playersWrapper.setAlignment(Pos.BOTTOM_CENTER);
+
         return playersWrapper;
     }
 
     // StackPane with player positions
     private StackPane createStackPane() {
         StackPane stackPane = new StackPane();
+
         int i = 0;
-        for (String playerName : endGameController.topThreePlayers()) {
-            Label playerNameLabel = new Label(playerName);
+        for (Player player : endGameController.getSortedPlayersByPoints()) {
+            Label playerNameLabel = new Label(player.getName() + "\nPoints: " + player.getPoints());
             playerNameLabel.setId("podiumText");
+
             switch (i) {
-                case 2:
-                    stackPane.getChildren().add(playerNameLabel);
-                    playerNameLabel.setAlignment(Pos.CENTER);
+                case 0:
                     playerNameLabel.setTranslateX(-5);
-                    i++;
                     break;
                 case 1:
-                    stackPane.getChildren().add(playerNameLabel);
-                    playerNameLabel.setAlignment(Pos.CENTER);
                     playerNameLabel.setTranslateX(-270);
                     playerNameLabel.setTranslateY(40);
-                    i++;
                     break;
-                case 0:
-                    stackPane.getChildren().add(playerNameLabel);
-                    playerNameLabel.setAlignment(Pos.CENTER);
+                case 2:
                     playerNameLabel.setTranslateX(270);
                     playerNameLabel.setTranslateY(70);
-                    i++;
                     break;
             }
+
+            playerNameLabel.setAlignment(Pos.CENTER);
+            stackPane.getChildren().add(playerNameLabel);
+            i++;
         }
         return stackPane;
     }
 
-    // Right side info box
     private VBox createInfoBox() {
         VBox info = new VBox(10);
         info.setAlignment(Pos.TOP_CENTER);

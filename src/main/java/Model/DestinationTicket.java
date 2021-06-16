@@ -22,10 +22,7 @@ public class DestinationTicket {
     }
 
     public DestinationTicket() {
-
-
     }
-
     public String fileName() {
         return "images/destination_tickets/eu-" + firstCity.getName().toLowerCase() + "-" + secondCity.getName().toLowerCase() + ".png";
     }

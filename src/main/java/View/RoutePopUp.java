@@ -12,10 +12,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
 
 public class RoutePopUp {
+    private Stage stage;
     private final ArrayList<String> possibleColors;
     private String selectedColor;
 
@@ -27,9 +29,12 @@ public class RoutePopUp {
     }
 
     public String showRoutePopUp() {
-        Stage stage = new Stage();
+        stage = new Stage();
         stage.getIcons().add(new Image("images/traincards/traincard_back_small.png"));
         stage.setTitle("Traincards");
+        stage.initStyle(StageStyle.UTILITY);
+        stage.setResizable(false);
+        stage.setAlwaysOnTop(true);
         stage.setOnCloseRequest(Event::consume);
 
         HBox hBox = new HBox();
@@ -58,8 +63,10 @@ public class RoutePopUp {
                 selectedColor = color;
                 trainCard.setOpacity(SELECTED_OPACITY);
             });
+
             hBox.getChildren().add(trainCard);
         }
+
         vBox.getChildren().add(hBox);
         hBox.setAlignment(Pos.CENTER);
 
@@ -69,6 +76,7 @@ public class RoutePopUp {
                 stage.close();
             }
         });
+
         vBox.getChildren().add(closeButton);
 
         Scene scene = new Scene(vBox);
@@ -78,5 +86,9 @@ public class RoutePopUp {
         stage.setAlwaysOnTop(true);
 
         return selectedColor;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }
