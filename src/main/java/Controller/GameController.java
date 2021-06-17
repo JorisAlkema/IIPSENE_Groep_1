@@ -234,6 +234,8 @@ public class GameController {
                     if (isBuilt.equals("Successfully built the route!")) {
                         givePointForRouteSize(route.routeLength());
                         endTurn();
+                    } else if (isBuilt.equals("You don't have enough extra cards")) {
+                        endTurn();
                     }
                     systemMessage.setMessage(isBuilt);
                     routePopUp = null;
