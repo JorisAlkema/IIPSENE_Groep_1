@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class CardsController {
+    final int maxLocos = 3;
     private final Cards cards = new Cards();
 
     public TrainCard pickClosedCard(GameState gameState) {
@@ -32,6 +33,18 @@ public class CardsController {
         // Replace open card.
         openCards.remove(index);
         openCards.add(getRandomCard(gameState));
+
+        int locosInDeck = 0;
+        for (TrainCard trainCard: openCards){
+            if (trainCard.getColor().equals("LOCO")){
+                locosInDeck++;
+            }
+        }
+
+        if (locosInDeck == 3){
+            openCards.removeAll(openCards);
+            openCards.addAll(generateOpenDeck(gameState.getClosedDeck()));
+        }
 
         notifyObservers(openCards);
         return pickedCard;
