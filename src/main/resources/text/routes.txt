@@ -379,7 +379,7 @@ Brindisi Athina GREY FERRY 1
 160 532 67
 217 586 19
 298 593 -8
-Athina Smyrna GREY TUNNEL
+Athina Smyrna GREY FERRY 1
 402 576 0
 479 593 24
 Smyrna Constantinople GREY TUNNEL
