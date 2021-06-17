@@ -95,26 +95,28 @@ public class EndGameView extends StackPane {
 
         int i = 0;
         for (Player player : endGameController.getSortedPlayersByPoints()) {
-            Label playerNameLabel = new Label(player.getName() + "\nPoints: " + player.getPoints());
-            playerNameLabel.setId("podiumText");
+            if (i < 3) {
+                Label playerNameLabel = new Label(player.getName() + "\nPoints: " + player.getPoints());
+                playerNameLabel.setId("podiumText");
 
-            switch (i) {
-                case 0:
-                    playerNameLabel.setTranslateX(-5);
-                    break;
-                case 1:
-                    playerNameLabel.setTranslateX(-270);
-                    playerNameLabel.setTranslateY(40);
-                    break;
-                case 2:
-                    playerNameLabel.setTranslateX(270);
-                    playerNameLabel.setTranslateY(70);
-                    break;
+                switch (i) {
+                    case 0:
+                        playerNameLabel.setTranslateX(-5);
+                        break;
+                    case 1:
+                        playerNameLabel.setTranslateX(-270);
+                        playerNameLabel.setTranslateY(40);
+                        break;
+                    case 2:
+                        playerNameLabel.setTranslateX(270);
+                        playerNameLabel.setTranslateY(70);
+                        break;
+                }
+
+                playerNameLabel.setAlignment(Pos.CENTER);
+                stackPane.getChildren().add(playerNameLabel);
+                i++;
             }
-
-            playerNameLabel.setAlignment(Pos.CENTER);
-            stackPane.getChildren().add(playerNameLabel);
-            i++;
         }
         return stackPane;
     }
