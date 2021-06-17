@@ -10,13 +10,14 @@ import java.util.ArrayList;
 public class MusicPlayer implements MusicObservable {
     static MusicPlayer musicPlayer;
     private final MediaPlayer mediaPlayer;
+    private MediaPlayer endGameMusicPlayer; // Instance variable to avoid garbage collection
     private boolean isPlaying = true;
     private final ArrayList<MusicObserver> observers = new ArrayList<>();
 
     public MusicPlayer() {
         Media media = new Media(String.valueOf(getClass().getClassLoader().getResource("music/europe.mp3")));
         mediaPlayer = new MediaPlayer(media);
-        //mediaPlayer.play();
+        mediaPlayer.play();
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
     }
 
@@ -25,6 +26,23 @@ public class MusicPlayer implements MusicObservable {
             musicPlayer = new MusicPlayer();
         }
         return musicPlayer;
+    }
+
+    public void playEndMusic() {
+        if(isPlaying) {
+            mediaPlayer.pause();
+        }
+
+        Media media = new Media(String.valueOf(getClass().getClassLoader().getResource("music/victoryJingle.mp3")));
+        endGameMusicPlayer = new MediaPlayer(media);
+        endGameMusicPlayer.setOnEndOfMedia(() -> {
+            if (isPlaying) {
+                this.mediaPlayer.play();
+            }
+        });
+        if (isPlaying) {
+            endGameMusicPlayer.play();
+        }
     }
 
     public void toggleMusic() {

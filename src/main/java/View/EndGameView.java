@@ -3,6 +3,7 @@ package View;
 import App.MainState;
 import Controller.EndGameController;
 import Model.GameState;
+import Model.MusicPlayer;
 import Model.Player;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -33,6 +34,7 @@ public class EndGameView extends StackPane {
 
         this.getChildren().add(background);
         this.getChildren().add(gridPane);
+        MusicPlayer.getInstance().playEndMusic();
     }
 
     private ImageView createBackGround() {
@@ -62,6 +64,9 @@ public class EndGameView extends StackPane {
 
         return gridPane;
     }
+
+
+
 
     private ImageView createTitle() {
         ImageView title = new ImageView("images/logos/main_menu_logo.png");

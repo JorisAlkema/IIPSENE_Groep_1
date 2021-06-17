@@ -234,8 +234,11 @@ public class GameController {
                     if (isBuilt.equals("Successfully built the route!")) {
                         givePointForRouteSize(route.routeLength());
                         endTurn();
+                    } else if (isBuilt.equals("You don't have enough extra cards")) {
+                        endTurn();
                     }
                     systemMessage.setMessage(isBuilt);
+                    routePopUp = null;
                 } else {
                     systemMessage.setMessage("Not enough trains to build this route.");
                 }
@@ -307,8 +310,10 @@ public class GameController {
 
         if (routePopUp != null) {
             Platform.runLater(() -> {
-                routePopUp.getStage().close();
-                routePopUp = null;
+                if (routePopUp != null) {
+                    routePopUp.getStage().close();
+                    routePopUp = null;
+                }
             });
         }
 
