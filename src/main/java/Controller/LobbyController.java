@@ -56,14 +56,11 @@ public class LobbyController {
                 lobby.notifyObservers(document);
 
                 if ((Boolean) document.getData().get("ongoing")) {
-
                     Platform.runLater(() -> {
                         detachListener();
                         Scene scene = new Scene(new GameView());
                         scene.getStylesheets().add(MainState.gameCSS);
                         MainState.primaryStage.setScene(scene);
-                        //MainState.primaryStage.setX(MainState.WINDOW_X_POSITION);
-                        //MainState.primaryStage.setY(MainState.WINDOW_Y_POSITION);
                     });
                 }
             }
@@ -83,19 +80,16 @@ public class LobbyController {
     public void startRoom() {
         ArrayList<Player> allPlayers = MainState.firebaseService.getPlayersFromLobby(MainState.roomCode);
 
-//        if (MainState.getLocalPlayer().getHost()) {
-//            if (allPlayers.size() >= 3) {
-//                MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, "Game will start..\n");
-//                MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, true);
-//            } else {
-//                MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, "3 or more players are needed to start the game");
-//            }
-//        } else {
-//            MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, MainState.getLocalPlayer().getName() + " wants to start the game");
-//        }
-
-        // Remove from production
-        MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, true);
+        if (MainState.getLocalPlayer().getHost()) {
+            if (allPlayers.size() >= 3) {
+                MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, "Game will start..\n");
+                MainState.firebaseService.updateOngoingOfLobby(MainState.roomCode, true);
+            } else {
+                MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, "3 or more players are needed to start the game");
+            }
+        } else {
+            MainState.firebaseService.updateMessageOfLobby(MainState.roomCode, MainState.getLocalPlayer().getName() + " wants to start the game");
+        }
     }
 
     public void copyRoomCode() {

@@ -10,10 +10,7 @@ import View.RoutePopUp;
 import com.google.cloud.firestore.ListenerRegistration;
 import javafx.application.Platform;
 
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -84,7 +81,6 @@ public class GameController {
             giveFirstTurn();
             gameState.setLoadedByHost(true);
             updateGameState();
-            System.out.println("Initialized");
         }
     }
 
@@ -92,7 +88,6 @@ public class GameController {
     public void attachListener() {
         listenerRegistration = MainState.firebaseService.getLobbyReference(MainState.roomCode).addSnapshotListener(((documentSnapshot, e) -> {
             Platform.runLater(() -> {
-                System.out.println("INCOMING UPDATE");
                 GameState incomingGameState = documentSnapshot.toObject(GameState.class);
                 if (incomingGameState != null && incomingGameState.isLoadedByHost()) {
                     if (!incomingGameState.getOngoing()) {
@@ -107,18 +102,16 @@ public class GameController {
                             endGame();
                         }
                         return;
-                    } else {
-                        gameState = incomingGameState;
-                        // Check trains for all players
-                        checkTrains();
-                        cardsController.notifyObservers(gameState.getOpenDeck());
-                        bannerController.updatePlayersArray(gameState.getPlayers());
-                        mapController.redrawRoutes(gameState.getPlayers());
-
-                        // End old timer and Make time init timer
-                        turnTimerController.resetTimer(this);
                     }
+                    gameState = incomingGameState;
+                    // Check trains for all players
+                    checkTrains();
+                    cardsController.notifyObservers(gameState.getOpenDeck());
+                    bannerController.updatePlayersArray(gameState.getPlayers());
+                    mapController.redrawRoutes(gameState.getPlayers());
 
+                    // End old timer and Make time init timer
+                    turnTimerController.resetTimer(this);
                     try {
                         playerTurnController.checkMyTurn(gameState);
                         if (playerTurnController.getTurn()) {
@@ -176,7 +169,6 @@ public class GameController {
     // Step 2: if Actions = 2, End turn and set next player turn = true
     // Step 3: update gameState
     public void updateGameState() {
-        System.out.println("updateGameState");
         MainState.firebaseService.updateGameStateOfLobby(MainState.roomCode, gameState);
     }
 
@@ -186,7 +178,6 @@ public class GameController {
     public void pickClosedCard() {
         if (playerTurnController.getTurn()) {
             TrainCard pickedClosedCard = cardsController.pickClosedCard(gameState);
-            System.out.println("Picked Closed Card");
             addTrainCardToPlayerInventoryInGameState(pickedClosedCard);
             incrementPlayerActionsTaken();
             checkIfTurnIsOver();
@@ -244,7 +235,7 @@ public class GameController {
                 systemMessage.setMessage("It's not your turn, or you already drew a TrainCard this turn.");
             }
         } else {
-            systemMessage.setMessage("Choose a card to build grey route first before taking another action");
+            systemMessage.setMessage("Choose a card to build grey route first before taking another action.");
         }
     }
 
@@ -327,7 +318,6 @@ public class GameController {
                 int points = ticket.getPoints();
                 player.incrementPoints(isConnected(ticket, player) ? points : -points);
             }
-            System.out.println("Points after tickets: " + player.getName() + " " + player.getPoints());
         }
 
         for (Rectangle rectangle : mapController.getRouteCellRectangleHashMap().values()) {
@@ -356,8 +346,6 @@ public class GameController {
         }
     }
 
-    // ===============================================================
-
     private void addTrainCardToPlayerInventoryInGameState(TrainCard trainCard) {
         getLocalPlayerFromGameState().addTrainCard(trainCard);
     }
@@ -382,10 +370,8 @@ public class GameController {
     }
 
     private void checkIfTurnIsOver() {
-        System.out.println("CHECK");
         if (isPlayerActionsTakenEquals2()) {
             // End turn
-            System.out.println("NEXT TURN");
 
             if (lastRound) {
                 lastActionTaken = true;
@@ -402,8 +388,6 @@ public class GameController {
         incomingGameState.getPlayers().forEach((n) -> remainingPlayers.add(n.getUUID()));
         gameState.getPlayers().removeIf(player -> !remainingPlayers.contains(player.getUUID()));
     }
-
-    // ===============================================================
 
     public void checkTrains() {
         if (!lastRound) {

@@ -27,6 +27,7 @@ public class EndGameController {
         ArrayList<Player> players = gameState.getPlayers();
         Comparator<Player> playerComparator = Comparator.comparingInt(Player::getPoints).reversed();
         players.sort(playerComparator);
+
         return players;
     }
 }

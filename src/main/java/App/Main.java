@@ -11,8 +11,6 @@ import java.awt.*;
 public class Main extends Application {
 
     final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    private final int WINDOW_X_POSITION = screenSize.width / 2 - MainState.WINDOW_WIDTH / 2;
-    private final int WINDOW_Y_POSITION = screenSize.height / 2 - MainState.WINDOW_HEIGHT / 2;
 
     public static void main(String[] args) {
         launch(args);
