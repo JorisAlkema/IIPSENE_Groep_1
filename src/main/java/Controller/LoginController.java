@@ -8,7 +8,6 @@ import View.LoginView;
 import View.MainMenuView;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,8 +37,7 @@ public class LoginController {
 
     public boolean checkRoomCode(String code) {
         int characters = code.length();
-
-        for (int i = 0; i < characters; i++) {
+        for (int i = 0; i < characters; i ++) {
             if (Character.isLetter(code.charAt(i))) {
                 return false;
             }
@@ -114,7 +112,8 @@ public class LoginController {
             return;
         }
 
-        if (this.checkUsername(username)) {
+
+        if(this.checkUsername(username)) {
             login.notifyObservers("Your username must be between " + CHARACTER_MIN + " and " + CHARACTER_MAX + " characters long");
             return;
         }
