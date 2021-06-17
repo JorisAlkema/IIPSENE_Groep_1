@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class CardsControllerTest {
 
     @Test
-    public void generateClosedDeckHas110Cards() {
+    public void Should_Contain110Cards_When_ClosedDeckIsInitialized() {
         //arrange
         int fullDeck = 110;
 
