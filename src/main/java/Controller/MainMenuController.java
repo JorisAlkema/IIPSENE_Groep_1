@@ -34,8 +34,6 @@ public class MainMenuController {
                 }
             }).start();
         }
-
-
     }
 
     public void host() {

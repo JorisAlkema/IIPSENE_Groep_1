@@ -65,9 +65,6 @@ public class EndGameView extends StackPane {
         return gridPane;
     }
 
-
-
-
     private ImageView createTitle() {
         ImageView title = new ImageView("images/logos/main_menu_logo.png");
 
