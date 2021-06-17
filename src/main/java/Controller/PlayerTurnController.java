@@ -37,7 +37,6 @@ public class PlayerTurnController {
     public void start(GameState gameState) {
         gameState.getPlayers().get(0).setTurn(true);
         calculateNextPlayer(gameState);
-        System.out.println(playerTurn.getNextPlayerUUID());
     }
 
     public void checkMyTurn(GameState gameState) throws Exception {

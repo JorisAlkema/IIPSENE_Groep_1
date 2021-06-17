@@ -184,8 +184,6 @@ public class GameController {
     // Actions
     // MAKE SURE ACTIONS ALWAYS HAVE incrementPlayerActionsTaken and checkNextTurn;
     public void pickClosedCard() {
-        // Check if player turn
-        System.out.println(playerTurnController.getTurn());
         if (playerTurnController.getTurn()) {
             TrainCard pickedClosedCard = cardsController.pickClosedCard(gameState);
             System.out.println("Picked Closed Card");
