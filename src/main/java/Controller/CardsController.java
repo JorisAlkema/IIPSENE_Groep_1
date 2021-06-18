@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class CardsController {
+    final int maxLocos = 3;
     private final Cards cards = new Cards();
 
     public TrainCard pickClosedCard(GameState gameState) {
         TrainCard pickedClosedCard = getRandomCard(gameState);
-        System.out.println("Closed card picked, color: " + pickedClosedCard.getColor());
         return pickedClosedCard;
     }
 
@@ -32,6 +32,18 @@ public class CardsController {
         // Replace open card.
         openCards.remove(index);
         openCards.add(getRandomCard(gameState));
+
+        int locosInDeck = 0;
+        for (TrainCard trainCard: openCards){
+            if (trainCard.getColor().equals("LOCO")){
+                locosInDeck++;
+            }
+        }
+
+        if (locosInDeck == 3){
+            openCards.removeAll(openCards);
+            openCards.addAll(generateOpenDeck(gameState.getClosedDeck()));
+        }
 
         notifyObservers(openCards);
         return pickedCard;
@@ -64,11 +76,9 @@ public class CardsController {
 
     private TrainCard getRandomCard(GameState gameState) {
         ArrayList<TrainCard> closedDeck = gameState.getClosedDeck();
-        System.out.println(">>>> Before shuffle" + closedDeck.size());
         if (closedDeck.size() == 0) {
             closedDeck = reshuffleCards(gameState);
         }
-        System.out.println(">>>> After shuffle" + closedDeck.size());
         TrainCard randomCard = closedDeck.get(new Random().nextInt(closedDeck.size()));
         closedDeck.remove(randomCard);
         gameState.setClosedDeck(closedDeck);

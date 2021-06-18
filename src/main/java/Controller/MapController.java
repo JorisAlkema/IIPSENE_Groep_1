@@ -142,6 +142,12 @@ public class MapController {
             }
         }
 
+        for(Route builtRoutes:gameController.getCurrentPlayer().getClaimedRoutes()){
+            if(builtRoutes.getFirstCity().equals(route.getFirstCity()) && builtRoutes.getSecondCity().equals(route.getSecondCity())){
+                return "You cannot build two routes next to each other!";
+            }
+        }
+
         // Not enough cards of the right color
         if (correctColorCards.size() + locosInHand.size() < routeLength) {
             return "Not enough cards of the right color!";
@@ -273,8 +279,6 @@ public class MapController {
                 tunnels++;
             }
         }
-
-        System.out.println("you have to build " + tunnels + "tunnels!");
         return tunnels;
     }
 

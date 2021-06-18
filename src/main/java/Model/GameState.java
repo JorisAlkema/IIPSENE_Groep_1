@@ -17,6 +17,7 @@ public class GameState {
         this.players = players;
     }
 
+    //used by firebase
     public GameState() {
 
     }

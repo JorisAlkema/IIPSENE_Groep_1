@@ -26,7 +26,6 @@ public class GameSetupService {
         this.cities = readCitiesFromFile(citiesFile);
         this.routes = readRoutesFromFile(routeFile);
         this.destinationTickets = readDestinationTicketsFromFile(destinationTicketsFile);
-        //addNeighborCities();
     }
 
     public static GameSetupService getInstance() {
@@ -203,7 +202,6 @@ public class GameSetupService {
                     if (line == null) {
                         break;
                     }
-
                     splitLine = line.split(" ");
                 }
 
