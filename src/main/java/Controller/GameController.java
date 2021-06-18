@@ -94,7 +94,7 @@ public class GameController {
                         endGame();
                         return;
                     }
-                    // A player has leaved
+                    // A player has left
                     if (incomingGameState.getPlayers().size() < gameState.getPlayers().size()) {
                         removeLeftPlayers(incomingGameState);
                         bannerController.updatePlayersArray(gameState.getPlayers());
@@ -190,7 +190,6 @@ public class GameController {
         try {
             if (playerTurnController.getTurn()) {
                 TrainCard pickedOpenCard = cardsController.pickOpenCard(gameState, index);
-                System.out.println("Picked Open Card");
                 addTrainCardToPlayerInventoryInGameState(pickedOpenCard);
 
                 if (pickedOpenCard.getColor().equals("LOCO")) {
@@ -371,8 +370,6 @@ public class GameController {
 
     private void checkIfTurnIsOver() {
         if (isPlayerActionsTakenEquals2()) {
-            // End turn
-
             if (lastRound) {
                 lastActionTaken = true;
             }
@@ -411,7 +408,6 @@ public class GameController {
     public boolean isConnected(DestinationTicket ticket, Player player) {
         gameSetupService.addNeighborCities();
         boolean connected = singleStep(ticket.getFirstCity(), ticket.getSecondCity(), player);
-        System.out.println(ticket.getFirstCity().getName() + " " + ticket.getSecondCity().getName() + " " + connected);
         gameSetupService.removeNeighborCities();
         return connected;
     }
@@ -427,21 +423,15 @@ public class GameController {
      * @param player          Player that we are checking for if they have a connection between the two Cities
      * @return true if there is a connection from the initial currentCity to the destinationCity, false otherwise
      */
-
     private boolean singleStep(City currentCity, City destinationCity, Player player) {
-        // Accept case: We found the destination city.
         if (currentCity.equals(destinationCity)) {
             return true;
         }
-
-        // Reject case: We already visited this city.
         if (currentCity.isVisited()) {
             return false;
         }
-
-        // Backtracking step
-        // Make a note that we visited this City, then try to go to each neighboring city.
-        // (Janky hack because Firebase)
+        // This needs to be done because of a desync between locally saved City objects and
+        // City objects related to the DestinationTicket pulled from Firebase
         for (City city : gameSetupService.getCities()) {
             if (currentCity.equals(city)) {
                 currentCity.setNeighborCities(city.getNeighborCities());
@@ -450,11 +440,8 @@ public class GameController {
                 break;
             }
         }
-
         for (City neighbor : currentCity.getNeighborCities()) {
             for (Route route : player.getClaimedRoutes()) {
-                // If the player has built a route from currentCity to neighbor,
-                // run the function again with neighbor as the new currentCity.
                 boolean connectedAToB = route.getFirstCity().equals(currentCity) && route.getSecondCity().equals(neighbor);
                 boolean connectedBToA = route.getFirstCity().equals(neighbor) && route.getSecondCity().equals(currentCity);
                 if (connectedAToB || connectedBToA) {
@@ -464,9 +451,6 @@ public class GameController {
                 }
             }
         }
-
-        // Dead end: This location can't be part of the solution.
-        // Unmark the location and go back to previous step.
         for (City city : gameSetupService.getCities()) {
             if (currentCity.equals(city)) {
                 city.setVisited(false);

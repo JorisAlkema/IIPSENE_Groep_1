@@ -40,8 +40,6 @@ public class PlayerTurnController {
     }
 
     public void checkMyTurn(GameState gameState) throws Exception {
-        System.out.println("PlayerTurnController.checkMyTurn() called");
-
         if (!playerWithTurnLeft(gameState)) {
             if (playerTurn.getNextPlayerUUID().equals(MainState.player_uuid)) {
                 gameState.getPlayer(playerTurn.getNextPlayerUUID()).setTurn(true);
@@ -50,7 +48,6 @@ public class PlayerTurnController {
         }
 
         playerTurn.setTurn(gameState.getPlayer(MainState.player_uuid).isTurn());
-        System.out.println("It's " + getCurrentPlayer(gameState).getName() + "s turn.");
 
         playerTurn.setCurrentPlayerUsername(getCurrentPlayer(gameState).getName());
         calculateNextPlayer(gameState);
