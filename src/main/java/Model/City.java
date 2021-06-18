@@ -20,6 +20,7 @@ public class City {
         this.visited = false;
     }
 
+    //used by firebase
     public City() {
 
     }
@@ -38,11 +39,6 @@ public class City {
         }
         return false;
     }
-//
-//    @Override
-//    public int hashCode() {
-//        return getName() != null ? getName().hashCode() : 0;
-//    }
 
     public void setNeighborCities(ArrayList<City> neighborCities) {
         this.neighborCities = neighborCities;

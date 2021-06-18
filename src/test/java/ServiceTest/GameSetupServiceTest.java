@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class GameSetupServiceTest {
 
     @Test
-    public void areAllDestinationCardsGeneratedByTheGameSetupService() {
+    public void Should_Contain46DestinationTickets_When_DestinationTicketsAreLoadedFromFile() {
         // arrange
         final int expectedCards = 46;
         // act

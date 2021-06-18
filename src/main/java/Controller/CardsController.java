@@ -16,7 +16,6 @@ public class CardsController {
 
     public TrainCard pickClosedCard(GameState gameState) {
         TrainCard pickedClosedCard = getRandomCard(gameState);
-        System.out.println("Closed card picked, color: " + pickedClosedCard.getColor());
         return pickedClosedCard;
     }
 
@@ -77,11 +76,9 @@ public class CardsController {
 
     private TrainCard getRandomCard(GameState gameState) {
         ArrayList<TrainCard> closedDeck = gameState.getClosedDeck();
-        System.out.println(">>>> Before shuffle" + closedDeck.size());
         if (closedDeck.size() == 0) {
             closedDeck = reshuffleCards(gameState);
         }
-        System.out.println(">>>> After shuffle" + closedDeck.size());
         TrainCard randomCard = closedDeck.get(new Random().nextInt(closedDeck.size()));
         closedDeck.remove(randomCard);
         gameState.setClosedDeck(closedDeck);

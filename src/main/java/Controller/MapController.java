@@ -275,13 +275,10 @@ public class MapController {
 
         for (int i = 0; i < 3; i++) {
             TrainCard randomCard = cardsController.pickClosedCard(MainState.firebaseService.getGameStateOfLobby(MainState.roomCode));
-            System.out.println(randomCard.getColor()+"tunnel");
             if (randomCard.getColor().equals(color)) {
                 tunnels++;
             }
         }
-
-        System.out.println("you have to build " + tunnels + "tunnels!");
         return tunnels;
     }
 
