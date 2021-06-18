@@ -279,8 +279,6 @@ public class MapController {
                 tunnels++;
             }
         }
-
-        System.out.println("you have to build " + tunnels + "tunnels!");
         return tunnels;
     }
 

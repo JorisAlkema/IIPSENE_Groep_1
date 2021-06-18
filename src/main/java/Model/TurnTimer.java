@@ -32,7 +32,6 @@ public class TurnTimer implements TurnTimerObservable {
                 if (seconds > 0) {
                     updateTimerTextInGameView();
                 } else if (seconds == 0) {
-                    System.out.println("TIMER ENDED");
                     gameController.endTurn();
                     // Code that gets executed after the countdown has hit 0
                     updateTimerTextInGameView();
